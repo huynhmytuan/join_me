@@ -1,0 +1,59 @@
+name: join_me
+description: JoinMe is an application for sharing and manage your project
+version: 1.0.0+1
+publish_to: none
+
+environment:
+  sdk: ">=2.16.0 <3.0.0"
+
+dependencies:
+  auto_route: ^3.2.4
+  bloc: ^8.0.3
+  carousel_slider: ^4.1.1
+  cloud_firestore: ^3.1.12
+  equatable: ^2.0.3
+  firebase_auth: ^3.3.14
+  firebase_core: ^1.14.1
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^8.0.1
+  flutter_localizations:
+    sdk: flutter
+  flutter_svg: ^1.0.3
+  intl: ^0.17.0
+  ionicons: ^0.1.2
+  json_annotation: ^4.4.0
+  keyboard_dismisser: ^2.0.1
+  timeago: ^3.2.2
+  
+  
+
+dev_dependencies:
+  auto_route_generator: ^3.2.3 
+  bloc_test: ^9.0.3
+  build_runner: ^2.1.10
+
+  flutter_test:
+    sdk: flutter
+  json_serializable: ^6.1.6
+  mocktail: ^0.3.0
+  very_good_analysis: ^2.4.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/icons/
+    - assets/images/
+
+  fonts:
+    - family: Nunito
+      fonts:
+        - asset: assets/fonts/Nunito-Regular.ttf
+        - asset: assets/fonts/Nunito-Light.ttf
+          weight: 300
+        - asset: assets/fonts/Nunito-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Nunito-Bold.ttf
+          weight: 700
