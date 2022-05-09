@@ -6,8 +6,6 @@ import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/post/components/components.dart';
 import 'package:join_me/utilities/constant.dart';
-import 'package:join_me/widgets/bottom_text_field.dart';
-import 'package:join_me/widgets/expanded_text.dart';
 import 'package:join_me/widgets/widgets.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -27,6 +25,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
   late Post post;
   late User author;
   late List<Comment> comments;
+  late FocusNode commentFocusNode;
   final commentTextInputController = TextEditingController();
   void _getPost() {
     post = dummy_data.postsData.firstWhere((p) => p.id == widget.postId);
@@ -39,12 +38,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
   @override
   void didChangeDependencies() {
     _getPost();
+
     super.didChangeDependencies();
   }
 
   @override
   void initState() {
     _getPost();
+    commentFocusNode = FocusNode();
     super.initState();
   }
 
@@ -65,7 +66,8 @@ class _PostDetailPageState extends State<PostDetailPage> {
             ),
             BottomTextField(
               textEditingController: commentTextInputController,
-              hintText: 'Write a comment',
+              focusNode: commentFocusNode,
+              hintText: 'Write a comment...',
               onSubmit: () {
                 // TODO(tuanhuynh): post comment.
               },
@@ -86,9 +88,14 @@ class _PostDetailPageState extends State<PostDetailPage> {
             padding: const EdgeInsets.all(20),
             child: ExpandedText(text: post.content),
           ),
-          PresetsSlider(
-            imageList: post.imageUrls,
+          const Divider(
+            indent: kDefaultPadding,
+            endIndent: kDefaultPadding,
           ),
+          if (post.imageUrls.isNotEmpty)
+            PresetsSlider(
+              imageList: post.imageUrls,
+            ),
           Padding(
             padding: const EdgeInsets.all(10),
             child: Row(
@@ -127,7 +134,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
                       ),
                       child: IconButton(
                         splashRadius: 20,
-                        onPressed: () {},
+                        onPressed: () {
+                          commentFocusNode.requestFocus();
+                        },
                         icon: const Icon(
                           Ionicons.chatbubble_outline,
                           color: kTextColorGrey,
@@ -177,12 +186,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
       ),
       title: Row(
         children: [
-          CircleAvatar(
-            radius: 15,
-            backgroundImage: NetworkImage(
-              author.photoUrl,
-            ),
-          ),
+          CircleAvatarWidget(imageUrl: dummy_data.currentUser.photoUrl),
           const SizedBox(
             width: kDefaultPadding / 2,
           ),
@@ -230,5 +234,11 @@ class _PostDetailPageState extends State<PostDetailPage> {
       },
       itemCount: comments.length,
     );
+  }
+
+  @override
+  void dispose() {
+    commentFocusNode.dispose();
+    super.dispose();
   }
 }

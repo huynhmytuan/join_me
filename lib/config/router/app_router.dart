@@ -1,72 +1,98 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:join_me/home/view/home_page.dart';
-import 'package:join_me/login/login.dart';
-import 'package:join_me/menu/view/menu_page.dart';
-import 'package:join_me/message/message.dart';
-import 'package:join_me/notification/view/notification_page.dart';
-import 'package:join_me/post/post.dart';
-import 'package:join_me/post/view/post_detail_page.dart';
-import 'package:join_me/project/view/project_page.dart';
-import 'package:join_me/register/view/register_page.dart';
+import 'package:join_me/home/view/view.dart';
+import 'package:join_me/login/view/view.dart';
+import 'package:join_me/menu/view/view.dart';
+import 'package:join_me/message/view/view.dart';
+import 'package:join_me/notification/view/view.dart';
+import 'package:join_me/post/view/view.dart';
+import 'package:join_me/project/view/view.dart';
+import 'package:join_me/register/view/view.dart';
 
 part 'app_router.gr.dart';
 
 @MaterialAutoRouter(
   replaceInRouteName: 'Page,Route',
   routes: <AutoRoute>[
-    AutoRoute<MaterialPageRoute>(
+    AutoRoute<dynamic>(
       path: '/',
       page: HomePage,
       initial: true,
       children: [
-        AutoRoute<MaterialPageRoute>(
+        AutoRoute<dynamic>(
           path: 'posts',
           name: 'PostsRouter',
           page: EmptyRouterPage,
           children: [
-            AutoRoute<MaterialPageRoute>(
+            AutoRoute<dynamic>(
               path: '',
               page: PostsPage,
             ),
-            AutoRoute<MaterialPageRoute>(
+            AutoRoute<dynamic>(
               path: ':postId',
               page: PostDetailPage,
             ),
           ],
         ),
-        AutoRoute<MaterialPageRoute>(
+        AutoRoute<dynamic>(
           path: 'messages',
-          page: ConversationPage,
+          name: 'MessagesRouter',
+          page: MessagesPage,
         ),
-        AutoRoute<MaterialPageRoute>(
+        AutoRoute<dynamic>(
           path: 'projects',
           name: 'ProjectsRouter',
           page: EmptyRouterPage,
           children: [
-            AutoRoute<MaterialPageRoute>(
+            AutoRoute<dynamic>(
               path: '',
-              page: ProjectPage,
+              page: ProjectsPage,
+            ),
+            AutoRoute<dynamic>(
+              path: ':projectId',
+              page: SingleProjectPage,
+              children: [
+                AutoRoute<dynamic>(
+                  path: 'dashboard',
+                  page: ProjectDashboardPage,
+                ),
+                AutoRoute<dynamic>(
+                  path: 'task-list',
+                  page: ProjectTaskListPage,
+                ),
+                AutoRoute<dynamic>(
+                  path: 'task-by-calendar',
+                  page: ProjectCalendarPage,
+                ),
+              ],
             ),
           ],
         ),
-        AutoRoute<MaterialPageRoute>(
+        AutoRoute<dynamic>(
           path: 'notification',
           page: NotificationPage,
         ),
-        AutoRoute<MaterialPageRoute>(
+        AutoRoute<dynamic>(
           path: 'menu',
           page: MenuPage,
         ),
       ],
     ),
-    AutoRoute<MaterialPageRoute>(
+    AutoRoute<dynamic>(
+      path: 'new-post',
+      page: NewPostPage,
+    ),
+    AutoRoute<dynamic>(
       path: 'login',
       page: LoginPage,
     ),
-    AutoRoute<MaterialPageRoute>(
+    AutoRoute<dynamic>(
       path: 'register',
       page: RegisterPage,
+    ),
+    AutoRoute<dynamic>(
+      path: ':conversationId',
+      page: ChatPage,
     ),
   ],
 )

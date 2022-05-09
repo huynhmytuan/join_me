@@ -1,13 +1,17 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:join_me/config/router/app_router.dart';
+import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/utilities/constant.dart';
+import 'package:join_me/widgets/avatar_circle_widget.dart';
 
 class NewPostCard extends StatelessWidget {
   const NewPostCard({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    const currentUser = dummy_data.currentUser;
     return Padding(
       padding: const EdgeInsets.symmetric(
         vertical: kDefaultPadding,
@@ -29,16 +33,16 @@ class NewPostCard extends StatelessWidget {
           padding: const EdgeInsets.all(kDefaultPadding / 2),
           child: Row(
             children: [
-              CircleAvatar(
-                radius: 15,
-                child: SvgPicture.asset(kLogoLightDir),
-              ),
+              CircleAvatarWidget(imageUrl: currentUser.photoUrl),
               const SizedBox(
                 width: 20,
               ),
               Material(
+                color: Colors.transparent,
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    AutoRouter.of(context).push(const NewPostRoute());
+                  },
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: kDefaultPadding,
@@ -50,6 +54,7 @@ class NewPostCard extends StatelessWidget {
               ),
               const Spacer(),
               Material(
+                color: Colors.transparent,
                 child: IconButton(
                   splashRadius: 24,
                   onPressed: () {},
@@ -60,6 +65,7 @@ class NewPostCard extends StatelessWidget {
                 ),
               ),
               Material(
+                color: Colors.transparent,
                 child: IconButton(
                   splashRadius: 24,
                   onPressed: () {},

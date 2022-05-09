@@ -7,7 +7,10 @@ const kBackgroundDarkColor = Color(0xFF141e26);
 const kBackgroundPostLight = Color(0xFFF5F5F5);
 const kDividerColor = Color(0xFFF4F6FA);
 
+const kSecondaryRed = Color(0xFFFF4F4F);
+const kSecondaryBlue = Color(0xFF0066FF);
 const kSecondaryGreen = Color(0xFF5CD4A8);
+const kSecondaryYellow = Color(0xFFFFC633);
 
 //Icon Colors
 const kIconColorLight = Color(0xFFFFFFFF);
@@ -21,7 +24,7 @@ const kTextColorPrimaryDark = Color(0xFFffffff);
 const kShadowColor = Color(0xFF364564);
 
 const kDefaultPadding = 20.0;
-const kDefaultRadius = 20.0;
+const kDefaultRadius = 15.0;
 
 //Text
 const kFontFamily = 'Nunito';
@@ -31,3 +34,10 @@ const _kAssetImageDir = 'assets/images';
 const kLogoLightDir = '$_kAssetImageDir/logo_light.svg';
 const kLogoBackgroundDir = '$_kAssetImageDir/logo_background.svg';
 const kIconDir = 'assets/icons';
+
+//Design
+final kDefaultBoxShadow = BoxShadow(
+  color: Colors.grey.withOpacity(0.2),
+  blurRadius: 10,
+  offset: const Offset(0, 4),
+);

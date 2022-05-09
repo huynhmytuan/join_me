@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
 
 class ExpandedText extends StatefulWidget {
   const ExpandedText({
     required this.text,
+    this.duration,
+    this.curve,
     Key? key,
   }) : super(key: key);
   final String text;
+  final Duration? duration;
+  final Curve? curve;
 
   @override
   State<ExpandedText> createState() => _ExpandedTextState();
@@ -27,6 +30,9 @@ class _ExpandedTextState extends State<ExpandedText> {
   }
 
   void _expandToggle() {
+    if (secondHaft == '') {
+      return;
+    }
     setState(() {
       isExpanded = !isExpanded;
     });
@@ -40,30 +46,37 @@ class _ExpandedTextState extends State<ExpandedText> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: (secondHaft == '')
-          ? Text(
-              firstHaft,
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(isExpanded ? widget.text : '$firstHaft...'),
-                TextButton(
-                  onPressed: _expandToggle,
-                  child: Row(
-                    children: [
-                      Text(isExpanded ? 'show less' : 'show more'),
-                      Icon(
-                        isExpanded
-                            ? Ionicons.chevron_up
-                            : Ionicons.chevron_down,
-                      ),
-                    ],
-                  ),
+    return GestureDetector(
+      onTap: _expandToggle,
+      child: Container(
+        child: (secondHaft == '')
+            ? Text(
+                firstHaft,
+              )
+            : AnimatedSize(
+                duration: widget.duration ?? const Duration(milliseconds: 700),
+                curve: widget.curve ?? Curves.fastLinearToSlowEaseIn,
+                alignment: Alignment.topLeft,
+                child: Wrap(
+                  children: [
+                    Text(isExpanded ? widget.text : '$firstHaft...'),
+                    AnimatedOpacity(
+                      duration:
+                          widget.duration ?? const Duration(milliseconds: 700),
+                      opacity: isExpanded ? 0 : 1,
+                      child: isExpanded
+                          ? null
+                          : Text(
+                              'Read more',
+                              style: TextStyle(
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+      ),
     );
   }
 }

@@ -1,5 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:join_me/config/theme.dart';
+import 'package:join_me/utilities/constant.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class PresetsSlider extends StatefulWidget {
   const PresetsSlider({
@@ -11,52 +15,187 @@ class PresetsSlider extends StatefulWidget {
   State<PresetsSlider> createState() => _PresetsSliderState();
 }
 
-class _PresetsSliderState extends State<PresetsSlider> {
+class _PresetsSliderState extends State<PresetsSlider>
+    with SingleTickerProviderStateMixin {
   int _current = 0;
+  late TransformationController transformationController;
+  late AnimationController animationController;
+  late Animation<Matrix4> animation;
+  OverlayEntry? entry;
+  bool _isShowed = true;
+
+  @override
+  void initState() {
+    transformationController = TransformationController();
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    )
+      ..addListener(() => transformationController.value = animation.value)
+      ..addStatusListener((status) {
+        if (status == AnimationStatus.completed) {
+          _removeOverlay();
+        }
+      });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        CarouselSlider.builder(
-          itemCount: widget.imageList.length,
-          itemBuilder: (context, index, index_2) => SizedBox(
-            width: double.infinity,
-            child: Image.network(
-              widget.imageList[index],
-              fit: BoxFit.cover,
+        Stack(
+          children: [
+            CarouselSlider.builder(
+              itemCount: widget.imageList.length,
+              itemBuilder: (context, index, index_2) => SizedBox(
+                width: double.infinity,
+                child: _buildImage(index),
+              ),
+              options: CarouselOptions(
+                // aspectRatio: 3 / 4,
+                enableInfiniteScroll: false,
+                viewportFraction: 1,
+                onPageChanged: (index, changeReason) {
+                  setState(() {
+                    _current = index;
+                  });
+                },
+              ),
             ),
-          ),
-          options: CarouselOptions(
-            enableInfiniteScroll: false,
-            viewportFraction: 1,
-            // enlargeCenterPage: true,
-            onPageChanged: (index, changeReason) {
-              setState(() {
-                _current = index;
-              });
-            },
-          ),
+            if (_isShowed && widget.imageList.length > 1)
+              Positioned(
+                top: 5,
+                right: 5,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(.4),
+                    borderRadius: BorderRadius.circular(kDefaultRadius),
+                  ),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  child: Text(
+                    '${_current + 1} / ${widget.imageList.length}',
+                    style: CustomTextStyle.bodyMedium(context)
+                        .copyWith(color: Colors.white),
+                  ),
+                ),
+              ),
+          ],
         ),
         if (widget.imageList.length > 1)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: widget.imageList.asMap().entries.map((entry) {
-              return Container(
-                width: _current == entry.key ? 7 : 6,
-                height: _current == entry.key ? 7 : 6,
-                margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 2),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: (Theme.of(context).brightness == Brightness.dark
-                          ? Colors.white
-                          : Colors.black)
-                      .withOpacity(_current == entry.key ? 0.4 : 0.2),
-                ),
-              );
-            }).toList(),
+          Padding(
+            padding: const EdgeInsets.all(10),
+            child: AnimatedSmoothIndicator(
+              activeIndex: _current,
+              count: widget.imageList.length,
+              effect: ScrollingDotsEffect(
+                dotColor: kIconColorGrey,
+                activeDotColor: Theme.of(context).primaryColor,
+                dotWidth: 5,
+                dotHeight: 5,
+                spacing: 4,
+              ),
+            ),
           ),
       ],
     );
+  }
+
+  Widget _buildImage(int index) {
+    return Builder(
+      builder: (context) {
+        return GestureDetector(
+          onTap: () {
+            if (widget.imageList.length <= 1) {
+              return;
+            }
+            setState(() {
+              _isShowed = !_isShowed;
+            });
+          },
+          child: InteractiveViewer(
+            transformationController: transformationController,
+            minScale: 1,
+            maxScale: 3,
+            panEnabled: false,
+            clipBehavior: Clip.none,
+            onInteractionStart: (details) {
+              if (details.pointerCount < 2) {
+                return;
+              }
+              _showOverlay(context, index);
+            },
+            onInteractionEnd: (details) {
+              _resetAnimation();
+            },
+            child: SizedBox(
+              width: double.infinity,
+              child: CachedNetworkImage(
+                imageUrl: widget.imageList[index],
+                placeholder: (context, url) => Container(
+                  color: kIconColorGrey,
+                ),
+                errorWidget: (context, url, dynamic error) =>
+                    const Icon(Icons.error),
+                fit: BoxFit.fitWidth,
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showOverlay(BuildContext context, int index) {
+    final renderBox = context.findRenderObject()! as RenderBox;
+    final offset = renderBox.localToGlobal(Offset.zero);
+    final size = MediaQuery.of(context).size;
+    entry = OverlayEntry(
+      builder: (context) {
+        return Stack(
+          children: [
+            Positioned.fill(
+              child: Container(
+                color: Theme.of(context)
+                    .textTheme
+                    .bodyText1!
+                    .color!
+                    .withOpacity(.7),
+              ),
+            ),
+            Positioned(
+              left: offset.dx,
+              top: offset.dy,
+              width: size.width,
+              child: _buildImage(index),
+            ),
+          ],
+        );
+      },
+    );
+    final overlay = Overlay.of(context);
+    overlay!.insert(entry!);
+  }
+
+  void _removeOverlay() {
+    entry?.remove();
+    entry = null;
+  }
+
+  void _resetAnimation() {
+    animation = Matrix4Tween(
+      begin: transformationController.value,
+      end: Matrix4.identity(),
+    ).animate(
+      CurvedAnimation(parent: animationController, curve: Curves.easeIn),
+    );
+    animationController.forward(from: 0);
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
   }
 }

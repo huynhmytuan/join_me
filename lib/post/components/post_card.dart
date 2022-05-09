@@ -6,7 +6,6 @@ import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/utilities/constant.dart';
-import 'package:join_me/widgets/expanded_text.dart';
 import 'package:join_me/widgets/widgets.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -51,13 +50,7 @@ class _PostCardState extends State<PostCard> {
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(kDefaultRadius),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          boxShadow: [kDefaultBoxShadow],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -70,15 +63,9 @@ class _PostCardState extends State<PostCard> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(15),
                       onTap: () {
-                        //Go to user's page
+                        // TODO(tuan): Go to user's page
                       },
-                      child: CircleAvatar(
-                        backgroundColor: Colors.transparent,
-                        radius: 15,
-                        backgroundImage: NetworkImage(
-                          user.photoUrl,
-                        ),
-                      ),
+                      child: CircleAvatarWidget(imageUrl: user.photoUrl),
                     ),
                   ),
                   const SizedBox(
@@ -89,7 +76,7 @@ class _PostCardState extends State<PostCard> {
                     children: [
                       InkWell(
                         onTap: () {
-                          //Go to user's page
+                          // TODO(tuan): Go to user's page
                         },
                         child: Text(
                           user.displayName,
@@ -126,9 +113,10 @@ class _PostCardState extends State<PostCard> {
               ),
             ),
             //Post Pictures
-            PresetsSlider(
-              imageList: post.imageUrls,
-            ),
+            if (post.imageUrls.isNotEmpty)
+              PresetsSlider(
+                imageList: post.imageUrls,
+              ),
             const Divider(
               indent: 10,
               endIndent: 10,

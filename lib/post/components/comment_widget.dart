@@ -4,6 +4,7 @@ import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/utilities/constant.dart';
+import 'package:join_me/widgets/avatar_circle_widget.dart';
 import 'package:join_me/widgets/expanded_text.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -41,12 +42,9 @@ class _CommentWidgetState extends State<CommentWidget> {
         children: [
           GestureDetector(
             onTap: () {
-              //TODO: Go to user's Page
+              // TODO(tuan): Go to user's Page
             },
-            child: CircleAvatar(
-              radius: 17,
-              backgroundImage: NetworkImage(author.photoUrl),
-            ),
+            child: CircleAvatarWidget(imageUrl: author.photoUrl),
           ),
           const SizedBox(
             width: kDefaultPadding / 2,
@@ -83,7 +81,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              //TODO: Go to user's Page
+                              // TODO(tuan): Go to user's Page
                             },
                             child: Text(
                               author.displayName,
@@ -124,7 +122,9 @@ class _CommentWidgetState extends State<CommentWidget> {
                         ),
                         child: IconButton(
                           splashRadius: 20,
-                          onPressed: () {},
+                          onPressed: () {
+                            // TODO(tuan): Like the comment
+                          },
                           icon: const Icon(
                             Ionicons.heart_outline,
                             color: kTextColorGrey,

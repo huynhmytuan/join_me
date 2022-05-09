@@ -6,16 +6,23 @@ class AppTheme {
     brightness: Brightness.light,
     fontFamily: kFontFamily,
     primaryColor: kPrimaryLightColor,
+    splashColor: kSecondaryGreen.withOpacity(.3),
     colorScheme: ThemeData().colorScheme.copyWith(
           brightness: Brightness.light,
           primary: kPrimaryLightColor,
         ),
+    highlightColor: kSecondaryGreen.withOpacity(.2),
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
       elevation: 1,
       foregroundColor: kTextColorPrimaryLight,
       centerTitle: false,
+      titleTextStyle: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        color: kTextColorPrimaryLight,
+      ),
     ),
   );
 
@@ -23,6 +30,8 @@ class AppTheme {
     brightness: Brightness.dark,
     fontFamily: kFontFamily,
     primaryColor: kPrimaryLightColor,
+    splashColor: kSecondaryGreen.withOpacity(.3),
+    highlightColor: kSecondaryGreen.withOpacity(.2),
     colorScheme: ThemeData().colorScheme.copyWith(
           brightness: Brightness.dark,
           primary: kPrimaryLightColor,
@@ -32,6 +41,11 @@ class AppTheme {
       elevation: 1,
       foregroundColor: kTextColorPrimaryDark,
       centerTitle: false,
+      titleTextStyle: TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+        color: kTextColorPrimaryDark,
+      ),
     ),
   );
 }
