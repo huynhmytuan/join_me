@@ -1,4 +1,5 @@
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/utilities/constant.dart';
 
 final postsData = [
   Post(
@@ -192,6 +193,7 @@ final projectsData = [
     createdAt: DateTime.now().subtract(const Duration(days: 3)),
     leader: 'id4',
     lastChangeAt: DateTime.now(),
+    categories: kDefaultTaskCategories,
     description: 'This is a project which we play together. LOL, thats nice!',
     members: const ['id1', 'id2', 'id4'],
   ),
@@ -200,6 +202,7 @@ final projectsData = [
     name: 'Final Project Of 2022',
     createdAt: DateTime.now().subtract(const Duration(days: 3)),
     leader: 'id1',
+    categories: kDefaultTaskCategories,
     lastChangeAt: DateTime.now(),
     description: 'This is a project which we play together. LOL, thats nice!',
     members: const ['id1', 'id3', 'id4'],
@@ -209,6 +212,7 @@ final projectsData = [
     name: 'Custom UI',
     createdAt: DateTime.now().subtract(const Duration(days: 3)),
     leader: 'id2',
+    categories: kDefaultTaskCategories,
     lastChangeAt: DateTime.now(),
     description: 'This is a project which we play together. LOL, thats nice!',
     members: const ['id3', 'id2', 'id4'],
@@ -217,6 +221,7 @@ final projectsData = [
 
 final tasksData = [
   Task(
+    id: 'id1',
     projectId: 'id1',
     name: 'Doing something',
     createdBy: 'id4',
@@ -226,12 +231,14 @@ final tasksData = [
       const Duration(days: 1),
     ),
     type: TaskType.task,
-    status: TaskStatus.inProcess,
+    category: 'In-process',
+    isComplete: true,
     priority: TaskPriority.none,
     assignTo: const ['id4'],
     subTasks: const [],
   ),
   Task(
+    id: 'id2',
     projectId: 'id1',
     name: 'Doing something 1',
     createdBy: 'id4',
@@ -241,12 +248,14 @@ final tasksData = [
       const Duration(days: 2),
     ),
     type: TaskType.task,
-    status: TaskStatus.toTo,
+    category: 'To-do',
+    isComplete: false,
     priority: TaskPriority.none,
     assignTo: const ['id4'],
     subTasks: const [],
   ),
   Task(
+    id: 'id3',
     projectId: 'id1',
     name: 'Doing something 2',
     createdBy: 'id4',
@@ -256,12 +265,14 @@ final tasksData = [
       const Duration(days: 10),
     ),
     type: TaskType.task,
-    status: TaskStatus.complete,
+    category: 'In-process',
+    isComplete: true,
     priority: TaskPriority.low,
     assignTo: const ['id4'],
     subTasks: const [],
   ),
   Task(
+    id: 'id4',
     projectId: 'id1',
     name: 'Doing something 3',
     createdBy: 'id4',
@@ -269,12 +280,14 @@ final tasksData = [
     createdAt: DateTime.now(),
     dueDate: DateTime.now(),
     type: TaskType.task,
-    status: TaskStatus.complete,
+    category: 'Complete',
+    isComplete: true,
     priority: TaskPriority.none,
     assignTo: const ['id4'],
     subTasks: const [],
   ),
   Task(
+    id: 'id5',
     projectId: 'id1',
     name: 'Doing something 4',
     createdBy: 'id4',
@@ -282,7 +295,8 @@ final tasksData = [
     createdAt: DateTime.now(),
     dueDate: DateTime.now(),
     type: TaskType.subTask,
-    status: TaskStatus.inProcess,
+    category: 'To-do',
+    isComplete: false,
     priority: TaskPriority.none,
     assignTo: const ['id4'],
     subTasks: const [],

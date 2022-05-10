@@ -7,6 +7,7 @@ part of 'task.dart';
 // **************************************************************************
 
 Task _$TaskFromJson(Map<String, dynamic> json) => Task(
+      id: json['id'] as String,
       projectId: json['projectIid'] as String,
       name: json['name'] as String,
       createdBy: json['createdBy'] as String,
@@ -14,7 +15,8 @@ Task _$TaskFromJson(Map<String, dynamic> json) => Task(
       createdAt: DateTime.parse(json['createdAt'] as String),
       dueDate: DateTime.parse(json['dueDate'] as String),
       type: $enumDecode(_$TaskTypeEnumMap, json['type']),
-      status: $enumDecode(_$TaskStatusEnumMap, json['status']),
+      category: json['category'] as String,
+      isComplete: json['isComplete'] as bool,
       priority: $enumDecode(_$TaskPriorityEnumMap, json['priority']),
       assignTo: (json['assignTo'] as List<dynamic>)
           .map((dynamic e) => e as String)
@@ -25,6 +27,7 @@ Task _$TaskFromJson(Map<String, dynamic> json) => Task(
     );
 
 Map<String, dynamic> _$TaskToJson(Task instance) => <String, dynamic>{
+      'id': instance.id,
       'projectIid': instance.projectId,
       'name': instance.name,
       'createdBy': instance.createdBy,
@@ -32,7 +35,8 @@ Map<String, dynamic> _$TaskToJson(Task instance) => <String, dynamic>{
       'createdAt': instance.createdAt.toIso8601String(),
       'dueDate': instance.dueDate.toIso8601String(),
       'type': _$TaskTypeEnumMap[instance.type],
-      'status': _$TaskStatusEnumMap[instance.status],
+      'category': instance.category,
+      'isComplete': instance.isComplete,
       'priority': _$TaskPriorityEnumMap[instance.priority],
       'assignTo': instance.assignTo,
       'subTasks': instance.subTasks,
@@ -42,13 +46,6 @@ const _$TaskTypeEnumMap = {
   TaskType.task: 'task',
   TaskType.subTask: 'sub-task',
   TaskType.unknown: 'unknown',
-};
-
-const _$TaskStatusEnumMap = {
-  TaskStatus.toTo: 'to-do',
-  TaskStatus.inProcess: 'in-process',
-  TaskStatus.complete: 'complete',
-  TaskStatus.unknown: 'unknown',
 };
 
 const _$TaskPriorityEnumMap = {

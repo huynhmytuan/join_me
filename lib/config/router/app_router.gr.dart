@@ -25,6 +25,15 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
           routeData: routeData, child: const NewPostPage());
     },
+    SingleTaskRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<SingleTaskRouteArgs>(
+          orElse: () =>
+              SingleTaskRouteArgs(taskId: pathParams.getString('taskId')));
+      return MaterialPageX<dynamic>(
+          routeData: routeData,
+          child: SingleTaskPage(taskId: args.taskId, key: args.key));
+    },
     LoginRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
           routeData: routeData, child: const LoginPage());
@@ -147,6 +156,7 @@ class _$AppRouter extends RootStackRouter {
           RouteConfig(MenuRoute.name, path: 'menu', parent: HomeRoute.name)
         ]),
         RouteConfig(NewPostRoute.name, path: 'new-post'),
+        RouteConfig(SingleTaskRoute.name, path: ':taskId'),
         RouteConfig(LoginRoute.name, path: 'login'),
         RouteConfig(RegisterRoute.name, path: 'register'),
         RouteConfig(ChatRoute.name, path: ':conversationId')
@@ -168,6 +178,31 @@ class NewPostRoute extends PageRouteInfo<void> {
   const NewPostRoute() : super(NewPostRoute.name, path: 'new-post');
 
   static const String name = 'NewPostRoute';
+}
+
+/// generated route for
+/// [SingleTaskPage]
+class SingleTaskRoute extends PageRouteInfo<SingleTaskRouteArgs> {
+  SingleTaskRoute({required String taskId, Key? key})
+      : super(SingleTaskRoute.name,
+            path: ':taskId',
+            args: SingleTaskRouteArgs(taskId: taskId, key: key),
+            rawPathParams: <String, dynamic>{'taskId': taskId});
+
+  static const String name = 'SingleTaskRoute';
+}
+
+class SingleTaskRouteArgs {
+  const SingleTaskRouteArgs({required this.taskId, this.key});
+
+  final String taskId;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'SingleTaskRouteArgs{taskId: $taskId, key: $key}';
+  }
 }
 
 /// generated route for

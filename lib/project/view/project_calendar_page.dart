@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
-import 'package:join_me/project/components/stack_image.dart';
+import 'package:join_me/project/components/task_card.dart';
 import 'package:join_me/utilities/constant.dart';
+import 'package:join_me/utilities/extensions/extensions.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class ProjectCalendarPage extends StatefulWidget {
@@ -40,25 +39,6 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
         .toList();
   }
 
-  Color _loadColorByPriority(TaskPriority priority) {
-    switch (priority) {
-      case TaskPriority.none:
-        return kTextColorGrey;
-
-      case TaskPriority.low:
-        return kSecondaryBlue;
-
-      case TaskPriority.medium:
-        return kSecondaryYellow;
-
-      case TaskPriority.high:
-        return kSecondaryRed;
-
-      case TaskPriority.unknown:
-        return kIconColorGrey;
-    }
-  }
-
   @override
   void initState() {
     _getData();
@@ -68,22 +48,59 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
   @override
   Widget build(BuildContext context) {
     final languageCode = Localizations.localeOf(context).languageCode;
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildCalendar(context, languageCode),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: kDefaultPadding),
-            child: Text(
-              "Day's Task",
-              style: CustomTextStyle.heading2(context),
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildCalendar(context, languageCode),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: kDefaultPadding),
+                child: Text(
+                  "Day's Task",
+                  style: CustomTextStyle.heading2(context),
+                ),
+              ),
+              _buildListTodayTasks(languageCode),
+            ],
+          ),
+        ),
+        AnimatedOpacity(
+          duration: const Duration(milliseconds: 200),
+          opacity: (!isSameDay(_selectedDay, DateTime.now())) ? 1 : 0,
+          child: Align(
+            alignment: Alignment.bottomCenter,
+            child: GestureDetector(
+              onTap: () {
+                setState(() {
+                  _selectedDay = DateTime.now();
+                  _focusedDay = DateTime.now();
+                });
+              },
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 20),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 5,
+                  horizontal: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  borderRadius: BorderRadius.circular(kDefaultRadius),
+                  boxShadow: [kDefaultBoxShadow],
+                ),
+                child: Text(
+                  'Today',
+                  style: CustomTextStyle.heading4(context).copyWith(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
             ),
           ),
-          _buildListTodayTasks(languageCode),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -111,7 +128,7 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
               width: 5, // for horizontal axis
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: _loadColorByPriority(task.priority),
+                color: task.priority.getColor(),
               ),
             );
           },
@@ -172,96 +189,26 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
   }
 
   Expanded _buildListTodayTasks(String languageCode) {
+    final tasks = _loadDayTask().toList();
+
     return Expanded(
-      child: Scrollbar(
-        child: ListView.builder(
-          itemCount: _loadDayTask().length,
-          itemBuilder: (context, index) {
-            final task = _loadDayTask().toList()[index];
-            final assignedTo = dummy_data.usersData
-                .where((user) => task.assignTo.contains(user.id))
-                .toList();
-            return Container(
-              height: 100,
-              padding: const EdgeInsets.fromLTRB(
-                0,
-                kDefaultPadding,
-                kDefaultPadding,
-                kDefaultPadding,
+      child: tasks.isEmpty
+          ? const Text('No task in this day.')
+          : Scrollbar(
+              child: ListView.builder(
+                itemCount: _loadDayTask().length,
+                itemBuilder: (context, index) {
+                  final task = tasks[index];
+                  final assignedTo = dummy_data.usersData
+                      .where((user) => task.assignTo.contains(user.id))
+                      .toList();
+                  return TaskCard(
+                    task: task,
+                    assignedTo: assignedTo,
+                  );
+                },
               ),
-              margin: const EdgeInsets.symmetric(vertical: 5),
-              decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
-                boxShadow: [kDefaultBoxShadow],
-                borderRadius: BorderRadius.circular(kDefaultRadius),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    height: 57,
-                    width: 10,
-                    decoration: BoxDecoration(
-                      color: _loadColorByPriority(
-                        task.priority,
-                      ),
-                      borderRadius: const BorderRadius.only(
-                        topRight: Radius.circular(kDefaultRadius),
-                        bottomRight: Radius.circular(kDefaultRadius),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: kDefaultPadding,
-                  ),
-                  Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          task.name,
-                          style: CustomTextStyle.heading3(context),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              children: [
-                                const Icon(
-                                  Ionicons.time,
-                                  size: 17,
-                                  color: kTextColorGrey,
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                Text(
-                                  DateFormat.yMMMMEEEEd(languageCode)
-                                      .format(task.dueDate),
-                                  style: CustomTextStyle.heading4(context)
-                                      .copyWith(
-                                    color: kTextColorGrey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            StackImage(
-                              imageUrlList:
-                                  assignedTo.map((e) => e.photoUrl).toList(),
-                              imageSize: 24,
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      ),
+            ),
     );
   }
 }

@@ -16,6 +16,9 @@ Project _$ProjectFromJson(Map<String, dynamic> json) => Project(
       members: (json['members'] as List<dynamic>)
           .map((dynamic e) => e as String)
           .toList(),
+      categories: (json['categories'] as List<dynamic>)
+          .map((dynamic e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$ProjectToJson(Project instance) => <String, dynamic>{
@@ -26,4 +29,5 @@ Map<String, dynamic> _$ProjectToJson(Project instance) => <String, dynamic>{
       'lastChangeAt': instance.lastChangeAt.toIso8601String(),
       'description': instance.description,
       'members': instance.members,
+      'categories': instance.categories,
     };

@@ -5,8 +5,8 @@ import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
-import 'package:join_me/project/project.dart';
 import 'package:join_me/utilities/constant.dart';
+import 'package:join_me/widgets/widgets.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class ProjectCard extends StatelessWidget {

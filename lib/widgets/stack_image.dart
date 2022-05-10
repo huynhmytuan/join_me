@@ -29,7 +29,8 @@ class StackImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stackList = imageUrlList
-        .sublist(0, imageUrlList.length < 3 ? null : imageCount ?? 3)
+        .sublist(
+            0, imageUrlList.length <= 3 ? imageUrlList.length : imageCount ?? 3)
         .asMap()
         .map(
           (index, value) => MapEntry(

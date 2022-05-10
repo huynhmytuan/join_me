@@ -7,4 +7,5 @@ class ProjectKeys {
   static const String leader = 'leader';
   static const String description = 'description';
   static const String members = 'members';
+  static const String categories = 'categories';
 }

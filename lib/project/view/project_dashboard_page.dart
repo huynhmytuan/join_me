@@ -4,9 +4,9 @@ import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
-import 'package:join_me/project/components/components.dart';
+
 import 'package:join_me/utilities/constant.dart';
-import 'package:join_me/widgets/avatar_circle_widget.dart';
+import 'package:join_me/widgets/widgets.dart';
 
 class ProjectDashboardPage extends StatefulWidget {
   const ProjectDashboardPage({
@@ -123,17 +123,27 @@ class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
               const SizedBox(
                 height: 10,
               ),
-              Text(
-                'Description',
-                style: CustomTextStyle.heading4(context)
-                    .copyWith(color: kTextColorGrey),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                _project.description,
-                style: CustomTextStyle.bodyMedium(context),
+              InkWell(
+                onTap: () {},
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal:
+                        _project.description.isEmpty ? kDefaultPadding : 0,
+                    vertical: kDefaultPadding / 2,
+                  ),
+                  child: (_project.description.isEmpty)
+                      ? Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: const [
+                            Icon(Ionicons.add),
+                            Text('Add description'),
+                          ],
+                        )
+                      : Text(
+                          _project.description,
+                          style: CustomTextStyle.bodyMedium(context),
+                        ),
+                ),
               ),
               const SizedBox(
                 height: 10,
@@ -146,10 +156,8 @@ class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
                     badgeTitle: 'Pending Task',
                     iconColor: kSecondaryYellow,
                     iconData: Ionicons.document_text,
-                    valueCount: _tasks
-                        .where((task) => task.status == TaskStatus.inProcess)
-                        .toList()
-                        .length,
+                    valueCount:
+                        _tasks.where((task) => task.isComplete).toList().length,
                   ),
                   _buildDataBadge(
                     context: context,
@@ -157,7 +165,7 @@ class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
                     iconColor: kSecondaryGreen,
                     iconData: Ionicons.checkbox_outline,
                     valueCount: _tasks
-                        .where((task) => task.status == TaskStatus.complete)
+                        .where((task) => !task.isComplete)
                         .toList()
                         .length,
                   ),

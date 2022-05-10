@@ -8,6 +8,7 @@ import 'package:join_me/notification/view/view.dart';
 import 'package:join_me/post/view/view.dart';
 import 'package:join_me/project/view/view.dart';
 import 'package:join_me/register/view/view.dart';
+import 'package:join_me/task/view/view.dart';
 
 part 'app_router.gr.dart';
 
@@ -81,6 +82,10 @@ part 'app_router.gr.dart';
     AutoRoute<dynamic>(
       path: 'new-post',
       page: NewPostPage,
+    ),
+    AutoRoute<dynamic>(
+      path: ':taskId',
+      page: SingleTaskPage,
     ),
     AutoRoute<dynamic>(
       path: 'login',

@@ -12,15 +12,6 @@ enum TaskType {
   unknown,
 }
 
-enum TaskStatus {
-  @JsonValue('to-do')
-  toTo,
-  @JsonValue('in-process')
-  inProcess,
-  complete,
-  unknown,
-}
-
 enum TaskPriority {
   none,
   high,
@@ -32,6 +23,7 @@ enum TaskPriority {
 @JsonSerializable()
 class Task extends Equatable {
   const Task({
+    required this.id,
     required this.projectId,
     required this.name,
     required this.createdBy,
@@ -39,7 +31,8 @@ class Task extends Equatable {
     required this.createdAt,
     required this.dueDate,
     required this.type,
-    required this.status,
+    required this.category,
+    required this.isComplete,
     required this.priority,
     required this.assignTo,
     required this.subTasks,
@@ -49,6 +42,8 @@ class Task extends Equatable {
 
   Map<String, dynamic> toJson() => _$TaskToJson(this);
 
+  @JsonKey(name: TaskKeys.id)
+  final String id;
   @JsonKey(name: TaskKeys.projectIid)
   final String projectId;
   @JsonKey(name: TaskKeys.name)
@@ -63,8 +58,10 @@ class Task extends Equatable {
   final DateTime dueDate;
   @JsonKey(name: TaskKeys.type)
   final TaskType type;
-  @JsonKey(name: TaskKeys.status)
-  final TaskStatus status;
+  @JsonKey(name: TaskKeys.category)
+  final String category;
+  @JsonKey(name: TaskKeys.isComplete)
+  final bool isComplete;
   @JsonKey(name: TaskKeys.priority)
   final TaskPriority priority;
   @JsonKey(name: TaskKeys.assignTo)
@@ -73,6 +70,7 @@ class Task extends Equatable {
   final List<String> subTasks;
 
   Task copyWith({
+    String? id,
     String? projectId,
     String? name,
     String? createdBy,
@@ -80,12 +78,14 @@ class Task extends Equatable {
     DateTime? createdAt,
     DateTime? dueDate,
     TaskType? type,
-    TaskStatus? status,
+    String? category,
+    bool? isComplete,
     TaskPriority? priority,
     List<String>? assignTo,
     List<String>? subTasks,
   }) {
     return Task(
+      id: id ?? this.id,
       projectId: projectId ?? this.projectId,
       name: name ?? this.name,
       createdBy: createdBy ?? this.createdBy,
@@ -93,7 +93,8 @@ class Task extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       dueDate: dueDate ?? this.dueDate,
       type: type ?? this.type,
-      status: status ?? this.status,
+      category: category ?? this.category,
+      isComplete: isComplete ?? this.isComplete,
       priority: priority ?? this.priority,
       assignTo: assignTo ?? this.assignTo,
       subTasks: subTasks ?? this.subTasks,
@@ -112,7 +113,8 @@ class Task extends Equatable {
       createdAt,
       dueDate,
       type,
-      status,
+      category,
+      isComplete,
       priority,
       assignTo,
       subTasks,

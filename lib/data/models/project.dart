@@ -15,6 +15,7 @@ class Project extends Equatable {
     required this.lastChangeAt,
     required this.description,
     required this.members,
+    required this.categories,
   });
   factory Project.fromJson(Map<String, dynamic> json) =>
       _$ProjectFromJson(json);
@@ -28,6 +29,7 @@ class Project extends Equatable {
     DateTime? lastChangeAt,
     String? description,
     List<String>? members,
+    List<String>? categories,
   }) {
     return Project(
       id: id ?? this.id,
@@ -37,6 +39,7 @@ class Project extends Equatable {
       lastChangeAt: lastChangeAt ?? this.lastChangeAt,
       description: description ?? this.description,
       members: members ?? this.members,
+      categories: categories ?? this.categories,
     );
   }
 
@@ -67,6 +70,9 @@ class Project extends Equatable {
   @JsonKey(name: ProjectKeys.members)
   final List<String> members;
 
+  @JsonKey(name: ProjectKeys.categories)
+  final List<String> categories;
+
   @override
   bool get stringify => true;
   @override
@@ -79,6 +85,7 @@ class Project extends Equatable {
       lastChangeAt,
       description,
       members,
+      categories,
     ];
   }
 }

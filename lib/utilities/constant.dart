@@ -41,3 +41,16 @@ final kDefaultBoxShadow = BoxShadow(
   blurRadius: 10,
   offset: const Offset(0, 4),
 );
+
+const kTopBorderRadiusShape = RoundedRectangleBorder(
+  borderRadius: BorderRadius.only(
+    topLeft: Radius.circular(kDefaultRadius),
+    topRight: Radius.circular(kDefaultRadius),
+  ),
+);
+
+const kDefaultTaskCategories = [
+  'To-do',
+  'In-process',
+  'Complete',
+];
