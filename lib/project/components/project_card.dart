@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/l10n/l10n.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -26,6 +28,7 @@ class ProjectCard extends StatelessWidget {
           (element) => project.id == element.projectId,
         )
         .toList();
+    final appLocale = Localizations.localeOf(context);
     return GestureDetector(
       onTap: () {
         AutoRouter.of(context).push(SingleProjectRoute(projectId: project.id));
@@ -49,20 +52,6 @@ class ProjectCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Text(
-                  timeago.format(project.lastChangeAt),
-                  style: CustomTextStyle.subText(context),
-                ),
-                const SizedBox(
-                  width: 3,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    // TODO(tuan): more action button.
-                  },
-                  child:
-                      const Icon(Ionicons.ellipsis_horizontal_circle_outline),
-                )
               ],
             ),
             const SizedBox(
@@ -79,25 +68,48 @@ class ProjectCard extends StatelessWidget {
                     .copyWith(color: kTextColorGrey),
               ),
             ),
-            const SizedBox(
-              height: kDefaultPadding,
-            ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: StackImage(
-                    imageUrlList: users.map((user) => user.photoUrl).toList(),
-                    totalCount: project.members.length,
-                  ),
+                StackImage(
+                  imageUrlList: users.map((user) => user.photoUrl).toList(),
+                  totalCount: project.members.length,
+                  imageSize: 24,
                 ),
-                const Icon(
-                  Ionicons.document_text_outline,
-                  color: kTextColorGrey,
+                Row(
+                  children: [
+                    const Icon(
+                      Ionicons.document_text_outline,
+                      color: kTextColorGrey,
+                      size: 16,
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      tasks.length.toString(),
+                      style: CustomTextStyle.subText(context)
+                          .copyWith(fontSize: 12),
+                    ),
+                  ],
                 ),
-                Text(
-                  tasks.length.toString(),
-                  style: CustomTextStyle.heading4(context)
-                      .copyWith(color: kTextColorGrey),
+                Row(
+                  children: [
+                    const Icon(
+                      Ionicons.time_outline,
+                      color: kTextColorGrey,
+                      size: 16,
+                    ),
+                    const SizedBox(
+                      width: 5,
+                    ),
+                    Text(
+                      DateFormat.yMMMMd(appLocale.languageCode)
+                          .format(project.createdAt),
+                      style: CustomTextStyle.subText(context)
+                          .copyWith(fontSize: 12),
+                    ),
+                  ],
                 ),
               ],
             )

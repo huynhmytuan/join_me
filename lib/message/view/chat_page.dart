@@ -15,7 +15,7 @@ import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({
-    @pathParam required this.conversationId,
+    @PathParam('conversationId') required this.conversationId,
     Key? key,
   }) : super(key: key);
   final String conversationId;
@@ -118,7 +118,7 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  AppBar _buildAppBar(BuildContext context, User sender) {
+  AppBar _buildAppBar(BuildContext context, AppUser sender) {
     return AppBar(
       elevation: 5,
       shadowColor: Colors.grey.withOpacity(.3),
@@ -139,7 +139,7 @@ class _ChatPageState extends State<ChatPage> {
             children: [
               //User display name
               Text(
-                sender.displayName,
+                sender.name,
                 style: CustomTextStyle.heading3(context),
               ),
               //PostTime

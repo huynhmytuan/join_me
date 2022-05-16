@@ -12,7 +12,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class PostDetailPage extends StatefulWidget {
   const PostDetailPage({
-    @pathParam required this.postId,
+    @PathParam('postId') required this.postId,
     Key? key,
   }) : super(key: key);
   final String postId;
@@ -23,7 +23,7 @@ class PostDetailPage extends StatefulWidget {
 
 class _PostDetailPageState extends State<PostDetailPage> {
   late Post post;
-  late User author;
+  late AppUser author;
   late List<Comment> comments;
   late FocusNode commentFocusNode;
   final commentTextInputController = TextEditingController();
@@ -195,7 +195,7 @@ class _PostDetailPageState extends State<PostDetailPage> {
             children: [
               //User display name
               Text(
-                author.displayName,
+                author.name,
                 style: CustomTextStyle.heading3(context),
               ),
               //PostTime

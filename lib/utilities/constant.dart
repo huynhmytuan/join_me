@@ -48,6 +48,11 @@ const kTopBorderRadiusShape = RoundedRectangleBorder(
     topRight: Radius.circular(kDefaultRadius),
   ),
 );
+const kBorderRadiusShape = RoundedRectangleBorder(
+  borderRadius: BorderRadius.all(
+    Radius.circular(kDefaultRadius),
+  ),
+);
 
 const kDefaultTaskCategories = [
   'To-do',

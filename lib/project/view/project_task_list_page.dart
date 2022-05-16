@@ -1,10 +1,9 @@
-import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:join_me/config/router/app_router.dart';
+
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
-import 'package:join_me/utilities/extensions/extensions.dart';
+import 'package:join_me/project/components/components.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
 
@@ -94,12 +93,13 @@ class _ProjectTaskListPageState extends State<ProjectTaskListPage> {
     required Item item,
   }) {
     return ExpansionPanel(
+      canTapOnHeader: true,
       headerBuilder: (context, isExpanded) {
-        return ListTile(
-          dense: true,
-          title: Text(
-            '${item.headerValue} (${item.expandedValue.length})',
-            style: CustomTextStyle.heading3(context),
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            item.headerValue,
+            style: CustomTextStyle.heading4(context),
           ),
         );
       },
@@ -108,9 +108,22 @@ class _ProjectTaskListPageState extends State<ProjectTaskListPage> {
         shrinkWrap: true,
         separatorBuilder: (context, index) => const Divider(),
         itemCount: item.expandedValue.length,
-        itemBuilder: (context, index) => TaskListRow(
-          task: item.expandedValue[index],
-        ),
+        itemBuilder: (context, index) {
+          final _assignedUsers = dummy_data.usersData
+              .where(
+                (user) => item.expandedValue[index].assignee.contains(user.id),
+              )
+              .toList();
+          return TaskListRow(
+            task: item.expandedValue[index],
+            trailing: StackImage(
+              imageUrlList:
+                  _assignedUsers.map((user) => user.photoUrl).toList(),
+              imageSize: 24,
+              totalCount: _assignedUsers.length,
+            ),
+          );
+        },
       ),
       isExpanded: item.isExpanded,
     );
@@ -122,74 +135,10 @@ class Item {
   Item({
     required this.expandedValue,
     required this.headerValue,
-    this.isExpanded = false,
+    this.isExpanded = true,
   });
 
   List<Task> expandedValue;
   String headerValue;
   bool isExpanded;
-}
-
-class TaskListRow extends StatefulWidget {
-  const TaskListRow({
-    required this.task,
-    Key? key,
-  }) : super(key: key);
-  final Task task;
-
-  @override
-  State<TaskListRow> createState() => _TaskListRowState();
-}
-
-class _TaskListRowState extends State<TaskListRow> {
-  late List<User> _assignedUsers;
-  bool isComplete = false;
-
-  void _loadData() {
-    _assignedUsers = dummy_data.usersData
-        .where(
-          (user) => widget.task.assignTo.contains(user.id),
-        )
-        .toList();
-    isComplete = widget.task.isComplete;
-  }
-
-  @override
-  void initState() {
-    _loadData();
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        AutoRouter.of(context).push(SingleTaskRoute(taskId: widget.task.id));
-      },
-      child: Row(
-        children: [
-          Checkbox(
-            value: isComplete,
-            onChanged: (value) {
-              //
-              setState(() {
-                isComplete = !isComplete;
-              });
-            },
-          ),
-          Expanded(
-            child: Text(
-              widget.task.name,
-              style: CustomTextStyle.heading4(context),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          StackImage(
-            imageUrlList: _assignedUsers.map((user) => user.photoUrl).toList(),
-            imageSize: 30,
-          ),
-        ],
-      ),
-    );
-  }
 }

@@ -23,12 +23,14 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   late Post post;
   int comments = 0;
-  late User user;
+  late AppUser user;
+  late AppUser _currentUser;
   void _getPost() {
     post = dummy_data.postsData.firstWhere((p) => p.id == widget.postId);
     comments =
         dummy_data.commentsData.where((c) => c.postId == widget.postId).length;
     user = dummy_data.usersData.firstWhere((u) => u.id == post.authorId);
+    _currentUser = dummy_data.currentUser;
   }
 
   @override
@@ -45,13 +47,9 @@ class _PostCardState extends State<PostCard> {
       onTap: () {
         AutoRouter.of(context).push(PostDetailRoute(postId: widget.postId));
       },
-      child: Container(
+      child: RoundedContainer(
         margin: const EdgeInsets.all(kDefaultPadding / 2),
-        decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          borderRadius: BorderRadius.circular(kDefaultRadius),
-          boxShadow: [kDefaultBoxShadow],
-        ),
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -76,10 +74,12 @@ class _PostCardState extends State<PostCard> {
                     children: [
                       InkWell(
                         onTap: () {
-                          // TODO(tuan): Go to user's page
+                          AutoRouter.of(context).push(
+                            UserInfoRoute(userId: user.id),
+                          );
                         },
                         child: Text(
-                          user.displayName,
+                          user.name,
                           style: CustomTextStyle.heading4(context),
                         ),
                       ),
@@ -129,49 +129,43 @@ class _PostCardState extends State<PostCard> {
                 children: [
                   Row(
                     children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: kIconColorGrey.withOpacity(.8),
-                          borderRadius: BorderRadius.circular(20),
+                      IconButton(
+                        splashRadius: 20,
+                        onPressed: () {
+                          final userId = _currentUser.id;
+                          final likedList = List<String>.from(post.likes);
+                          if (post.likes.contains(userId)) {
+                            likedList.remove(userId);
+                          } else {
+                            likedList.add(userId);
+                          }
+                          setState(() {
+                            post = post.copyWith(
+                              likes: likedList,
+                            );
+                          });
+                          // TODO(tuan): post like.
+                        },
+                        icon: Icon(
+                          (post.likes.contains(_currentUser.id))
+                              ? Ionicons.heart
+                              : Ionicons.heart_outline,
+                          color: (post.likes.contains(_currentUser.id))
+                              ? kSecondaryRed
+                              : kTextColorGrey,
                         ),
-                        child: IconButton(
-                          splashRadius: 20,
-                          onPressed: () {},
-                          icon: const Icon(
-                            Ionicons.heart_outline,
-                            color: kTextColorGrey,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
                       ),
                       Text(post.likes.length.toString()),
                       const SizedBox(
                         width: 20,
                       ),
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: kIconColorGrey.withOpacity(.8),
-                          borderRadius: BorderRadius.circular(20),
+                      IconButton(
+                        splashRadius: 20,
+                        onPressed: () {},
+                        icon: const Icon(
+                          Ionicons.chatbubble_outline,
+                          color: kTextColorGrey,
                         ),
-                        child: IconButton(
-                          splashRadius: 20,
-                          onPressed: () {},
-                          icon: const Icon(
-                            Ionicons.chatbubble_outline,
-                            color: kTextColorGrey,
-                            size: 20,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        width: 5,
                       ),
                       Text(comments.toString()),
                     ],

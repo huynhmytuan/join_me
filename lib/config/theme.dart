@@ -24,6 +24,19 @@ class AppTheme {
         color: kTextColorPrimaryLight,
       ),
     ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: MaterialStateColor.resolveWith(
+        (states) {
+          if (states.contains(MaterialState.selected)) {
+            return kPrimaryLightColor;
+          }
+          return Colors.black;
+        },
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
+      ),
+    ),
   );
 
   static final darkTheme = ThemeData(
@@ -45,6 +58,19 @@ class AppTheme {
         fontSize: 20,
         fontWeight: FontWeight.w700,
         color: kTextColorPrimaryDark,
+      ),
+    ),
+    checkboxTheme: CheckboxThemeData(
+      fillColor: MaterialStateColor.resolveWith(
+        (states) {
+          if (states.contains(MaterialState.selected)) {
+            return kPrimaryDarkColor;
+          }
+          return Colors.white;
+        },
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(5),
       ),
     ),
   );

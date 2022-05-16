@@ -16,7 +16,7 @@ class TaskCard extends StatelessWidget {
     Key? key,
   }) : super(key: key);
   final Task task;
-  final List<User> assignedTo;
+  final List<AppUser> assignedTo;
 
   Color _loadColorByPriority(TaskPriority priority) {
     switch (priority) {
@@ -52,7 +52,7 @@ class TaskCard extends StatelessWidget {
           kDefaultPadding,
           kDefaultPadding,
         ),
-        margin: const EdgeInsets.symmetric(vertical: 5),
+        margin: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
           boxShadow: [kDefaultBoxShadow],
@@ -98,8 +98,10 @@ class TaskCard extends StatelessWidget {
                             width: 5,
                           ),
                           Text(
-                            DateFormat.yMMMMEEEEd(languageCode)
-                                .format(task.dueDate),
+                            task.dueDate == null
+                                ? 'No due date'
+                                : DateFormat.yMMMMEEEEd(languageCode)
+                                    .format(task.dueDate!),
                             style: CustomTextStyle.heading4(context).copyWith(
                               color: kTextColorGrey,
                             ),
@@ -110,6 +112,7 @@ class TaskCard extends StatelessWidget {
                         imageUrlList:
                             assignedTo.map((e) => e.photoUrl).toList(),
                         imageSize: 24,
+                        totalCount: assignedTo.length,
                       )
                     ],
                   )

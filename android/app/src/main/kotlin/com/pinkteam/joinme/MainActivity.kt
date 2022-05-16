@@ -1,4 +1,4 @@
-package com.pinkteam.joinme.join_me
+package com.pinkteam.joinme
 
 import io.flutter.embedding.android.FlutterActivity
 

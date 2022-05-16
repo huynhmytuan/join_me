@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
@@ -19,7 +21,7 @@ class CommentWidget extends StatefulWidget {
 }
 
 class _CommentWidgetState extends State<CommentWidget> {
-  late User author;
+  late AppUser author;
 
   void _getAuthor() {
     author = dummy_data.usersData
@@ -81,10 +83,12 @@ class _CommentWidgetState extends State<CommentWidget> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              // TODO(tuan): Go to user's Page
+                              AutoRouter.of(context).push(
+                                UserInfoRoute(userId: author.id),
+                              );
                             },
                             child: Text(
-                              author.displayName,
+                              author.name,
                               style: CustomTextStyle.heading4(context).copyWith(
                                 color: Theme.of(context).primaryColor,
                               ),

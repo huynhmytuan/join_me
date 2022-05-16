@@ -2,7 +2,7 @@ class TaskKeys {
   static const String collection = 'tasks';
   static const String id = 'id';
   static const String projectIid = 'projectIid';
-  static const String assignTo = 'assignTo';
+  static const String assignee = 'assignee';
   static const String name = 'name';
   static const String createdBy = 'createdBy';
   static const String description = 'description';

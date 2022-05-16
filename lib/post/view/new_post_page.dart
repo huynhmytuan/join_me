@@ -50,48 +50,46 @@ class _NewPostPageState extends State<NewPostPage> {
           child: Scrollbar(
             child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
-              child: Container(
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: CachedNetworkImage(
-                            imageUrl: user.photoUrl,
-                            errorWidget: (context, url, dynamic error) =>
-                                const Icon(Icons.error),
-                            fit: BoxFit.cover,
-                            height: 30,
-                            width: 30,
-                          ),
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(15),
+                        child: CachedNetworkImage(
+                          imageUrl: user.photoUrl,
+                          errorWidget: (context, url, dynamic error) =>
+                              const Icon(Icons.error),
+                          fit: BoxFit.cover,
+                          height: 30,
+                          width: 30,
                         ),
-                        const SizedBox(
-                          width: kDefaultPadding / 2,
-                        ),
-                        Text(
-                          user.displayName,
-                          style: CustomTextStyle.heading3(context),
-                        )
-                      ],
-                    ),
-                    TextField(
-                      controller: postTextEditController,
-                      autofocus: true,
-                      keyboardType: TextInputType.multiline,
-                      textInputAction: TextInputAction.newline,
-                      maxLines: null,
-                      decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'What on your mind?',
                       ),
-                      onChanged: (value) {
-                        setState(() {});
-                      },
+                      const SizedBox(
+                        width: kDefaultPadding / 2,
+                      ),
+                      Text(
+                        user.name,
+                        style: CustomTextStyle.heading3(context),
+                      )
+                    ],
+                  ),
+                  TextField(
+                    controller: postTextEditController,
+                    autofocus: true,
+                    keyboardType: TextInputType.multiline,
+                    textInputAction: TextInputAction.newline,
+                    maxLines: null,
+                    decoration: const InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'What on your mind?',
                     ),
-                  ],
-                ),
+                    onChanged: (value) {
+                      setState(() {});
+                    },
+                  ),
+                ],
               ),
             ),
           ),

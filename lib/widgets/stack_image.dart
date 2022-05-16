@@ -6,10 +6,11 @@ import 'package:join_me/widgets/avatar_circle_widget.dart';
 class StackImage extends StatelessWidget {
   const StackImage({
     required this.imageUrlList,
+    required this.totalCount,
     this.borderWidth,
     this.imageSize,
     this.imageCount,
-    this.totalCount,
+    this.emptyHandler,
     Key? key,
   }) : super(key: key);
   final List<String> imageUrlList;
@@ -24,13 +25,18 @@ class StackImage extends StatelessWidget {
   final int? imageCount;
 
   ///Show number of remain Image in list
-  final int? totalCount;
+  final int totalCount;
+
+  ///Show this widget when list is empty
+  final Widget? emptyHandler;
 
   @override
   Widget build(BuildContext context) {
     final stackList = imageUrlList
         .sublist(
-            0, imageUrlList.length <= 3 ? imageUrlList.length : imageCount ?? 3)
+          0,
+          imageUrlList.length <= 3 ? imageUrlList.length : imageCount ?? 3,
+        )
         .asMap()
         .map(
           (index, value) => MapEntry(
@@ -50,7 +56,7 @@ class StackImage extends StatelessWidget {
         )
         .values
         .toList();
-    if (totalCount != null && totalCount! > stackList.length) {
+    if (totalCount > stackList.length) {
       stackList.add(
         Padding(
           padding: EdgeInsets.only(
@@ -70,7 +76,7 @@ class StackImage extends StatelessWidget {
             ),
             child: FittedBox(
               child: Text(
-                '+${totalCount! - stackList.length}',
+                '+${totalCount - stackList.length}',
                 style: CustomTextStyle.bodySmall(context).copyWith(
                   color: kTextColorGrey,
                 ),
@@ -80,14 +86,16 @@ class StackImage extends StatelessWidget {
         ),
       );
     }
-    return Row(
-      children: [
-        Stack(
-          alignment: Alignment.centerLeft,
-          clipBehavior: Clip.none,
-          children: stackList,
-        ),
-      ],
-    );
+    return imageUrlList.isEmpty
+        ? emptyHandler ?? const Text('Empty')
+        : Row(
+            children: [
+              Stack(
+                alignment: Alignment.centerLeft,
+                clipBehavior: Clip.none,
+                children: stackList,
+              ),
+            ],
+          );
   }
 }

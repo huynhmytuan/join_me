@@ -19,6 +19,13 @@ class _ProjectsPageState extends State<ProjectsPage> {
         .toList();
   }
 
+  void _showNewProjectDialog() {
+    showDialog<void>(
+      context: context,
+      builder: (context) => const NewProjectDialog(),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -60,9 +67,9 @@ class _ProjectsPageState extends State<ProjectsPage> {
           borderRadius: BorderRadius.circular(12), // <-- Radius
         ),
         backgroundColor: Theme.of(context).primaryColor,
-        onPressed: () {},
+        onPressed: _showNewProjectDialog,
         child: const Icon(
-          Icons.note_add_outlined,
+          Icons.add,
           size: 30,
         ),
       ),

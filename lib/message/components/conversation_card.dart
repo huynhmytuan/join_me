@@ -55,14 +55,14 @@ class ConversationCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    sender.displayName,
+                    sender.name,
                     style: CustomTextStyle.bodyLarge(context),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                   Text(
                     lastMessage == null
-                        ? 'Say something to ${sender.displayName}'
+                        ? 'Say something to ${sender.name}'
                         : lastMessage.content,
                     style: CustomTextStyle.bodySmall(context)
                         .copyWith(color: kTextColorGrey),

@@ -10,6 +10,11 @@ class NotificationPage extends StatefulWidget {
 class _NotificationPageState extends State<NotificationPage> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        title: const Text('Notifications'),
+      ),
+    );
   }
 }

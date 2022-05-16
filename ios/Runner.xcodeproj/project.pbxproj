@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -88,7 +88,6 @@
 				7C443F934C03B00FC0F573F5 /* Pods-Runner.profile-development.xcconfig */,
 				F5DF541B0DFC320DC3F9E518 /* Pods-Runner.profile-staging.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -369,6 +368,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = FV5USAUJLA;
 				ENABLE_BITCODE = NO;
 				FLAVOR_APP_NAME = "Join Me";
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -376,7 +376,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pinkteam.joinme.join-me";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pinkteam.joinme;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -500,6 +500,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = FV5USAUJLA;
 				ENABLE_BITCODE = NO;
 				FLAVOR_APP_NAME = "Join Me";
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -507,7 +508,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pinkteam.joinme.join-me";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pinkteam.joinme;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -523,6 +524,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = FV5USAUJLA;
 				ENABLE_BITCODE = NO;
 				FLAVOR_APP_NAME = "Join Me";
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -530,7 +532,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pinkteam.joinme.join-me";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pinkteam.joinme;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -601,6 +603,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-dev";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = FV5USAUJLA;
 				ENABLE_BITCODE = NO;
 				FLAVOR_APP_NAME = "[DEV] Join Me";
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -608,7 +611,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pinkteam.joinme.join-me.dev";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pinkteam.joinme.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -677,6 +680,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-dev";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = FV5USAUJLA;
 				ENABLE_BITCODE = NO;
 				FLAVOR_APP_NAME = "[DEV] Join Me";
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -684,7 +688,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pinkteam.joinme.join-me.dev";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pinkteam.joinme.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -750,6 +754,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-dev";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = FV5USAUJLA;
 				ENABLE_BITCODE = NO;
 				FLAVOR_APP_NAME = "[DEV] Join Me";
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -757,7 +762,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pinkteam.joinme.join-me.dev";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pinkteam.joinme.dev;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -828,6 +833,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-stg";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = FV5USAUJLA;
 				ENABLE_BITCODE = NO;
 				FLAVOR_APP_NAME = "[STG] Join Me";
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -835,7 +841,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pinkteam.joinme.join-me.stg";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pinkteam.joinme.stg;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -904,6 +910,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-stg";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = FV5USAUJLA;
 				ENABLE_BITCODE = NO;
 				FLAVOR_APP_NAME = "[STG] Join Me";
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -911,7 +918,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pinkteam.joinme.join-me.stg";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pinkteam.joinme.stg;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -977,6 +984,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-stg";
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEVELOPMENT_TEAM = FV5USAUJLA;
 				ENABLE_BITCODE = NO;
 				FLAVOR_APP_NAME = "[STG] Join Me";
 				INFOPLIST_FILE = Runner/Info.plist;
@@ -984,7 +992,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.pinkteam.joinme.join-me.stg";
+				PRODUCT_BUNDLE_IDENTIFIER = com.pinkteam.joinme.stg;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

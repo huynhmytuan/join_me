@@ -53,7 +53,7 @@ class _PresetsSliderState extends State<PresetsSlider>
                 child: _buildImage(index),
               ),
               options: CarouselOptions(
-                // aspectRatio: 3 / 4,
+                aspectRatio: 1,
                 enableInfiniteScroll: false,
                 viewportFraction: 1,
                 onPageChanged: (index, changeReason) {
@@ -136,9 +136,22 @@ class _PresetsSliderState extends State<PresetsSlider>
                 placeholder: (context, url) => Container(
                   color: kIconColorGrey,
                 ),
-                errorWidget: (context, url, dynamic error) =>
-                    const Icon(Icons.error),
-                fit: BoxFit.fitWidth,
+                errorWidget: (context, url, dynamic error) => Container(
+                  color: kIconColorGrey,
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.error,
+                          size: 24,
+                        ),
+                        Text(error.toString())
+                      ],
+                    ),
+                  ),
+                ),
+                fit: BoxFit.cover,
               ),
             ),
           ),

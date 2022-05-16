@@ -1,6 +1,8 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
@@ -21,8 +23,8 @@ class ProjectDashboardPage extends StatefulWidget {
 
 class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
   late Project _project;
-  late User _leader;
-  late List<User> _members;
+  late AppUser _leader;
+  late List<AppUser> _members;
   late List<Task> _tasks;
   void _loadData() {
     _project = dummy_data.projectsData
@@ -37,6 +39,25 @@ class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
           (task) => task.projectId == _project.id && task.type == TaskType.task,
         )
         .toList();
+  }
+
+  void _showAssigneeEditDialog() {
+    showDialog<List<AppUser>>(
+      context: context,
+      builder: (context) => AddUserDialog(
+        initialUserList:
+            _members.takeWhile((user) => user.id != _project.leader).toList(),
+      ),
+    ).then((selectedUser) {
+      if (selectedUser == null) {
+        return;
+      }
+      final userIds = selectedUser.map((user) => user.id).toList();
+      setState(() {
+        _members = selectedUser;
+        _project = _project.copyWith(members: userIds);
+      });
+    });
   }
 
   @override
@@ -76,16 +97,14 @@ class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
                         width: 5,
                       ),
                       Text(
-                        _leader.displayName,
+                        _leader.name,
                         style: CustomTextStyle.bodySmall(context),
                       ),
                     ],
                   ),
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const Divider(),
               _buildDataRow(
                 context: context,
                 iconData: Ionicons.time_outline,
@@ -95,9 +114,7 @@ class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
                       .format(_project.createdAt),
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const Divider(),
               _buildDataRow(
                 context: context,
                 iconData: Ionicons.time_outline,
@@ -107,24 +124,43 @@ class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
                       .format(_project.lastChangeAt),
                 ),
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              _buildDataRow(
-                context: context,
-                iconData: Ionicons.people_outline,
-                rowTitle: 'Members',
-                rowData: StackImage(
-                  imageUrlList: _members.map((user) => user.photoUrl).toList(),
-                  totalCount: _project.members.length,
-                  imageSize: 24,
+              const Divider(),
+              GestureDetector(
+                onTap: _showAssigneeEditDialog,
+                child: _buildDataRow(
+                  context: context,
+                  iconData: Ionicons.people_outline,
+                  rowTitle: 'Members',
+                  rowData: StackImage(
+                    imageUrlList:
+                        _members.map((user) => user.photoUrl).toList(),
+                    totalCount: _project.members.length,
+                    imageSize: 24,
+                  ),
                 ),
               ),
-              const SizedBox(
-                height: 10,
+              const Divider(),
+              Text(
+                'Description',
+                style: CustomTextStyle.heading4(context)
+                    .copyWith(color: kTextColorGrey),
               ),
               InkWell(
-                onTap: () {},
+                onTap: () async {
+                  final textEdited = await AutoRouter.of(context).push(
+                    TextEditingRoute(
+                      initialText: _project.description,
+                      hintText: 'Edit description',
+                    ),
+                  );
+                  if (textEdited != null) {
+                    setState(() {
+                      _project = _project.copyWith(
+                        description: textEdited as String,
+                      );
+                    });
+                  }
+                },
                 child: Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal:

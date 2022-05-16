@@ -91,39 +91,39 @@ final commentsData = [
 ];
 
 const usersData = [
-  User(
+  AppUser(
     id: 'id1',
-    displayName: 'Huy Tin',
+    name: 'Huy Tin',
     email: 'email@email.com',
     personalBio: 'personalBio',
     photoUrl: 'https://picsum.photos/id/237/536/354',
   ),
-  User(
+  AppUser(
     id: 'id2',
-    displayName: 'Aria Lois',
+    name: 'Aria Lois',
     email: 'aria@email.com',
     personalBio: 'personalBio',
     photoUrl: 'https://picsum.photos/id/237/536/354',
   ),
-  User(
+  AppUser(
     id: 'id3',
-    displayName: 'Huy Tin',
+    name: 'Huy Tin',
     email: 'email@email.com',
     personalBio: 'personalBio',
     photoUrl: 'https://picsum.photos/id/237/536/354',
   ),
-  User(
+  AppUser(
     id: 'id4',
-    displayName: 'Huynh Tuan',
+    name: 'Huynh Tuan',
     email: 'huynhmytuan@email.com',
     personalBio: 'personalBio',
     photoUrl: 'https://picsum.photos/id/237/536/354',
   ),
 ];
 
-const currentUser = User(
+const currentUser = AppUser(
   id: 'id4',
-  displayName: 'Huynh Tuan',
+  name: 'Huynh Tuan',
   email: 'huynhmytuan@email.com',
   personalBio: 'personalBio',
   photoUrl: 'https://picsum.photos/id/237/536/354',
@@ -192,6 +192,7 @@ final projectsData = [
     name: 'Playing Around',
     createdAt: DateTime.now().subtract(const Duration(days: 3)),
     leader: 'id4',
+    viewType: ProjectViewType.calendarView,
     lastChangeAt: DateTime.now(),
     categories: kDefaultTaskCategories,
     description: 'This is a project which we play together. LOL, thats nice!',
@@ -202,6 +203,7 @@ final projectsData = [
     name: 'Final Project Of 2022',
     createdAt: DateTime.now().subtract(const Duration(days: 3)),
     leader: 'id1',
+    viewType: ProjectViewType.calendarView,
     categories: kDefaultTaskCategories,
     lastChangeAt: DateTime.now(),
     description: 'This is a project which we play together. LOL, thats nice!',
@@ -212,6 +214,7 @@ final projectsData = [
     name: 'Custom UI',
     createdAt: DateTime.now().subtract(const Duration(days: 3)),
     leader: 'id2',
+    viewType: ProjectViewType.dashBoard,
     categories: kDefaultTaskCategories,
     lastChangeAt: DateTime.now(),
     description: 'This is a project which we play together. LOL, thats nice!',
@@ -219,7 +222,7 @@ final projectsData = [
   )
 ];
 
-final tasksData = [
+var tasksData = [
   Task(
     id: 'id1',
     projectId: 'id1',
@@ -227,15 +230,15 @@ final tasksData = [
     createdBy: 'id4',
     description: 'description something there',
     createdAt: DateTime.now(),
-    dueDate: DateTime.now().subtract(
+    dueDate: DateTime.now().add(
       const Duration(days: 1),
     ),
     type: TaskType.task,
     category: 'In-process',
     isComplete: true,
     priority: TaskPriority.none,
-    assignTo: const ['id4'],
-    subTasks: const [],
+    assignee: const ['id4'],
+    subTasks: const ['id5'],
   ),
   Task(
     id: 'id2',
@@ -244,14 +247,14 @@ final tasksData = [
     createdBy: 'id4',
     description: 'description something there',
     createdAt: DateTime.now(),
-    dueDate: DateTime.now().subtract(
+    dueDate: DateTime.now().add(
       const Duration(days: 2),
     ),
     type: TaskType.task,
     category: 'To-do',
     isComplete: false,
     priority: TaskPriority.none,
-    assignTo: const ['id4'],
+    assignee: const ['id4'],
     subTasks: const [],
   ),
   Task(
@@ -261,14 +264,14 @@ final tasksData = [
     createdBy: 'id4',
     description: 'description something there',
     createdAt: DateTime.now(),
-    dueDate: DateTime.now().subtract(
+    dueDate: DateTime.now().add(
       const Duration(days: 10),
     ),
     type: TaskType.task,
     category: 'In-process',
     isComplete: true,
     priority: TaskPriority.low,
-    assignTo: const ['id4'],
+    assignee: const ['id4'],
     subTasks: const [],
   ),
   Task(
@@ -283,7 +286,7 @@ final tasksData = [
     category: 'Complete',
     isComplete: true,
     priority: TaskPriority.none,
-    assignTo: const ['id4'],
+    assignee: const ['id4'],
     subTasks: const [],
   ),
   Task(
@@ -298,7 +301,7 @@ final tasksData = [
     category: 'To-do',
     isComplete: false,
     priority: TaskPriority.none,
-    assignTo: const ['id4'],
+    assignee: const [],
     subTasks: const [],
   ),
 ];

@@ -5,6 +5,7 @@ class ProjectKeys {
   static const String createdAt = 'createdAt';
   static const String lastChangeAt = 'lastChangeAt';
   static const String leader = 'leader';
+  static const String viewType = 'viewType';
   static const String description = 'description';
   static const String members = 'members';
   static const String categories = 'categories';

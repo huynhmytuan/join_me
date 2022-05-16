@@ -57,7 +57,7 @@ class _BottomTextFieldState extends State<BottomTextField> {
           Expanded(
             child: Container(
               constraints: const BoxConstraints(
-                maxHeight: 200,
+                maxHeight: 150,
               ),
               decoration: BoxDecoration(
                 color: Colors.grey.shade100,
@@ -72,11 +72,13 @@ class _BottomTextFieldState extends State<BottomTextField> {
                   border: InputBorder.none,
                   hintText: widget.hintText,
                   isDense: true,
+                  counterText: '',
                 ),
                 focusNode: widget.focusNode,
                 textInputAction: TextInputAction.newline,
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
+                maxLength: 1000,
                 onChanged: (value) {
                   widget.onChange?.call(value);
                   setState(() {});

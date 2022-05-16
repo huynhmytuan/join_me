@@ -1,9 +1,19 @@
 import 'package:equatable/equatable.dart';
+import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/utilities/keys/project_keys.dart';
-
 import 'package:json_annotation/json_annotation.dart';
 
 part 'project.g.dart';
+
+enum ProjectViewType {
+  @JsonValue('dashboard-view')
+  dashBoard,
+  @JsonValue('list-view')
+  listView,
+  @JsonValue('calendar-view')
+  calendarView,
+  unknown,
+}
 
 @JsonSerializable()
 class Project extends Equatable {
@@ -16,7 +26,32 @@ class Project extends Equatable {
     required this.description,
     required this.members,
     required this.categories,
+    required this.viewType,
   });
+
+  factory Project.empty({
+    String? id,
+    String? name,
+    DateTime? createdAt,
+    String? leader,
+    DateTime? lastChangeAt,
+    String? description,
+    List<String>? members,
+    List<String>? categories,
+    ProjectViewType? viewType,
+  }) =>
+      Project(
+        id: id ?? '',
+        name: name ?? '',
+        createdAt: createdAt ?? DateTime.now(),
+        lastChangeAt: lastChangeAt ?? DateTime.now(),
+        categories: categories ?? kDefaultTaskCategories,
+        description: description ?? '',
+        leader: leader ?? '',
+        members: members ?? [],
+        viewType: viewType ?? ProjectViewType.dashBoard,
+      );
+
   factory Project.fromJson(Map<String, dynamic> json) =>
       _$ProjectFromJson(json);
 
@@ -26,6 +61,7 @@ class Project extends Equatable {
     String? name,
     DateTime? createdAt,
     String? leader,
+    ProjectViewType? viewType,
     DateTime? lastChangeAt,
     String? description,
     List<String>? members,
@@ -36,6 +72,7 @@ class Project extends Equatable {
       name: name ?? this.name,
       createdAt: createdAt ?? this.createdAt,
       leader: leader ?? this.leader,
+      viewType: viewType ?? this.viewType,
       lastChangeAt: lastChangeAt ?? this.lastChangeAt,
       description: description ?? this.description,
       members: members ?? this.members,
@@ -66,6 +103,9 @@ class Project extends Equatable {
   @JsonKey(name: ProjectKeys.description)
   final String description;
 
+  @JsonKey(name: ProjectKeys.viewType)
+  final ProjectViewType viewType;
+
   ///Return list of members's id (UserID)
   @JsonKey(name: ProjectKeys.members)
   final List<String> members;
@@ -82,6 +122,7 @@ class Project extends Equatable {
       name,
       createdAt,
       leader,
+      viewType,
       lastChangeAt,
       description,
       members,

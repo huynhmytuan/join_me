@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/utilities/keys/task_keys.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -34,10 +35,39 @@ class Task extends Equatable {
     required this.category,
     required this.isComplete,
     required this.priority,
-    required this.assignTo,
+    required this.assignee,
     required this.subTasks,
   });
-
+  factory Task.empty({
+    String? id,
+    String? projectId,
+    String? name,
+    String? createdBy,
+    String? description,
+    DateTime? createdAt,
+    DateTime? dueDate,
+    TaskType? type,
+    String? category,
+    bool? isComplete,
+    TaskPriority? priority,
+    List<String>? assignee,
+    List<String>? subTasks,
+  }) =>
+      Task(
+        id: id ?? '',
+        projectId: projectId ?? '',
+        name: name ?? '',
+        createdBy: createdBy ?? '',
+        description: description ?? '',
+        createdAt: createdAt ?? DateTime.now(),
+        dueDate: dueDate,
+        type: type ?? TaskType.task,
+        category: category ?? kDefaultTaskCategories.first,
+        isComplete: isComplete ?? false,
+        priority: priority ?? TaskPriority.none,
+        assignee: assignee ?? [],
+        subTasks: subTasks ?? [],
+      );
   factory Task.fromJson(Map<String, dynamic> json) => _$TaskFromJson(json);
 
   Map<String, dynamic> toJson() => _$TaskToJson(this);
@@ -55,7 +85,7 @@ class Task extends Equatable {
   @JsonKey(name: TaskKeys.createdAt)
   final DateTime createdAt;
   @JsonKey(name: TaskKeys.dueDate)
-  final DateTime dueDate;
+  final DateTime? dueDate;
   @JsonKey(name: TaskKeys.type)
   final TaskType type;
   @JsonKey(name: TaskKeys.category)
@@ -64,8 +94,8 @@ class Task extends Equatable {
   final bool isComplete;
   @JsonKey(name: TaskKeys.priority)
   final TaskPriority priority;
-  @JsonKey(name: TaskKeys.assignTo)
-  final List<String> assignTo;
+  @JsonKey(name: TaskKeys.assignee)
+  final List<String> assignee;
   @JsonKey(name: TaskKeys.subTasks)
   final List<String> subTasks;
 
@@ -81,7 +111,7 @@ class Task extends Equatable {
     String? category,
     bool? isComplete,
     TaskPriority? priority,
-    List<String>? assignTo,
+    List<String>? assignee,
     List<String>? subTasks,
   }) {
     return Task(
@@ -91,12 +121,12 @@ class Task extends Equatable {
       createdBy: createdBy ?? this.createdBy,
       description: description ?? this.description,
       createdAt: createdAt ?? this.createdAt,
-      dueDate: dueDate ?? this.dueDate,
+      dueDate: dueDate,
       type: type ?? this.type,
       category: category ?? this.category,
       isComplete: isComplete ?? this.isComplete,
       priority: priority ?? this.priority,
-      assignTo: assignTo ?? this.assignTo,
+      assignee: assignee ?? this.assignee,
       subTasks: subTasks ?? this.subTasks,
     );
   }
@@ -104,8 +134,9 @@ class Task extends Equatable {
   @override
   bool get stringify => true;
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
+      id,
       projectId,
       name,
       createdBy,
@@ -116,7 +147,7 @@ class Task extends Equatable {
       category,
       isComplete,
       priority,
-      assignTo,
+      assignee,
       subTasks,
     ];
   }
