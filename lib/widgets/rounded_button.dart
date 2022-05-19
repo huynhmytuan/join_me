@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:join_me/utilities/constant.dart';
 
 class RoundedButton extends StatelessWidget {
   const RoundedButton({
@@ -21,30 +22,18 @@ class RoundedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        boxShadow: <BoxShadow>[
-          BoxShadow(
-            color: color == null
-                ? Theme.of(context).primaryColor.withOpacity(0.2)
-                : color!.withOpacity(.2),
-            blurRadius: height == null ? 30 : height! / 3,
-            offset: Offset(0, height == null ? 5 : height! / 8),
-          ),
-        ],
+    return MaterialButton(
+      minWidth: minWidth ?? 180,
+      height: height ?? 44,
+      color: color ?? Theme.of(context).primaryColor,
+      elevation: elevation ?? 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
       ),
-      child: MaterialButton(
-        minWidth: minWidth ?? 180,
-        height: height ?? 44,
-        color: color ?? Theme.of(context).primaryColor,
-        elevation: elevation ?? 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-        ),
-        textColor: textColor ?? Colors.white,
-        onPressed: onPressed,
-        child: child,
-      ),
+      disabledColor: kIconColorGrey,
+      textColor: textColor ?? Colors.white,
+      onPressed: onPressed,
+      child: child,
     );
   }
 }

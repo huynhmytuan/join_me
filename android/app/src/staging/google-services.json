@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "114164703660",
+    "project_id": "join-me-ad622",
+    "storage_bucket": "join-me-ad622.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:114164703660:android:ec1319f6dd7c01aa131a09",
+        "android_client_info": {
+          "package_name": "com.pinkteam.joinme"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "114164703660-nu72acrg3qf2h83mk4edhl74ucgedd3n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBH-wl-D7LlNwJS-XDi_yQX0PZak7KV-RM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "114164703660-nu72acrg3qf2h83mk4edhl74ucgedd3n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

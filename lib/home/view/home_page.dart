@@ -14,15 +14,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return AutoTabsScaffold(
-      routes: const [
-        PostsRouter(),
-        MessagesRouter(),
-        ProjectsRouter(),
-        NotificationRoute(),
-        MenuRoute(),
-      ],
-      bottomNavigationBuilder: _buildBottomBar,
+    return Container(
+      color: Theme.of(context).scaffoldBackgroundColor,
+      child: SafeArea(
+        child: AutoTabsScaffold(
+          routes: const [
+            PostsRoute(),
+            MessagesRouter(),
+            ProjectsRoute(),
+            NotificationRoute(),
+            MenuRoute(),
+          ],
+          bottomNavigationBuilder: _buildBottomBar,
+        ),
+      ),
     );
   }
 

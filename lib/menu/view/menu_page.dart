@@ -1,35 +1,20 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:join_me/app/blocs/blocs.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/data/dummy_data.dart' as dummy_data;
-import 'package:join_me/data/models/models.dart';
 import 'package:join_me/utilities/constant.dart';
-import 'package:join_me/widgets/avatar_circle_widget.dart';
-import 'package:join_me/widgets/rounded_container.dart';
+import 'package:join_me/widgets/widgets.dart';
 
-class MenuPage extends StatefulWidget {
+class MenuPage extends StatelessWidget {
   const MenuPage({Key? key}) : super(key: key);
 
   @override
-  State<MenuPage> createState() => _MenuPageState();
-}
-
-class _MenuPageState extends State<MenuPage> {
-  late AppUser _currentUser;
-  void _getData() {
-    _currentUser = dummy_data.currentUser;
-  }
-
-  @override
-  void initState() {
-    _getData();
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final _currentUser = context.read<AppBloc>().state.user;
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -43,8 +28,9 @@ class _MenuPageState extends State<MenuPage> {
               onTap: () => AutoRouter.of(context)
                   .push(UserInfoRoute(userId: _currentUser.id)),
               child: RoundedContainer(
-                padding:
-                    const EdgeInsets.symmetric(vertical: kDefaultPadding * 2),
+                padding: const EdgeInsets.symmetric(
+                  vertical: kDefaultPadding * 2,
+                ),
                 color: Theme.of(context).scaffoldBackgroundColor,
                 child: Center(
                   child: Column(
@@ -119,7 +105,9 @@ class _MenuPageState extends State<MenuPage> {
                   ),
                   _buildSettingCard(
                     context: context,
-                    onTap: () {},
+                    onTap: () {
+                      context.read<AppBloc>().add(AppLogoutRequested());
+                    },
                     iconData: Ionicons.log_out_outline,
                     iconColor: kSecondaryRed,
                     title: 'Logout',

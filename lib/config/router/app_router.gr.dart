@@ -17,6 +17,26 @@ class _$AppRouter extends RootStackRouter {
 
   @override
   final Map<String, PageFactory> pagesMap = {
+    RootWrapperRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+          routeData: routeData, child: const RootWrapperPage());
+    },
+    AuthenticateRouter.name: (routeData) {
+      return MaterialPageX<dynamic>(
+          routeData: routeData, child: const EmptyRouterPage());
+    },
+    MainWrapperRouter.name: (routeData) {
+      return MaterialPageX<dynamic>(
+          routeData: routeData, child: const EmptyRouterPage());
+    },
+    LoginRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+          routeData: routeData, child: const LoginPage());
+    },
+    SignUpRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+          routeData: routeData, child: const SignUpPage());
+    },
     HomeRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
           routeData: routeData, child: const HomePage());
@@ -61,14 +81,6 @@ class _$AppRouter extends RootStackRouter {
           routeData: routeData,
           child: SingleTaskPage(taskId: args.taskId, key: args.key));
     },
-    LoginRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-          routeData: routeData, child: const LoginPage());
-    },
-    RegisterRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-          routeData: routeData, child: const RegisterPage());
-    },
     ChatRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<ChatRouteArgs>(
@@ -99,17 +111,17 @@ class _$AppRouter extends RootStackRouter {
           routeData: routeData,
           child: UserInfoPage(userId: args.userId, key: args.key));
     },
-    PostsRouter.name: (routeData) {
+    PostsRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
-          routeData: routeData, child: const EmptyRouterPage());
+          routeData: routeData, child: const PostsPage());
     },
     MessagesRouter.name: (routeData) {
       return MaterialPageX<dynamic>(
           routeData: routeData, child: const MessagesPage());
     },
-    ProjectsRouter.name: (routeData) {
+    ProjectsRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
-          routeData: routeData, child: const EmptyRouterPage());
+          routeData: routeData, child: const ProjectsPage());
     },
     NotificationRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
@@ -118,14 +130,6 @@ class _$AppRouter extends RootStackRouter {
     MenuRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
           routeData: routeData, child: const MenuPage());
-    },
-    PostsRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-          routeData: routeData, child: const PostsPage());
-    },
-    ProjectsRoute.name: (routeData) {
-      return MaterialPageX<dynamic>(
-          routeData: routeData, child: const ProjectsPage());
     },
     ProjectDashboardRoute.name: (routeData) {
       final args = routeData.argsAs<ProjectDashboardRouteArgs>();
@@ -150,53 +154,124 @@ class _$AppRouter extends RootStackRouter {
 
   @override
   List<RouteConfig> get routes => [
-        RouteConfig(HomeRoute.name, path: '/', children: [
-          RouteConfig(PostsRouter.name,
-              path: 'posts',
-              parent: HomeRoute.name,
+        RouteConfig(RootWrapperRoute.name, path: '/', children: [
+          RouteConfig(AuthenticateRouter.name,
+              path: 'authenticate',
+              parent: RootWrapperRoute.name,
               children: [
-                RouteConfig(PostsRoute.name, path: '', parent: PostsRouter.name)
+                RouteConfig('#redirect',
+                    path: '',
+                    parent: AuthenticateRouter.name,
+                    redirectTo: 'login',
+                    fullMatch: true),
+                RouteConfig(LoginRoute.name,
+                    path: 'login', parent: AuthenticateRouter.name),
+                RouteConfig(SignUpRoute.name,
+                    path: 'register', parent: AuthenticateRouter.name)
               ]),
-          RouteConfig(MessagesRouter.name,
-              path: 'messages', parent: HomeRoute.name),
-          RouteConfig(ProjectsRouter.name,
-              path: 'projects',
-              parent: HomeRoute.name,
+          RouteConfig(MainWrapperRouter.name,
+              path: 'main',
+              parent: RootWrapperRoute.name,
               children: [
-                RouteConfig(ProjectsRoute.name,
-                    path: '', parent: ProjectsRouter.name)
-              ]),
-          RouteConfig(NotificationRoute.name,
-              path: 'notification', parent: HomeRoute.name),
-          RouteConfig(MenuRoute.name, path: 'menu', parent: HomeRoute.name)
-        ]),
-        RouteConfig(SingleProjectRoute.name, path: ':projectId', children: [
-          RouteConfig(ProjectDashboardRoute.name,
-              path: 'dashboard', parent: SingleProjectRoute.name),
-          RouteConfig(ProjectTaskListRoute.name,
-              path: 'task-list', parent: SingleProjectRoute.name),
-          RouteConfig(ProjectCalendarRoute.name,
-              path: 'task-by-calendar', parent: SingleProjectRoute.name)
-        ]),
-        RouteConfig(PostDetailRoute.name, path: ':postId'),
-        RouteConfig(NewPostRoute.name, path: 'new-post'),
-        RouteConfig(TextEditingRoute.name, path: 'editing'),
-        RouteConfig(SingleTaskRoute.name, path: ':taskId'),
-        RouteConfig(LoginRoute.name, path: 'login'),
-        RouteConfig(RegisterRoute.name, path: 'register'),
-        RouteConfig(ChatRoute.name, path: ':conversationId'),
-        RouteConfig(LanguageSettingRoute.name, path: 'language-setting'),
-        RouteConfig(ThemeSettingRoute.name, path: 'theme-setting'),
-        RouteConfig(AboutUsRoute.name, path: 'about-us'),
-        RouteConfig(UserInfoRoute.name, path: 'user-info/:userId')
+                RouteConfig(HomeRoute.name,
+                    path: '',
+                    parent: MainWrapperRouter.name,
+                    children: [
+                      RouteConfig(PostsRoute.name,
+                          path: 'posts', parent: HomeRoute.name),
+                      RouteConfig(MessagesRouter.name,
+                          path: 'messages', parent: HomeRoute.name),
+                      RouteConfig(ProjectsRoute.name,
+                          path: 'projects', parent: HomeRoute.name),
+                      RouteConfig(NotificationRoute.name,
+                          path: 'notification', parent: HomeRoute.name),
+                      RouteConfig(MenuRoute.name,
+                          path: 'menu', parent: HomeRoute.name)
+                    ]),
+                RouteConfig(SingleProjectRoute.name,
+                    path: ':projectId',
+                    parent: MainWrapperRouter.name,
+                    children: [
+                      RouteConfig(ProjectDashboardRoute.name,
+                          path: 'dashboard', parent: SingleProjectRoute.name),
+                      RouteConfig(ProjectTaskListRoute.name,
+                          path: 'task-list', parent: SingleProjectRoute.name),
+                      RouteConfig(ProjectCalendarRoute.name,
+                          path: 'task-by-calendar',
+                          parent: SingleProjectRoute.name)
+                    ]),
+                RouteConfig(PostDetailRoute.name,
+                    path: ':postId', parent: MainWrapperRouter.name),
+                RouteConfig(NewPostRoute.name,
+                    path: 'new-post', parent: MainWrapperRouter.name),
+                RouteConfig(TextEditingRoute.name,
+                    path: 'editing', parent: MainWrapperRouter.name),
+                RouteConfig(SingleTaskRoute.name,
+                    path: ':taskId', parent: MainWrapperRouter.name),
+                RouteConfig(ChatRoute.name,
+                    path: ':conversationId', parent: MainWrapperRouter.name),
+                RouteConfig(LanguageSettingRoute.name,
+                    path: 'language-setting', parent: MainWrapperRouter.name),
+                RouteConfig(ThemeSettingRoute.name,
+                    path: 'theme-setting', parent: MainWrapperRouter.name),
+                RouteConfig(AboutUsRoute.name,
+                    path: 'about-us', parent: MainWrapperRouter.name),
+                RouteConfig(UserInfoRoute.name,
+                    path: 'user-info/:userId', parent: MainWrapperRouter.name)
+              ])
+        ])
       ];
+}
+
+/// generated route for
+/// [RootWrapperPage]
+class RootWrapperRoute extends PageRouteInfo<void> {
+  const RootWrapperRoute({List<PageRouteInfo>? children})
+      : super(RootWrapperRoute.name, path: '/', initialChildren: children);
+
+  static const String name = 'RootWrapperRoute';
+}
+
+/// generated route for
+/// [EmptyRouterPage]
+class AuthenticateRouter extends PageRouteInfo<void> {
+  const AuthenticateRouter({List<PageRouteInfo>? children})
+      : super(AuthenticateRouter.name,
+            path: 'authenticate', initialChildren: children);
+
+  static const String name = 'AuthenticateRouter';
+}
+
+/// generated route for
+/// [EmptyRouterPage]
+class MainWrapperRouter extends PageRouteInfo<void> {
+  const MainWrapperRouter({List<PageRouteInfo>? children})
+      : super(MainWrapperRouter.name, path: 'main', initialChildren: children);
+
+  static const String name = 'MainWrapperRouter';
+}
+
+/// generated route for
+/// [LoginPage]
+class LoginRoute extends PageRouteInfo<void> {
+  const LoginRoute() : super(LoginRoute.name, path: 'login');
+
+  static const String name = 'LoginRoute';
+}
+
+/// generated route for
+/// [SignUpPage]
+class SignUpRoute extends PageRouteInfo<void> {
+  const SignUpRoute() : super(SignUpRoute.name, path: 'register');
+
+  static const String name = 'SignUpRoute';
 }
 
 /// generated route for
 /// [HomePage]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute({List<PageRouteInfo>? children})
-      : super(HomeRoute.name, path: '/', initialChildren: children);
+      : super(HomeRoute.name, path: '', initialChildren: children);
 
   static const String name = 'HomeRoute';
 }
@@ -316,22 +391,6 @@ class SingleTaskRouteArgs {
 }
 
 /// generated route for
-/// [LoginPage]
-class LoginRoute extends PageRouteInfo<void> {
-  const LoginRoute() : super(LoginRoute.name, path: 'login');
-
-  static const String name = 'LoginRoute';
-}
-
-/// generated route for
-/// [RegisterPage]
-class RegisterRoute extends PageRouteInfo<void> {
-  const RegisterRoute() : super(RegisterRoute.name, path: 'register');
-
-  static const String name = 'RegisterRoute';
-}
-
-/// generated route for
 /// [ChatPage]
 class ChatRoute extends PageRouteInfo<ChatRouteArgs> {
   ChatRoute({required String conversationId, Key? key})
@@ -408,12 +467,11 @@ class UserInfoRouteArgs {
 }
 
 /// generated route for
-/// [EmptyRouterPage]
-class PostsRouter extends PageRouteInfo<void> {
-  const PostsRouter({List<PageRouteInfo>? children})
-      : super(PostsRouter.name, path: 'posts', initialChildren: children);
+/// [PostsPage]
+class PostsRoute extends PageRouteInfo<void> {
+  const PostsRoute() : super(PostsRoute.name, path: 'posts');
 
-  static const String name = 'PostsRouter';
+  static const String name = 'PostsRoute';
 }
 
 /// generated route for
@@ -425,12 +483,11 @@ class MessagesRouter extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [EmptyRouterPage]
-class ProjectsRouter extends PageRouteInfo<void> {
-  const ProjectsRouter({List<PageRouteInfo>? children})
-      : super(ProjectsRouter.name, path: 'projects', initialChildren: children);
+/// [ProjectsPage]
+class ProjectsRoute extends PageRouteInfo<void> {
+  const ProjectsRoute() : super(ProjectsRoute.name, path: 'projects');
 
-  static const String name = 'ProjectsRouter';
+  static const String name = 'ProjectsRoute';
 }
 
 /// generated route for
@@ -448,22 +505,6 @@ class MenuRoute extends PageRouteInfo<void> {
   const MenuRoute() : super(MenuRoute.name, path: 'menu');
 
   static const String name = 'MenuRoute';
-}
-
-/// generated route for
-/// [PostsPage]
-class PostsRoute extends PageRouteInfo<void> {
-  const PostsRoute() : super(PostsRoute.name, path: '');
-
-  static const String name = 'PostsRoute';
-}
-
-/// generated route for
-/// [ProjectsPage]
-class ProjectsRoute extends PageRouteInfo<void> {
-  const ProjectsRoute() : super(ProjectsRoute.name, path: '');
-
-  static const String name = 'ProjectsRoute';
 }
 
 /// generated route for
