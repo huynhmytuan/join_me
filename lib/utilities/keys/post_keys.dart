@@ -6,6 +6,6 @@ class PostKeys {
   static const String createdAt = 'createdAt';
   static const String content = 'content';
   static const String projectInvitationId = 'projectInvitationId';
-  static const String imageUrls = 'imageUrls';
+  static const String medias = 'medias';
   static const String likes = 'likes';
 }

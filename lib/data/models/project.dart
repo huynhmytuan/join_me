@@ -21,8 +21,7 @@ class Project extends Equatable {
     required this.id,
     required this.name,
     required this.createdAt,
-    required this.leader,
-    required this.lastChangeAt,
+    required this.owner,
     required this.description,
     required this.members,
     required this.categories,
@@ -34,7 +33,6 @@ class Project extends Equatable {
     String? name,
     DateTime? createdAt,
     String? leader,
-    DateTime? lastChangeAt,
     String? description,
     List<String>? members,
     List<String>? categories,
@@ -44,10 +42,9 @@ class Project extends Equatable {
         id: id ?? '',
         name: name ?? '',
         createdAt: createdAt ?? DateTime.now(),
-        lastChangeAt: lastChangeAt ?? DateTime.now(),
         categories: categories ?? kDefaultTaskCategories,
         description: description ?? '',
-        leader: leader ?? '',
+        owner: leader ?? '',
         members: members ?? [],
         viewType: viewType ?? ProjectViewType.dashBoard,
       );
@@ -60,7 +57,7 @@ class Project extends Equatable {
     String? id,
     String? name,
     DateTime? createdAt,
-    String? leader,
+    String? owner,
     ProjectViewType? viewType,
     DateTime? lastChangeAt,
     String? description,
@@ -71,9 +68,8 @@ class Project extends Equatable {
       id: id ?? this.id,
       name: name ?? this.name,
       createdAt: createdAt ?? this.createdAt,
-      leader: leader ?? this.leader,
+      owner: owner ?? this.owner,
       viewType: viewType ?? this.viewType,
-      lastChangeAt: lastChangeAt ?? this.lastChangeAt,
       description: description ?? this.description,
       members: members ?? this.members,
       categories: categories ?? this.categories,
@@ -93,12 +89,8 @@ class Project extends Equatable {
   final DateTime createdAt;
 
   ///Return User's ID who created this project (aka Owner)
-  @JsonKey(name: ProjectKeys.leader)
-  final String leader;
-
-  ///Return time when the last change
-  @JsonKey(name: ProjectKeys.lastChangeAt)
-  final DateTime lastChangeAt;
+  @JsonKey(name: ProjectKeys.owner)
+  final String owner;
 
   @JsonKey(name: ProjectKeys.description)
   final String description;
@@ -121,9 +113,8 @@ class Project extends Equatable {
       id,
       name,
       createdAt,
-      leader,
+      owner,
       viewType,
-      lastChangeAt,
       description,
       members,
       categories,

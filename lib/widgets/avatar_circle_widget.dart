@@ -41,7 +41,6 @@ class CircleAvatarWidget extends StatelessWidget {
                 imageUrl: imageUrl,
                 errorWidget: (context, url, dynamic error) => CircleAvatar(
                   radius: (size != null) ? size! / 2 : 15,
-                  backgroundColor: kIconColorGrey,
                   foregroundColor: kTextColorGrey,
                   child: Icon(
                     Icons.image_not_supported_outlined,

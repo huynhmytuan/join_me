@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/utilities/constant.dart';
 
@@ -17,11 +16,16 @@ class SelectionBottomSheet extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        const Align(
+        Align(
           alignment: Alignment.topCenter,
-          child: Icon(
-            Ionicons.remove,
-            size: 40,
+          child: Container(
+            margin: const EdgeInsets.symmetric(vertical: 10),
+            height: 5,
+            width: 50,
+            decoration: BoxDecoration(
+              color: kIconColorGrey,
+              borderRadius: BorderRadius.circular(12),
+            ),
           ),
         ),
         Align(
@@ -45,10 +49,7 @@ class SelectionBottomSheet extends StatelessWidget {
             kDefaultPadding,
           ),
           child: ListView.separated(
-            separatorBuilder: (context, index) => const Divider(
-              indent: kDefaultPadding,
-              endIndent: kDefaultPadding,
-            ),
+            separatorBuilder: (context, index) => const Divider(),
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: listSelections.length,
@@ -65,11 +66,13 @@ class SelectionRow extends StatelessWidget {
     required this.onTap,
     required this.title,
     required this.iconData,
+    this.color,
     Key? key,
   }) : super(key: key);
   final String title;
   final IconData iconData;
   final Function onTap;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -78,13 +81,17 @@ class SelectionRow extends StatelessWidget {
       onTap: () => onTap.call(),
       child: Row(
         children: [
-          Icon(iconData),
+          Icon(
+            iconData,
+            color: color,
+            size: 24,
+          ),
           const SizedBox(
             width: kDefaultPadding,
           ),
           Text(
             title,
-            style: CustomTextStyle.heading3(context),
+            style: CustomTextStyle.heading4(context).copyWith(color: color),
           ),
         ],
       ),

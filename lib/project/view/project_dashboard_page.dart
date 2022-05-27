@@ -1,11 +1,14 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:join_me/app/blocs/app_bloc.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/data/dummy_data.dart' as dummy_data;
-import 'package:join_me/data/models/models.dart';
+
+import 'package:join_me/project/bloc/project_bloc/project_bloc.dart';
+import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
 
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
@@ -22,212 +25,228 @@ class ProjectDashboardPage extends StatefulWidget {
 }
 
 class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
-  late Project _project;
-  late AppUser _leader;
-  late List<AppUser> _members;
-  late List<Task> _tasks;
-  void _loadData() {
-    _project = dummy_data.projectsData
-        .firstWhere((proj) => proj.id == widget.projectId);
-    _leader =
-        dummy_data.usersData.firstWhere((user) => user.id == _project.leader);
-    _members = dummy_data.usersData
-        .where((user) => _project.members.contains(user.id))
-        .toList();
-    _tasks = dummy_data.tasksData
-        .where(
-          (task) => task.projectId == _project.id && task.type == TaskType.task,
-        )
-        .toList();
-  }
-
-  void _showAssigneeEditDialog() {
-    showDialog<List<AppUser>>(
-      context: context,
-      builder: (context) => AddUserDialog(
-        initialUserList:
-            _members.takeWhile((user) => user.id != _project.leader).toList(),
-      ),
-    ).then((selectedUser) {
-      if (selectedUser == null) {
-        return;
-      }
-      final userIds = selectedUser.map((user) => user.id).toList();
-      setState(() {
-        _members = selectedUser;
-        _project = _project.copyWith(members: userIds);
-      });
-    });
-  }
-
   @override
   void initState() {
-    _loadData();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     final appLocale = Localizations.localeOf(context);
-    return Scaffold(
-      body: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Container(
-          padding: const EdgeInsets.all(kDefaultPadding),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildDataRow(
-                context: context,
-                iconData: Ionicons.person_outline,
-                rowTitle: 'Leader',
-                rowData: Container(
-                  padding: const EdgeInsets.all(kDefaultPadding / 4),
-                  decoration: BoxDecoration(
-                    color: kIconColorGrey,
-                    borderRadius: BorderRadius.circular(kDefaultRadius),
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatarWidget(
-                        imageUrl: _leader.photoUrl,
-                        size: 24,
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        _leader.name,
-                        style: CustomTextStyle.bodySmall(context),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              const Divider(),
-              _buildDataRow(
-                context: context,
-                iconData: Ionicons.time_outline,
-                rowTitle: 'Created At',
-                rowData: Text(
-                  DateFormat.yMMMMEEEEd(appLocale.languageCode)
-                      .format(_project.createdAt),
-                ),
-              ),
-              const Divider(),
-              _buildDataRow(
-                context: context,
-                iconData: Ionicons.time_outline,
-                rowTitle: 'Last Updated',
-                rowData: Text(
-                  DateFormat.yMMMMEEEEd(appLocale.languageCode)
-                      .format(_project.lastChangeAt),
-                ),
-              ),
-              const Divider(),
-              GestureDetector(
-                onTap: _showAssigneeEditDialog,
-                child: _buildDataRow(
-                  context: context,
-                  iconData: Ionicons.people_outline,
-                  rowTitle: 'Members',
-                  rowData: StackImage(
-                    imageUrlList:
-                        _members.map((user) => user.photoUrl).toList(),
-                    totalCount: _project.members.length,
-                    imageSize: 24,
-                  ),
-                ),
-              ),
-              const Divider(),
-              Text(
-                'Description',
-                style: CustomTextStyle.heading4(context)
-                    .copyWith(color: kTextColorGrey),
-              ),
-              InkWell(
-                onTap: () async {
-                  final textEdited = await AutoRouter.of(context).push(
-                    TextEditingRoute(
-                      initialText: _project.description,
-                      hintText: 'Edit description',
-                    ),
-                  );
-                  if (textEdited != null) {
-                    setState(() {
-                      _project = _project.copyWith(
-                        description: textEdited as String,
-                      );
-                    });
-                  }
-                },
-                child: Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal:
-                        _project.description.isEmpty ? kDefaultPadding : 0,
-                    vertical: kDefaultPadding / 2,
-                  ),
-                  child: (_project.description.isEmpty)
-                      ? Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: const [
-                            Icon(Ionicons.add),
-                            Text('Add description'),
-                          ],
-                        )
-                      : Text(
-                          _project.description,
-                          style: CustomTextStyle.bodyMedium(context),
-                        ),
-                ),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Wrap(
-                alignment: WrapAlignment.spaceAround,
+    final currentUser = context.read<AppBloc>().state.user;
+    return BlocBuilder<ProjectBloc, ProjectState>(
+      builder: (context, state) {
+        if (state.status == ProjectStatus.loading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        if (state.status == ProjectStatus.success) {
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Container(
+              padding: const EdgeInsets.all(kDefaultPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildDataBadge(
+                  _buildDataRow(
                     context: context,
-                    badgeTitle: 'Pending Task',
-                    iconColor: kSecondaryYellow,
-                    iconData: Ionicons.document_text,
-                    valueCount:
-                        _tasks.where((task) => task.isComplete).toList().length,
+                    iconData: Ionicons.person_outline,
+                    rowTitle: 'Owned By',
+                    rowData: Row(
+                      children: [
+                        CircleAvatarWidget(
+                          imageUrl: state.owner.photoUrl,
+                          size: 24,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          state.owner.email,
+                          style: CustomTextStyle.bodySmall(context),
+                        ),
+                      ],
+                    ),
                   ),
-                  _buildDataBadge(
+                  const Divider(),
+                  _buildDataRow(
                     context: context,
-                    badgeTitle: 'Complete',
-                    iconColor: kSecondaryGreen,
-                    iconData: Ionicons.checkbox_outline,
-                    valueCount: _tasks
-                        .where((task) => !task.isComplete)
-                        .toList()
-                        .length,
+                    iconData: Ionicons.time_outline,
+                    rowTitle: 'Created At',
+                    rowData: Text(
+                      DateFormat.yMMMMEEEEd(appLocale.languageCode)
+                          .format(state.project.createdAt),
+                    ),
                   ),
-                  _buildDataBadge(
-                    context: context,
-                    badgeTitle: 'All',
-                    iconColor: kSecondaryBlue,
-                    iconData: Ionicons.bag_handle_outline,
-                    valueCount: _tasks.length,
+                  const Divider(),
+                  GestureDetector(
+                    onTap: () {
+                      AutoRouter.of(context).push(
+                        ProjectMembersRoute(
+                          projectBloc: context.read<ProjectBloc>(),
+                        ),
+                      );
+                    },
+                    child: _buildDataRow(
+                      context: context,
+                      iconData: Ionicons.people_outline,
+                      rowTitle: 'Members',
+                      rowData: StackedImages(
+                        imageUrlList:
+                            state.members.map((user) => user.photoUrl).toList(),
+                        totalCount: state.project.members.length,
+                        imageSize: 24,
+                      ),
+                    ),
+                  ),
+                  const Divider(),
+                  Text(
+                    'Description',
+                    style: CustomTextStyle.heading4(context)
+                        .copyWith(color: kTextColorGrey),
+                  ),
+                  InkWell(
+                    onTap: currentUser.id == state.owner.id
+                        ? () {
+                            AutoRouter.of(context)
+                                .push(
+                              TextEditingRoute(
+                                initialText: state.project.description,
+                                hintText: 'Edit description',
+                              ),
+                            )
+                                .then((textEdited) {
+                              if (textEdited != null &&
+                                  textEdited != state.project.description) {
+                                context.read<ProjectBloc>().add(
+                                      EditProject(
+                                        state.project.copyWith(
+                                          description: textEdited as String,
+                                        ),
+                                      ),
+                                    );
+                              }
+                            });
+                          }
+                        : null,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: state.project.description.isEmpty
+                            ? kDefaultPadding
+                            : 0,
+                        vertical: kDefaultPadding / 2,
+                      ),
+                      child: (state.project.description.isEmpty)
+                          ? Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: const [
+                                Icon(Ionicons.add),
+                                Text('Add description'),
+                              ],
+                            )
+                          : Text(
+                              state.project.description,
+                              style: CustomTextStyle.bodyMedium(context),
+                            ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  BlocBuilder<TasksOverviewBloc, TasksOverviewState>(
+                    builder: (context, state) {
+                      if (state is TasksOverviewLoading) {
+                        return const CircularProgressIndicator();
+                      }
+                      if (state is TasksOverviewLoadSuccess) {
+                        return Wrap(
+                          alignment: WrapAlignment.spaceAround,
+                          children: [
+                            DataBadge(
+                              badgeTitle: 'Pending Task',
+                              iconColor: kSecondaryYellow,
+                              iconData: Ionicons.document_text,
+                              valueCount: state.tasks
+                                  .where((task) => task.task.isComplete)
+                                  .toList()
+                                  .length,
+                            ),
+                            DataBadge(
+                              badgeTitle: 'Complete',
+                              iconColor: kSecondaryGreen,
+                              iconData: Ionicons.checkbox_outline,
+                              valueCount: state.tasks
+                                  .where((task) => !task.task.isComplete)
+                                  .toList()
+                                  .length,
+                            ),
+                            DataBadge(
+                              badgeTitle: 'All',
+                              iconColor: kSecondaryBlue,
+                              iconData: Ionicons.bag_handle_outline,
+                              valueCount: state.tasks.length,
+                            ),
+                          ],
+                        );
+                      }
+                      return const SizedBox();
+                    },
                   ),
                 ],
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
+          );
+        }
+        return const Text('Something went wrong');
+      },
     );
   }
 
-  Container _buildDataBadge({
+  Row _buildDataRow({
     required BuildContext context,
-    required String badgeTitle,
     required IconData iconData,
-    required Color iconColor,
-    required int valueCount,
+    required String rowTitle,
+    required Widget rowData,
   }) {
+    return Row(
+      children: [
+        Icon(
+          iconData,
+          color: kTextColorGrey,
+          size: 20,
+        ),
+        const SizedBox(
+          width: 5,
+        ),
+        Text(
+          rowTitle,
+          style:
+              CustomTextStyle.heading4(context).copyWith(color: kTextColorGrey),
+        ),
+        const SizedBox(
+          width: kDefaultPadding,
+        ),
+        rowData,
+      ],
+    );
+  }
+}
+
+class DataBadge extends StatelessWidget {
+  const DataBadge({
+    required this.badgeTitle,
+    required this.iconData,
+    required this.iconColor,
+    required this.valueCount,
+    Key? key,
+  }) : super(key: key);
+  final String badgeTitle;
+  final IconData iconData;
+  final Color iconColor;
+  final int valueCount;
+  @override
+  Widget build(BuildContext context) {
     return Container(
       constraints: const BoxConstraints(
         minWidth: 165,
@@ -270,34 +289,6 @@ class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
           )
         ],
       ),
-    );
-  }
-
-  Row _buildDataRow({
-    required BuildContext context,
-    required IconData iconData,
-    required String rowTitle,
-    required Widget rowData,
-  }) {
-    return Row(
-      children: [
-        Icon(
-          iconData,
-          color: kTextColorGrey,
-        ),
-        const SizedBox(
-          width: 5,
-        ),
-        Text(
-          rowTitle,
-          style:
-              CustomTextStyle.heading4(context).copyWith(color: kTextColorGrey),
-        ),
-        const SizedBox(
-          width: kDefaultPadding,
-        ),
-        rowData,
-      ],
     );
   }
 }

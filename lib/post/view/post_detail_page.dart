@@ -92,9 +92,9 @@ class _PostDetailPageState extends State<PostDetailPage> {
             indent: kDefaultPadding,
             endIndent: kDefaultPadding,
           ),
-          if (post.imageUrls.isNotEmpty)
+          if (post.medias.isNotEmpty)
             PresetsSlider(
-              imageList: post.imageUrls,
+              imageList: post.medias,
             ),
           Padding(
             padding: const EdgeInsets.all(10),

@@ -2,28 +2,33 @@
 
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/data/repositories/user_repository.dart';
+import 'package:join_me/user/bloc/users_search_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/avatar_circle_widget.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 
 class AddUserDialog extends StatefulWidget {
   const AddUserDialog({
-    required this.initialUserList,
+    this.initialUserList = const [],
     this.onSubmit,
     this.onCancel,
     this.title,
-    this.withoutCurrentUser = false,
+    this.withoutUsers = const [],
+    this.searchData,
     Key? key,
   }) : super(key: key);
   final List<AppUser> initialUserList;
   final Function? onCancel;
   final Function? onSubmit;
   final String? title;
-  final bool withoutCurrentUser;
+  final List<AppUser> withoutUsers;
+  final List<AppUser>? searchData;
 
   @override
   State<AddUserDialog> createState() => _AddUserDialogState();
@@ -32,8 +37,10 @@ class AddUserDialog extends StatefulWidget {
 class _AddUserDialogState extends State<AddUserDialog> {
   List<AppUser> selectedUser = [];
   final searchTextController = TextEditingController();
+  late UsersSearchBloc _userBloc;
   @override
   void initState() {
+    _userBloc = UsersSearchBloc(userRepository: UserRepository());
     selectedUser.addAll(widget.initialUserList);
     super.initState();
   }
@@ -78,66 +85,7 @@ class _AddUserDialogState extends State<AddUserDialog> {
                     ),
                   ],
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: kBackgroundPostLight,
-                    borderRadius: BorderRadius.circular(kDefaultRadius),
-                    border: Border.all(
-                      color: kDividerColor,
-                    ),
-                  ),
-                  child: TypeAheadField<AppUser>(
-                    hideSuggestionsOnKeyboardHide: false,
-                    hideOnLoading: true,
-                    textFieldConfiguration: const TextFieldConfiguration(
-                      autofocus: true,
-                      decoration: InputDecoration(
-                        isDense: true,
-                        hintText: 'Search for username or email',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                    suggestionsCallback: (pattern) async {
-                      if (pattern.isEmpty) {
-                        return [];
-                      }
-                      final returnData = dummy_data.usersData
-                          .where(
-                            (user) =>
-                                (user.name
-                                        .toLowerCase()
-                                        .contains(pattern.toLowerCase()) ||
-                                    user.email
-                                        .toLowerCase()
-                                        .contains(pattern.toLowerCase())) &&
-                                !selectedUser.contains(user),
-                          )
-                          .toList();
-                      if (widget.withoutCurrentUser) {
-                        returnData.remove(dummy_data.currentUser);
-                      }
-                      return returnData;
-                    },
-                    noItemsFoundBuilder: (context) => const ListTile(
-                      title: Text('No user found.'),
-                    ),
-                    itemBuilder: (context, userSuggestion) {
-                      return ListTile(
-                        leading: CircleAvatarWidget(
-                          imageUrl: userSuggestion.photoUrl,
-                        ),
-                        title: Text(userSuggestion.name),
-                        subtitle: Text(userSuggestion.email),
-                      );
-                    },
-                    onSuggestionSelected: (userSuggestion) {
-                      setState(() {
-                        selectedUser.add(userSuggestion);
-                      });
-                    },
-                  ),
-                ),
+                _buildSearchField(),
                 SizedBox(
                   height: 250,
                   child: _buildSelectionView(selectedUser),
@@ -146,6 +94,93 @@ class _AddUserDialogState extends State<AddUserDialog> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Container _buildSearchField() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      decoration: BoxDecoration(
+        color: kBackgroundPostLight,
+        borderRadius: BorderRadius.circular(kDefaultRadius),
+        border: Border.all(
+          color: kDividerColor,
+        ),
+      ),
+      child: BlocBuilder<UsersSearchBloc, UsersSearchState>(
+        bloc: _userBloc,
+        builder: (context, state) {
+          return TypeAheadField<AppUser>(
+            hideSuggestionsOnKeyboardHide: false,
+            hideOnLoading: true,
+            textFieldConfiguration: const TextFieldConfiguration(
+              autofocus: true,
+              decoration: InputDecoration(
+                isDense: true,
+                hintText: 'Search for username or email',
+                border: InputBorder.none,
+              ),
+            ),
+            suggestionsCallback: (pattern) {
+              if (pattern.isEmpty) {
+                return [];
+              }
+              var returnData = <AppUser>[];
+
+              //Check if search data is null
+              if (widget.searchData != null) {
+                returnData = widget.searchData!
+                    .where(
+                      (user) =>
+                          user.name
+                              .toLowerCase()
+                              .contains(pattern.toLowerCase()) ||
+                          user.email.toLowerCase().contains(
+                                pattern.toLowerCase(),
+                              ),
+                    )
+                    .toList();
+              } else {
+                //Search User by UserBloc
+                _userBloc.add(
+                  SearchUserByName(searchString: pattern),
+                );
+                if (state is UserSearchResult) {
+                  returnData = state.searchResults;
+                  returnData = List.from(
+                    Set<AppUser>.from(returnData).difference(
+                      Set<AppUser>.from(selectedUser),
+                    ),
+                  );
+                }
+              }
+              if (widget.withoutUsers.isNotEmpty) {
+                for (final user in widget.withoutUsers) {
+                  returnData.remove(user);
+                }
+              }
+              return returnData;
+            },
+            noItemsFoundBuilder: (context) => const ListTile(
+              title: Text('No user found.'),
+            ),
+            itemBuilder: (context, userSuggestion) {
+              return ListTile(
+                leading: CircleAvatarWidget(
+                  imageUrl: userSuggestion.photoUrl,
+                ),
+                title: Text(userSuggestion.name),
+                subtitle: Text(userSuggestion.email),
+              );
+            },
+            onSuggestionSelected: (userSuggestion) {
+              setState(() {
+                selectedUser.add(userSuggestion);
+              });
+            },
+          );
+        },
       ),
     );
   }
@@ -191,6 +226,7 @@ class _AddUserDialogState extends State<AddUserDialog> {
 
   @override
   void dispose() {
+    _userBloc.close();
     searchTextController.dispose();
     super.dispose();
   }

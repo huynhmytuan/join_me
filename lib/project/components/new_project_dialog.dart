@@ -1,8 +1,12 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:join_me/app/blocs/app_bloc.dart';
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/project/bloc/project_overview_bloc/project_overview_bloc.dart';
+
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
 
@@ -17,9 +21,14 @@ class NewProjectDialogState extends State<NewProjectDialog> {
   List<AppUser> _members = [];
   final _formKey = GlobalKey<FormState>();
   bool _isBUttonActive = false;
+  late TextEditingController _projectNameTextController;
+  late TextEditingController _descriptionTextController;
+  late AppUser _currentUser;
 
   @override
   void initState() {
+    _projectNameTextController = TextEditingController();
+    _descriptionTextController = TextEditingController();
     super.initState();
   }
 
@@ -27,8 +36,9 @@ class NewProjectDialogState extends State<NewProjectDialog> {
     showDialog<List<AppUser>>(
       context: context,
       builder: (context) => AddUserDialog(
+        title: 'Add Members',
         initialUserList: _members,
-        withoutCurrentUser: true,
+        withoutUsers: [context.read<AppBloc>().state.user],
       ),
     ).then((selectedUser) {
       if (selectedUser == null) {
@@ -42,6 +52,7 @@ class NewProjectDialogState extends State<NewProjectDialog> {
 
   @override
   Widget build(BuildContext context) {
+    _currentUser = context.read<AppBloc>().state.user;
     return Dialog(
       shape: kBorderRadiusShape,
       child: SingleChildScrollView(
@@ -53,6 +64,7 @@ class NewProjectDialogState extends State<NewProjectDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 TextFormField(
+                  controller: _projectNameTextController,
                   autofocus: true,
                   style: CustomTextStyle.heading3(context),
                   decoration: const InputDecoration(
@@ -75,10 +87,12 @@ class NewProjectDialogState extends State<NewProjectDialog> {
                         });
                       });
                     }
+                    return null;
                   },
                 ),
                 const Divider(),
                 TextFormField(
+                  controller: _descriptionTextController,
                   style: CustomTextStyle.bodyMedium(context),
                   decoration: const InputDecoration(
                     hintText: 'Description',
@@ -121,7 +135,7 @@ class NewProjectDialogState extends State<NewProjectDialog> {
                                   color: kTextColorGrey,
                                 ),
                               ),
-                              StackImage(
+                              StackedImages(
                                 imageUrlList:
                                     _members.map((e) => e.photoUrl).toList(),
                                 totalCount: _members.length,
@@ -152,17 +166,45 @@ class NewProjectDialogState extends State<NewProjectDialog> {
                         },
                       ),
                     ),
-                    onPressed: _isBUttonActive ? () {} : null,
+                    onPressed: _isBUttonActive
+                        ? () async {
+                            final newProject = Project(
+                              id: '',
+                              name: _projectNameTextController.value.text,
+                              createdAt: DateTime.now(),
+                              owner: _currentUser.id,
+                              description:
+                                  _descriptionTextController.value.text,
+                              members:
+                                  _members.map((member) => member.id).toList()
+                                    ..add(_currentUser.id),
+                              categories: kDefaultTaskCategories,
+                              viewType: ProjectViewType.dashBoard,
+                            );
+                            context
+                                .read<ProjectOverviewBloc>()
+                                .add(AddProject(newProject));
+                            await AutoRouter.of(context).pop();
+                            // await context.
+                          }
+                        : null,
                     child: const Text(
                       'Create',
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _projectNameTextController.dispose();
+    _descriptionTextController.dispose();
+    super.dispose();
   }
 }

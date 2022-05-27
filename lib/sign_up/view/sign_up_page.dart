@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:join_me/data/repositories/repositories.dart';
-import 'package:join_me/data/repositories/user_repository.dart';
-import 'package:join_me/sign_up/blocs/sign_up_cubit.dart';
+import 'package:join_me/sign_up/cubit/sign_up_cubit.dart';
 
 import 'package:join_me/sign_up/view/sign_up_form.dart';
 import 'package:join_me/utilities/constant.dart';

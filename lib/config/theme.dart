@@ -15,7 +15,7 @@ class AppTheme {
     scaffoldBackgroundColor: Colors.white,
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
-      elevation: 1,
+      elevation: 0,
       foregroundColor: kTextColorPrimaryLight,
       centerTitle: false,
       titleTextStyle: TextStyle(
@@ -51,7 +51,7 @@ class AppTheme {
         ),
     appBarTheme: const AppBarTheme(
       backgroundColor: kBackgroundDarkColor,
-      elevation: 1,
+      elevation: 0,
       foregroundColor: kTextColorPrimaryDark,
       centerTitle: false,
       titleTextStyle: TextStyle(

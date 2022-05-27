@@ -10,10 +10,12 @@ class TaskListRow extends StatefulWidget {
   TaskListRow({
     required this.task,
     this.trailing,
+    this.onChange,
     Key? key,
   }) : super(key: key);
   Task task;
   final Widget? trailing;
+  final Function(bool?)? onChange;
 
   @override
   State<TaskListRow> createState() => _TaskListRowState();
@@ -45,7 +47,7 @@ class _TaskListRowState extends State<TaskListRow> {
           Checkbox(
             value: widget.task.isComplete,
             onChanged: (value) {
-              // TODO(tuan): Update to database
+              widget.onChange?.call(value);
               setState(() {
                 widget.task = widget.task.copyWith(isComplete: value);
               });

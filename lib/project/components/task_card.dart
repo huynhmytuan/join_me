@@ -18,25 +18,6 @@ class TaskCard extends StatelessWidget {
   final Task task;
   final List<AppUser> assignedTo;
 
-  Color _loadColorByPriority(TaskPriority priority) {
-    switch (priority) {
-      case TaskPriority.none:
-        return kTextColorGrey;
-
-      case TaskPriority.low:
-        return kSecondaryBlue;
-
-      case TaskPriority.medium:
-        return kSecondaryYellow;
-
-      case TaskPriority.high:
-        return kSecondaryRed;
-
-      case TaskPriority.unknown:
-        return kIconColorGrey;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final languageCode = Localizations.localeOf(context).languageCode;
@@ -108,11 +89,17 @@ class TaskCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      StackImage(
+                      StackedImages(
                         imageUrlList:
                             assignedTo.map((e) => e.photoUrl).toList(),
                         imageSize: 24,
                         totalCount: assignedTo.length,
+                        emptyHandler: Text(
+                          'Unassigned',
+                          style: CustomTextStyle.heading4(context).copyWith(
+                            color: kTextColorGrey,
+                          ),
+                        ),
                       )
                     ],
                   )

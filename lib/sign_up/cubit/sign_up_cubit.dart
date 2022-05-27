@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:join_me/data/repositories/repositories.dart';
-import 'package:join_me/data/repositories/user_repository.dart';
-import 'package:join_me/sign_up/blocs/sign_up_state.dart';
+
+import 'package:join_me/sign_up/cubit/sign_up_state.dart';
 
 import 'package:join_me/utilities/validators/form_inputs/form_inputs.dart';
 

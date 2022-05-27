@@ -24,7 +24,7 @@ const kTextColorPrimaryDark = Color(0xFFffffff);
 const kShadowColor = Color(0xFF364564);
 
 const kDefaultPadding = 20.0;
-const kDefaultRadius = 15.0;
+const kDefaultRadius = 10.0;
 
 //Text
 const kFontFamily = 'Nunito';

@@ -38,4 +38,50 @@ class UserRepository {
       rethrow;
     }
   }
+
+  Future<List<AppUser>> searchUsers(String searchString) async {
+    final ref = await _firestore
+        .collection(UserKeys.collection)
+        .where(
+          UserKeys.name,
+          isGreaterThanOrEqualTo: searchString,
+          isLessThanOrEqualTo:
+              searchString.substring(0, searchString.length - 1) +
+                  String.fromCharCode(
+                    searchString.codeUnitAt(searchString.length - 1) + 1,
+                  ),
+        )
+        .orderBy(UserKeys.name)
+        .limitToLast(10)
+        .get();
+
+    return ref.docs
+        .map(
+          (doc) => AppUser.fromJson(doc.data()),
+        )
+        .toList();
+  }
+
+  Future<List<AppUser>> getUsers({required List<String> userIds}) async {
+    try {
+      final userQuerySnap = await _firestore
+          .collection(UserKeys.collection)
+          .where(FieldPath.documentId, whereIn: userIds)
+          .get();
+
+      if (userQuerySnap.docs.isNotEmpty) {
+        final users = userQuerySnap.docs
+            .map(
+              (snapshot) => AppUser.fromJson(
+                snapshot.data(),
+              ),
+            )
+            .toList();
+        return users;
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
 }

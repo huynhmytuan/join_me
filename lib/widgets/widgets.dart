@@ -1,9 +1,9 @@
-export 'add_user_dialog.dart';
+export 'dialog/add_user_dialog.dart';
 export 'avatar_circle_widget.dart';
 export 'bottom_text_field.dart';
-export 'cupertino_picker_bottom_sheet.dart';
-export 'custom_alert_dialog.dart';
-export 'custom_date_picker.dart';
+export 'bottom_sheet/cupertino_picker_bottom_sheet.dart';
+export 'dialog/custom_alert_dialog.dart';
+export 'dialog/custom_date_picker.dart';
 export 'expanded_text.dart';
 export 'persistent_header_delegate.dart';
 export 'presets_slider.dart';
@@ -12,3 +12,4 @@ export 'rounded_container.dart';
 export 'rounded_text_field.dart';
 export 'selected_list_widget.dart';
 export 'stack_image.dart';
+export 'text_editing_page.dart';

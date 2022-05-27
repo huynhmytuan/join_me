@@ -10,7 +10,7 @@ class AboutUsPage extends StatelessWidget {
         elevation: 0,
         title: const Text('About Us'),
       ),
-      body: Text('data'),
+      body: const Text('data'),
     );
   }
 }

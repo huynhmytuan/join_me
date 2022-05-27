@@ -12,7 +12,7 @@ Post _$PostFromJson(Map<String, dynamic> json) => Post(
       authorId: json['authorId'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
       content: json['content'] as String,
-      imageUrls: (json['imageUrls'] as List<dynamic>)
+      medias: (json['medias'] as List<dynamic>)
           .map((dynamic e) => e as String)
           .toList(),
       projectInvitationId: json['projectInvitationId'] as String?,
@@ -25,7 +25,7 @@ Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'id': instance.id,
       'type': _$PostTypeEnumMap[instance.type],
       'authorId': instance.authorId,
-      'imageUrls': instance.imageUrls,
+      'medias': instance.medias,
       'createdAt': instance.createdAt.toIso8601String(),
       'content': instance.content,
       'projectInvitationId': instance.projectInvitationId,

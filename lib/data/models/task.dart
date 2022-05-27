@@ -26,6 +26,7 @@ class Task extends Equatable {
   const Task({
     required this.id,
     required this.projectId,
+    required this.subTaskOf,
     required this.name,
     required this.createdBy,
     required this.description,
@@ -41,6 +42,7 @@ class Task extends Equatable {
   factory Task.empty({
     String? id,
     String? projectId,
+    String? subTaskOf,
     String? name,
     String? createdBy,
     String? description,
@@ -56,6 +58,7 @@ class Task extends Equatable {
       Task(
         id: id ?? '',
         projectId: projectId ?? '',
+        subTaskOf: subTaskOf ?? '',
         name: name ?? '',
         createdBy: createdBy ?? '',
         description: description ?? '',
@@ -74,8 +77,10 @@ class Task extends Equatable {
 
   @JsonKey(name: TaskKeys.id)
   final String id;
-  @JsonKey(name: TaskKeys.projectIid)
+  @JsonKey(name: TaskKeys.projectId)
   final String projectId;
+  @JsonKey(name: TaskKeys.subTaskOf)
+  final String subTaskOf;
   @JsonKey(name: TaskKeys.name)
   final String name;
   @JsonKey(name: TaskKeys.createdBy)
@@ -102,6 +107,7 @@ class Task extends Equatable {
   Task copyWith({
     String? id,
     String? projectId,
+    String? subTaskOf,
     String? name,
     String? createdBy,
     String? description,
@@ -117,11 +123,12 @@ class Task extends Equatable {
     return Task(
       id: id ?? this.id,
       projectId: projectId ?? this.projectId,
+      subTaskOf: subTaskOf ?? this.subTaskOf,
       name: name ?? this.name,
       createdBy: createdBy ?? this.createdBy,
       description: description ?? this.description,
       createdAt: createdAt ?? this.createdAt,
-      dueDate: dueDate,
+      dueDate: dueDate ?? this.dueDate,
       type: type ?? this.type,
       category: category ?? this.category,
       isComplete: isComplete ?? this.isComplete,

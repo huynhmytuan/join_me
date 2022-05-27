@@ -21,7 +21,7 @@ class Post extends Equatable {
     required this.authorId,
     required this.createdAt,
     required this.content,
-    required this.imageUrls,
+    required this.medias,
     required this.projectInvitationId,
     required this.likes,
   });
@@ -42,8 +42,8 @@ class Post extends Equatable {
   final String authorId;
 
   ///Return author id who created the post
-  @JsonKey(name: PostKeys.imageUrls)
-  final List<String> imageUrls;
+  @JsonKey(name: PostKeys.medias)
+  final List<String> medias;
 
   ///Return time when the post created.
   @JsonKey(name: PostKeys.createdAt)
@@ -78,7 +78,7 @@ class Post extends Equatable {
       authorId: authorId ?? this.authorId,
       createdAt: createdAt ?? this.createdAt,
       content: content ?? this.content,
-      imageUrls: imageUrls ?? this.imageUrls,
+      medias: imageUrls ?? this.medias,
       projectInvitationId: projectInvitationId ?? this.projectInvitationId,
       likes: likes ?? this.likes,
     );

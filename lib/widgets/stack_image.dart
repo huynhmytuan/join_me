@@ -3,8 +3,8 @@ import 'package:join_me/config/theme.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/avatar_circle_widget.dart';
 
-class StackImage extends StatelessWidget {
-  const StackImage({
+class StackedImages extends StatelessWidget {
+  const StackedImages({
     required this.imageUrlList,
     required this.totalCount,
     this.borderWidth,
@@ -19,7 +19,7 @@ class StackImage extends StatelessWidget {
   final double? borderWidth;
   final double? imageSize;
 
-  ///How many image view in the [StackImage]
+  ///How many image view in the [StackedImages]
   ///default value = 3
   ///Must be lower than [totalCount]
   final int? imageCount;

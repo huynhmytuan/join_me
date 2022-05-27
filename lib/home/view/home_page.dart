@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       type: BottomNavigationBarType.fixed,
       elevation: 1,
-      iconSize: 20,
+      selectedFontSize: 12,
       selectedItemColor: Theme.of(context).primaryColor,
       unselectedItemColor: kTextColorGrey,
       currentIndex: tabsRouter.activeIndex,

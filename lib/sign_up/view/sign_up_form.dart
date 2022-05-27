@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/sign_up/blocs/sign_up_cubit.dart';
-import 'package:join_me/sign_up/blocs/sign_up_state.dart';
+import 'package:join_me/sign_up/cubit/sign_up_cubit.dart';
+import 'package:join_me/sign_up/cubit/sign_up_state.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
 
@@ -25,6 +25,7 @@ class SignUpForm extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
+                behavior: SnackBarBehavior.floating,
                 backgroundColor: Theme.of(context).errorColor,
                 content: Text(state.errorMessage ?? 'Authentication Failure'),
               ),

@@ -162,7 +162,6 @@ class AuthenticationRepository {
       var user = firebaseUser.toUser;
       _userStreamController.add(user);
       user = await _userRepository.getUserById(userId: user.id);
-
       _userStreamController.add(user);
     }
   }
@@ -248,7 +247,8 @@ class AuthenticationRepository {
       );
       final firebaseUser = userCredential.user;
       if (firebaseUser != null) {
-        final user = firebaseUser.toUser;
+        var user = firebaseUser.toUser;
+        user = await _userRepository.getUserById(userId: user.id);
         _userStreamController.add(user);
       }
     } on firebase_auth.FirebaseAuthException catch (e) {

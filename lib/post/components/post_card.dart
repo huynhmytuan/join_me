@@ -113,40 +113,34 @@ class _PostCardState extends State<PostCard> {
               ),
             ),
             //Post Pictures
-            if (post.imageUrls.isNotEmpty)
+            if (post.medias.isNotEmpty)
               PresetsSlider(
-                imageList: post.imageUrls,
+                imageList: post.medias,
               ),
-            const Divider(
-              indent: 10,
-              endIndent: 10,
-            ),
             //Post Reaction
             Padding(
               padding: const EdgeInsets.all(10),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      IconButton(
-                        splashRadius: 20,
-                        onPressed: () {
-                          final userId = _currentUser.id;
-                          final likedList = List<String>.from(post.likes);
-                          if (post.likes.contains(userId)) {
-                            likedList.remove(userId);
-                          } else {
-                            likedList.add(userId);
-                          }
-                          setState(() {
-                            post = post.copyWith(
-                              likes: likedList,
-                            );
-                          });
-                          // TODO(tuan): post like.
-                        },
-                        icon: Icon(
+                  GestureDetector(
+                    onTap: () {
+                      final userId = _currentUser.id;
+                      final likedList = List<String>.from(post.likes);
+                      if (post.likes.contains(userId)) {
+                        likedList.remove(userId);
+                      } else {
+                        likedList.add(userId);
+                      }
+                      setState(() {
+                        post = post.copyWith(
+                          likes: likedList,
+                        );
+                      });
+                      // TODO(tuan): post like.
+                    },
+                    child: Row(
+                      children: [
+                        Icon(
                           (post.likes.contains(_currentUser.id))
                               ? Ionicons.heart
                               : Ionicons.heart_outline,
@@ -154,21 +148,29 @@ class _PostCardState extends State<PostCard> {
                               ? kSecondaryRed
                               : kTextColorGrey,
                         ),
-                      ),
-                      Text(post.likes.length.toString()),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      IconButton(
-                        splashRadius: 20,
-                        onPressed: () {},
-                        icon: const Icon(
-                          Ionicons.chatbubble_outline,
+                        const SizedBox(
+                          width: 3,
+                        ),
+                        Text(post.likes.length.toString()),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 20,
+                  ),
+                  GestureDetector(
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Ionicons.chatbox_ellipses_outline,
                           color: kTextColorGrey,
                         ),
-                      ),
-                      Text(comments.toString()),
-                    ],
+                        const SizedBox(
+                          width: 3,
+                        ),
+                        Text(comments.toString()),
+                      ],
+                    ),
                   ),
                   if (post.type == PostType.invitation)
                     RoundedButton(

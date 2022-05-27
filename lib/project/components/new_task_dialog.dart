@@ -1,16 +1,20 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:join_me/app/blocs/app_bloc.dart';
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/utilities/extensions/extensions.dart';
-import 'package:join_me/data/dummy_data.dart' as dummy_data;
+import 'package:join_me/data/dummy_data.dart';
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/utilities/constant.dart';
+import 'package:join_me/utilities/extensions/extensions.dart';
 import 'package:join_me/widgets/widgets.dart';
 
 class NewTaskDialog extends StatefulWidget {
   const NewTaskDialog({
     required this.project,
+    required this.members,
     this.parentTask,
     Key? key,
   }) : super(key: key);
@@ -20,15 +24,18 @@ class NewTaskDialog extends StatefulWidget {
 
   ///Project which this task belong to;
   final Project project;
+
+  final List<AppUser> members;
   @override
   State<NewTaskDialog> createState() => NewTaskDialogState();
 }
 
 class NewTaskDialogState extends State<NewTaskDialog> {
-  Task _task = Task.empty();
+  var _task = Task.empty();
   List<AppUser> _assignees = [];
   final _formKey = GlobalKey<FormState>();
-  bool _isBUttonActive = false;
+  final _taskNameEditController = TextEditingController();
+  final _taskDescriptionEditController = TextEditingController();
 
   @override
   void initState() {
@@ -40,6 +47,8 @@ class NewTaskDialogState extends State<NewTaskDialog> {
       context: context,
       builder: (context) => AddUserDialog(
         initialUserList: _assignees,
+        searchData: widget.members,
+        title: 'Assign to',
       ),
     ).then((selectedUser) {
       if (selectedUser == null) {
@@ -47,7 +56,6 @@ class NewTaskDialogState extends State<NewTaskDialog> {
       }
       setState(() {
         _assignees = selectedUser;
-        _task = _task.copyWith(assignee: _assignees.map((e) => e.id).toList());
       });
     });
   }
@@ -77,7 +85,6 @@ class NewTaskDialogState extends State<NewTaskDialog> {
             .toList();
         return CupertinoPickerBottomSheet(
           onSubmit: (index) {
-            // TODO(tuan): save to sever
             setState(() {
               _task = _task.copyWith(priority: priorityList[index]);
             });
@@ -138,41 +145,9 @@ class NewTaskDialogState extends State<NewTaskDialog> {
                     style: CustomTextStyle.heading3(context),
                   ),
                 ),
-                TextFormField(
-                  autofocus: true,
-                  style: CustomTextStyle.heading4(context),
-                  decoration: const InputDecoration(
-                    hintText: 'Task name',
-                    border: InputBorder.none,
-                  ),
-                  textInputAction: TextInputAction.next,
-                  autovalidateMode: AutovalidateMode.onUserInteraction,
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      WidgetsBinding.instance!.addPostFrameCallback((_) {
-                        setState(() {
-                          _isBUttonActive = false;
-                        });
-                      });
-                    } else {
-                      WidgetsBinding.instance!.addPostFrameCallback((_) {
-                        setState(() {
-                          _isBUttonActive = true;
-                        });
-                      });
-                    }
-                  },
-                ),
+                _buildNameInput(context),
                 const Divider(),
-                TextFormField(
-                  style: CustomTextStyle.bodyMedium(context),
-                  decoration: const InputDecoration(
-                    hintText: 'Description',
-                    border: InputBorder.none,
-                  ),
-                  maxLines: null,
-                  textInputAction: TextInputAction.newline,
-                ),
+                _buildDescriptionInput(context),
                 const Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -182,37 +157,7 @@ class NewTaskDialogState extends State<NewTaskDialog> {
                   ],
                 ),
                 const Divider(),
-                GestureDetector(
-                  onTap: _showPriorityPickerSheet,
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Ionicons.warning_outline,
-                        color: kTextColorGrey,
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Text(
-                        'Priority',
-                        style: CustomTextStyle.bodyMedium(context)
-                            .copyWith(color: kTextColorGrey),
-                      ),
-                      const SizedBox(
-                        width: kDefaultPadding,
-                      ),
-                      Chip(
-                        visualDensity: VisualDensity.compact,
-                        backgroundColor: _task.priority.getColor(),
-                        label: Text(
-                          _task.priority.toTitle(),
-                          style: CustomTextStyle.bodySmall(context)
-                              .copyWith(color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                _buildPriority(context),
                 const SizedBox(
                   height: kDefaultPadding,
                 ),
@@ -229,7 +174,23 @@ class NewTaskDialogState extends State<NewTaskDialog> {
                         },
                       ),
                     ),
-                    onPressed: _isBUttonActive ? () {} : null,
+                    onPressed: _taskNameEditController.text.isNotEmpty
+                        ? () {
+                            AutoRouter.of(context).pop(
+                              _task.copyWith(
+                                createdAt: DateTime.now(),
+                                createdBy:
+                                    context.read<AppBloc>().state.user.id,
+                                projectId: widget.project.id,
+                                name: _taskNameEditController.text,
+                                description:
+                                    _taskDescriptionEditController.text,
+                                assignee:
+                                    _assignees.map((user) => user.id).toList(),
+                              ),
+                            );
+                          }
+                        : null,
                     child: const Text(
                       'Create',
                     ),
@@ -239,6 +200,70 @@ class NewTaskDialogState extends State<NewTaskDialog> {
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  TextFormField _buildDescriptionInput(BuildContext context) {
+    return TextFormField(
+      controller: _taskDescriptionEditController,
+      style: CustomTextStyle.bodyMedium(context),
+      decoration: const InputDecoration(
+        hintText: 'Description',
+        border: InputBorder.none,
+      ),
+      maxLines: null,
+      textInputAction: TextInputAction.newline,
+    );
+  }
+
+  TextFormField _buildNameInput(BuildContext context) {
+    return TextFormField(
+      controller: _taskNameEditController,
+      autofocus: true,
+      style: CustomTextStyle.heading4(context),
+      decoration: const InputDecoration(
+        hintText: 'Task name',
+        border: InputBorder.none,
+      ),
+      textInputAction: TextInputAction.next,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      onChanged: (value) {
+        setState(() {});
+      },
+    );
+  }
+
+  GestureDetector _buildPriority(BuildContext context) {
+    return GestureDetector(
+      onTap: _showPriorityPickerSheet,
+      child: Row(
+        children: [
+          const Icon(
+            Ionicons.warning_outline,
+            color: kTextColorGrey,
+          ),
+          const SizedBox(
+            width: 5,
+          ),
+          Text(
+            'Priority',
+            style: CustomTextStyle.bodyMedium(context)
+                .copyWith(color: kTextColorGrey),
+          ),
+          const SizedBox(
+            width: kDefaultPadding,
+          ),
+          Chip(
+            visualDensity: VisualDensity.compact,
+            backgroundColor: _task.priority.getColor(),
+            label: Text(
+              _task.priority.toTitle(),
+              style: CustomTextStyle.bodySmall(context)
+                  .copyWith(color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -277,7 +302,7 @@ class NewTaskDialogState extends State<NewTaskDialog> {
                       color: kTextColorGrey,
                     ),
                   ),
-                  StackImage(
+                  StackedImages(
                     imageUrlList: _assignees.map((e) => e.photoUrl).toList(),
                     totalCount: _assignees.length,
                     imageSize: 24,

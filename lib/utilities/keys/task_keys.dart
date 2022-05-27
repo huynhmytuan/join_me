@@ -1,7 +1,8 @@
 class TaskKeys {
   static const String collection = 'tasks';
   static const String id = 'id';
-  static const String projectIid = 'projectIid';
+  static const String projectId = 'projectId';
+  static const String subTaskOf = 'subTaskOf';
   static const String assignee = 'assignee';
   static const String name = 'name';
   static const String createdBy = 'createdBy';

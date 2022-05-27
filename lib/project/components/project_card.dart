@@ -4,30 +4,23 @@ import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
-import 'package:join_me/l10n/l10n.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 class ProjectCard extends StatelessWidget {
   const ProjectCard({
     required this.project,
+    required this.users,
+    required this.tasks,
     Key? key,
   }) : super(key: key);
   final Project project;
+  final List<AppUser> users;
+  final List<Task?> tasks;
 
   @override
   Widget build(BuildContext context) {
-    final users = project.members.map((userId) {
-      return dummy_data.usersData.firstWhere((user) => user.id == userId);
-    }).toList();
-    final tasks = dummy_data.tasksData
-        .where(
-          (element) => project.id == element.projectId,
-        )
-        .toList();
     final appLocale = Localizations.localeOf(context);
     return GestureDetector(
       onTap: () {
@@ -43,19 +36,16 @@ class ProjectCard extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    project.name,
-                    style: CustomTextStyle.heading3(context),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                project.name,
+                style: CustomTextStyle.heading3(context),
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             const SizedBox(
-              height: kDefaultPadding,
+              height: 5,
             ),
             SizedBox(
               height: 54,
@@ -68,10 +58,13 @@ class ProjectCard extends StatelessWidget {
                     .copyWith(color: kTextColorGrey),
               ),
             ),
+            const SizedBox(
+              height: 5,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                StackImage(
+                StackedImages(
                   imageUrlList: users.map((user) => user.photoUrl).toList(),
                   totalCount: project.members.length,
                   imageSize: 24,

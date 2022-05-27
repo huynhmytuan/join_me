@@ -59,7 +59,7 @@ class CustomAlertDialog extends StatelessWidget {
               onPressed: onSubmit,
               child: Text(
                 submitLabel,
-                style: CustomTextStyle.heading4(context).copyWith(
+                style: CustomTextStyle.heading3(context).copyWith(
                   color: submitButtonColor ?? Theme.of(context).primaryColor,
                 ),
               ),

@@ -2,14 +2,22 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:join_me/config/router/root_wrapper_page.dart';
 import 'package:join_me/home/view/view.dart';
+import 'package:join_me/images_picker/view/albums_list_page.dart';
+import 'package:join_me/images_picker/view/images_picker_page.dart';
+import 'package:join_me/images_picker/view/media_grid_page.dart';
 import 'package:join_me/login/view/view.dart';
 import 'package:join_me/menu/view/view.dart';
 import 'package:join_me/message/view/view.dart';
 import 'package:join_me/notification/view/view.dart';
 import 'package:join_me/post/view/view.dart';
+import 'package:join_me/project/bloc/project_bloc/project_bloc.dart';
+import 'package:join_me/project/view/project_members_page.dart';
 import 'package:join_me/project/view/view.dart';
 import 'package:join_me/sign_up/view/view.dart';
+import 'package:join_me/task/view/view.dart';
 import 'package:join_me/user/view/view.dart';
+import 'package:join_me/widgets/widgets.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 part 'app_router.gr.dart';
 
@@ -71,6 +79,21 @@ part 'app_router.gr.dart';
               ],
             ),
             AutoRoute<dynamic>(
+              path: 'pick-image',
+              page: ImagesPickerPage,
+              children: [
+                AutoRoute<dynamic>(
+                  path: 'images',
+                  page: MediaGridPage,
+                ),
+                CustomRoute<dynamic>(
+                  path: 'albums',
+                  page: AlbumsListPage,
+                  transitionsBuilder: TransitionsBuilders.slideTop,
+                )
+              ],
+            ),
+            AutoRoute<dynamic>(
               path: ':projectId',
               page: SingleProjectPage,
               children: [
@@ -87,6 +110,10 @@ part 'app_router.gr.dart';
                   page: ProjectCalendarPage,
                 ),
               ],
+            ),
+            AutoRoute<dynamic>(
+              path: 'members',
+              page: ProjectMembersPage,
             ),
             AutoRoute<dynamic>(
               path: ':postId',

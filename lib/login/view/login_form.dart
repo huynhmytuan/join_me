@@ -31,6 +31,7 @@ class LoginForm extends StatelessWidget {
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
+                behavior: SnackBarBehavior.floating,
                 backgroundColor: Theme.of(context).errorColor,
                 content: Text(state.errorMessage ?? 'Authentication Failure'),
               ),

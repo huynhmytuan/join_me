@@ -70,7 +70,7 @@ class _CupertinoPickerBottomSheetState
           constraints: const BoxConstraints(
             maxHeight: 150,
           ),
-          margin: const EdgeInsets.symmetric(vertical: 20),
+          margin: const EdgeInsets.symmetric(vertical: 10),
           child: CupertinoPicker.builder(
             scrollController: FixedExtentScrollController(
               initialItem: widget.initialIndex ?? 0,

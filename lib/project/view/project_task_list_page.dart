@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/project/bloc/project_bloc/project_bloc.dart';
 import 'package:join_me/project/components/components.dart';
+import 'package:join_me/task/bloc/task_bloc.dart';
+import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
 
@@ -21,20 +25,16 @@ class ProjectTaskListPage extends StatefulWidget {
 class _ProjectTaskListPageState extends State<ProjectTaskListPage> {
   late List<Item> _items;
 
-  void _loadData() {
-    final _tasks = dummy_data.tasksData
-        .where(
-          (task) =>
-              task.projectId == widget.projectId && task.type == TaskType.task,
-        )
-        .toList();
-    _items = dummy_data.projectsData
-        .firstWhere((project) => project.id == widget.projectId)
+  void _setListItems({required List<TaskViewModel> task}) {
+    _items = context
+        .read<ProjectBloc>()
+        .state
+        .project
         .categories
         .map(
           (sta) => Item(
             expandedValue:
-                _tasks.where((task) => task.category == sta).toList(),
+                task.where((task) => task.task.category == sta).toList(),
             headerValue: sta,
           ),
         )
@@ -43,16 +43,52 @@ class _ProjectTaskListPageState extends State<ProjectTaskListPage> {
 
   @override
   void initState() {
-    _loadData();
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    _loadData();
     super.didChangeDependencies();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TasksOverviewBloc, TasksOverviewState>(
+      builder: (context, state) {
+        if (state is TasksOverviewLoadSuccess) {
+          _setListItems(task: state.tasks);
+          return TaskListView(items: _items);
+        }
+        return const Center(
+          child: Text('Something went wrong'),
+        );
+      },
+    );
+  }
+}
+
+// stores ExpansionPanel state information
+class Item {
+  Item({
+    required this.expandedValue,
+    required this.headerValue,
+    this.isExpanded = true,
+  });
+
+  List<TaskViewModel> expandedValue;
+  String headerValue;
+  bool isExpanded;
+}
+
+class TaskListView extends StatefulWidget {
+  const TaskListView({required this.items, Key? key}) : super(key: key);
+  final List<Item> items;
+
+  @override
+  State<TaskListView> createState() => _TaskListViewState();
+}
+
+class _TaskListViewState extends State<TaskListView> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -69,11 +105,11 @@ class _ProjectTaskListPageState extends State<ProjectTaskListPage> {
             ExpansionPanelList(
               expansionCallback: (int index, bool isExpanded) {
                 setState(() {
-                  _items[index].isExpanded = !isExpanded;
+                  widget.items[index].isExpanded = !isExpanded;
                 });
               },
               elevation: 0,
-              children: _items
+              children: widget.items
                   .map(
                     (Item item) => _buildExpandSection(
                       context: context,
@@ -109,36 +145,27 @@ class _ProjectTaskListPageState extends State<ProjectTaskListPage> {
         separatorBuilder: (context, index) => const Divider(),
         itemCount: item.expandedValue.length,
         itemBuilder: (context, index) {
-          final _assignedUsers = dummy_data.usersData
-              .where(
-                (user) => item.expandedValue[index].assignee.contains(user.id),
-              )
-              .toList();
+          final _assignedUsers = item.expandedValue[index].assignee;
           return TaskListRow(
-            task: item.expandedValue[index],
-            trailing: StackImage(
+            task: item.expandedValue[index].task,
+            trailing: StackedImages(
               imageUrlList:
                   _assignedUsers.map((user) => user.photoUrl).toList(),
               imageSize: 24,
               totalCount: _assignedUsers.length,
+              emptyHandler: const SizedBox(),
             ),
+            onChange: (value) => context.read<TasksOverviewBloc>().add(
+                  ToggleTaskStatus(
+                    item.expandedValue[index].task.copyWith(
+                      isComplete: value,
+                    ),
+                  ),
+                ),
           );
         },
       ),
       isExpanded: item.isExpanded,
     );
   }
-}
-
-// stores ExpansionPanel state information
-class Item {
-  Item({
-    required this.expandedValue,
-    required this.headerValue,
-    this.isExpanded = true,
-  });
-
-  List<Task> expandedValue;
-  String headerValue;
-  bool isExpanded;
 }

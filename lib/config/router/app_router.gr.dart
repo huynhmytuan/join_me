@@ -41,6 +41,14 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
           routeData: routeData, child: const HomePage());
     },
+    ImagesPickerRoute.name: (routeData) {
+      final args = routeData.argsAs<ImagesPickerRouteArgs>(
+          orElse: () => const ImagesPickerRouteArgs());
+      return MaterialPageX<dynamic>(
+          routeData: routeData,
+          child: ImagesPickerPage(
+              initialMedias: args.initialMedias, key: args.key));
+    },
     SingleProjectRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<SingleProjectRouteArgs>(
@@ -49,6 +57,13 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
           routeData: routeData,
           child: SingleProjectPage(projectId: args.projectId, key: args.key));
+    },
+    ProjectMembersRoute.name: (routeData) {
+      final args = routeData.argsAs<ProjectMembersRouteArgs>();
+      return MaterialPageX<dynamic>(
+          routeData: routeData,
+          child:
+              ProjectMembersPage(key: args.key, projectBloc: args.projectBloc));
     },
     PostDetailRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
@@ -131,6 +146,18 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
           routeData: routeData, child: const MenuPage());
     },
+    MediaGridRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+          routeData: routeData, child: const MediaGridPage());
+    },
+    AlbumsListRoute.name: (routeData) {
+      return CustomPage<dynamic>(
+          routeData: routeData,
+          child: const AlbumsListPage(),
+          transitionsBuilder: TransitionsBuilders.slideTop,
+          opaque: true,
+          barrierDismissible: false);
+    },
     ProjectDashboardRoute.name: (routeData) {
       final args = routeData.argsAs<ProjectDashboardRouteArgs>();
       return MaterialPageX<dynamic>(
@@ -188,6 +215,15 @@ class _$AppRouter extends RootStackRouter {
                       RouteConfig(MenuRoute.name,
                           path: 'menu', parent: HomeRoute.name)
                     ]),
+                RouteConfig(ImagesPickerRoute.name,
+                    path: 'pick-image',
+                    parent: MainWrapperRouter.name,
+                    children: [
+                      RouteConfig(MediaGridRoute.name,
+                          path: 'images', parent: ImagesPickerRoute.name),
+                      RouteConfig(AlbumsListRoute.name,
+                          path: 'albums', parent: ImagesPickerRoute.name)
+                    ]),
                 RouteConfig(SingleProjectRoute.name,
                     path: ':projectId',
                     parent: MainWrapperRouter.name,
@@ -200,6 +236,8 @@ class _$AppRouter extends RootStackRouter {
                           path: 'task-by-calendar',
                           parent: SingleProjectRoute.name)
                     ]),
+                RouteConfig(ProjectMembersRoute.name,
+                    path: 'members', parent: MainWrapperRouter.name),
                 RouteConfig(PostDetailRoute.name,
                     path: ':postId', parent: MainWrapperRouter.name),
                 RouteConfig(NewPostRoute.name,
@@ -277,6 +315,34 @@ class HomeRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [ImagesPickerPage]
+class ImagesPickerRoute extends PageRouteInfo<ImagesPickerRouteArgs> {
+  ImagesPickerRoute(
+      {List<AssetEntity> initialMedias = const [],
+      Key? key,
+      List<PageRouteInfo>? children})
+      : super(ImagesPickerRoute.name,
+            path: 'pick-image',
+            args: ImagesPickerRouteArgs(initialMedias: initialMedias, key: key),
+            initialChildren: children);
+
+  static const String name = 'ImagesPickerRoute';
+}
+
+class ImagesPickerRouteArgs {
+  const ImagesPickerRouteArgs({this.initialMedias = const [], this.key});
+
+  final List<AssetEntity> initialMedias;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'ImagesPickerRouteArgs{initialMedias: $initialMedias, key: $key}';
+  }
+}
+
+/// generated route for
 /// [SingleProjectPage]
 class SingleProjectRoute extends PageRouteInfo<SingleProjectRouteArgs> {
   SingleProjectRoute(
@@ -300,6 +366,30 @@ class SingleProjectRouteArgs {
   @override
   String toString() {
     return 'SingleProjectRouteArgs{projectId: $projectId, key: $key}';
+  }
+}
+
+/// generated route for
+/// [ProjectMembersPage]
+class ProjectMembersRoute extends PageRouteInfo<ProjectMembersRouteArgs> {
+  ProjectMembersRoute({Key? key, required ProjectBloc projectBloc})
+      : super(ProjectMembersRoute.name,
+            path: 'members',
+            args: ProjectMembersRouteArgs(key: key, projectBloc: projectBloc));
+
+  static const String name = 'ProjectMembersRoute';
+}
+
+class ProjectMembersRouteArgs {
+  const ProjectMembersRouteArgs({this.key, required this.projectBloc});
+
+  final Key? key;
+
+  final ProjectBloc projectBloc;
+
+  @override
+  String toString() {
+    return 'ProjectMembersRouteArgs{key: $key, projectBloc: $projectBloc}';
   }
 }
 
@@ -505,6 +595,22 @@ class MenuRoute extends PageRouteInfo<void> {
   const MenuRoute() : super(MenuRoute.name, path: 'menu');
 
   static const String name = 'MenuRoute';
+}
+
+/// generated route for
+/// [MediaGridPage]
+class MediaGridRoute extends PageRouteInfo<void> {
+  const MediaGridRoute() : super(MediaGridRoute.name, path: 'images');
+
+  static const String name = 'MediaGridRoute';
+}
+
+/// generated route for
+/// [AlbumsListPage]
+class AlbumsListRoute extends PageRouteInfo<void> {
+  const AlbumsListRoute() : super(AlbumsListRoute.name, path: 'albums');
+
+  static const String name = 'AlbumsListRoute';
 }
 
 /// generated route for
