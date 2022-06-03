@@ -7,7 +7,7 @@ import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/data/repositories/repositories.dart';
-import 'package:join_me/project/bloc/project_bloc/project_bloc.dart';
+import 'package:join_me/project/bloc/project_bloc.dart';
 
 import 'package:join_me/project/project.dart';
 import 'package:join_me/task/bloc/task_bloc.dart';

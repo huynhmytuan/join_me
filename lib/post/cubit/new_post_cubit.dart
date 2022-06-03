@@ -55,8 +55,9 @@ class NewPostCubit extends Cubit<NewPostState> {
         content: state.content,
         medias: const [],
         projectInvitationId:
-            state.invitedProject.id.isEmpty ? null : state.invitedProject.id,
+            state.invitedProject.id.isEmpty ? '' : state.invitedProject.id,
         likes: const [],
+        commentCount: 0,
       ),
       medias: state.medias,
     );

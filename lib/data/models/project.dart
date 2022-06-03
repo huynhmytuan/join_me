@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
+
 import 'package:join_me/utilities/constant.dart';
+
 import 'package:join_me/utilities/keys/project_keys.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -26,6 +28,7 @@ class Project extends Equatable {
     required this.members,
     required this.categories,
     required this.viewType,
+    required this.requests,
   });
 
   factory Project.empty({
@@ -37,6 +40,7 @@ class Project extends Equatable {
     List<String>? members,
     List<String>? categories,
     ProjectViewType? viewType,
+    List<String>? requests,
   }) =>
       Project(
         id: id ?? '',
@@ -47,6 +51,7 @@ class Project extends Equatable {
         owner: leader ?? '',
         members: members ?? [],
         viewType: viewType ?? ProjectViewType.dashBoard,
+        requests: requests ?? [],
       );
 
   factory Project.fromJson(Map<String, dynamic> json) =>
@@ -63,6 +68,7 @@ class Project extends Equatable {
     String? description,
     List<String>? members,
     List<String>? categories,
+    List<String>? requests,
   }) {
     return Project(
       id: id ?? this.id,
@@ -73,6 +79,7 @@ class Project extends Equatable {
       description: description ?? this.description,
       members: members ?? this.members,
       categories: categories ?? this.categories,
+      requests: requests ?? this.requests,
     );
   }
 
@@ -105,6 +112,9 @@ class Project extends Equatable {
   @JsonKey(name: ProjectKeys.categories)
   final List<String> categories;
 
+  @JsonKey(name: ProjectKeys.requests)
+  final List<String> requests;
+
   @override
   bool get stringify => true;
   @override
@@ -118,6 +128,7 @@ class Project extends Equatable {
       description,
       members,
       categories,
+      requests,
     ];
   }
 }

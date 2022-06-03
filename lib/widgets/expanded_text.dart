@@ -59,7 +59,9 @@ class _ExpandedTextState extends State<ExpandedText> {
                 alignment: Alignment.topLeft,
                 child: Wrap(
                   children: [
-                    Text(isExpanded ? widget.text : '$firstHaft...'),
+                    Text(
+                      isExpanded ? widget.text : '$firstHaft...',
+                    ),
                     AnimatedOpacity(
                       duration:
                           widget.duration ?? const Duration(milliseconds: 700),

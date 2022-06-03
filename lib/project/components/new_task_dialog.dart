@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/blocs/app_bloc.dart';
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/data/dummy_data.dart';
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/utilities/extensions/extensions.dart';

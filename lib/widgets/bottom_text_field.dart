@@ -17,7 +17,7 @@ class BottomTextField extends StatefulWidget {
   final TextEditingController textEditingController;
   final String hintText;
   final Function(String value)? onChange;
-  final Function onSubmit;
+  final Function() onSubmit;
   final FocusNode? focusNode;
   final Icon? submitIcon;
   final List<Widget>? leading;
@@ -32,18 +32,12 @@ class _BottomTextFieldState extends State<BottomTextField> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
+        color: Theme.of(context).cardColor,
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(kDefaultRadius),
           topRight: Radius.circular(kDefaultRadius),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.8),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        boxShadow: [kDefaultBoxShadow],
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -60,7 +54,9 @@ class _BottomTextFieldState extends State<BottomTextField> {
                 maxHeight: 150,
               ),
               decoration: BoxDecoration(
-                color: Colors.grey.shade100,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? kTextFieldLightColor
+                    : kTextFieldDarkColor,
                 borderRadius: BorderRadius.circular(30),
               ),
               margin: const EdgeInsets.all(3),
@@ -98,7 +94,9 @@ class _BottomTextFieldState extends State<BottomTextField> {
                     const Icon(
                       Ionicons.paper_plane,
                     ),
-                onPressed: () => widget.onSubmit,
+                onPressed: () {
+                  widget.onSubmit.call();
+                },
               ),
             ),
         ],

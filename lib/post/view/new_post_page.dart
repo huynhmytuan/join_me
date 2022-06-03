@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -89,8 +88,29 @@ class _CloseButton extends StatelessWidget {
         final newPostBlocState = context.read<NewPostCubit>().state;
         if (newPostBlocState.content.isNotEmpty ||
             newPostBlocState.medias.isNotEmpty ||
-            newPostBlocState.invitedProject.id.isNotEmpty) {}
-        AutoRouter.of(context).pop();
+            newPostBlocState.invitedProject.id.isNotEmpty) {
+          showDialog<bool>(
+            context: context,
+            builder: (context) => CustomAlertDialog(
+              title: 'Discard all changes?',
+              content: 'All contents which editing will be lost. Continue?',
+              submitLabel: 'Delete',
+              submitButtonColor: Colors.red,
+              onSubmit: () {
+                AutoRouter.of(context).pop(true);
+              },
+              onCancel: () {
+                AutoRouter.of(context).pop(false);
+              },
+            ),
+          ).then((value) {
+            if (value != null && value) {
+              AutoRouter.of(context).pop();
+            }
+          });
+        } else {
+          AutoRouter.of(context).pop();
+        }
       },
       icon: const Icon(Ionicons.close),
     );
@@ -304,11 +324,10 @@ class _AddNewPostButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<NewPostCubit, NewPostState>(
-      buildWhen: (previous, current) => previous.content != current.content,
       builder: (context, state) {
         return IconButton(
           color: Theme.of(context).primaryColor,
-          onPressed: state.content.isNotEmpty
+          onPressed: (state.content.isNotEmpty || state.medias.isNotEmpty)
               ? () {
                   context.read<NewPostCubit>().submitPost();
                   AutoRouter.of(context).pop();

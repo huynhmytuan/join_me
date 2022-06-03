@@ -8,6 +8,7 @@ part 'message.g.dart';
 @JsonSerializable()
 class Message extends Equatable {
   const Message({
+    required this.id,
     required this.conversationId,
     required this.createdAt,
     required this.authorId,
@@ -19,6 +20,8 @@ class Message extends Equatable {
   Map<String, dynamic> toJson() => _$MessageToJson(this);
 
   //properties
+  @JsonKey(name: MessageKeys.id)
+  final String id;
   @JsonKey(name: MessageKeys.conversationId)
   final String conversationId;
   @JsonKey(name: MessageKeys.createdAt)
@@ -29,12 +32,14 @@ class Message extends Equatable {
   final String content;
 
   Message copyWith({
+    String? id,
     String? conversationId,
     DateTime? createdAt,
     String? authorId,
     String? content,
   }) {
     return Message(
+      id: id ?? this.id,
       conversationId: conversationId ?? this.conversationId,
       createdAt: createdAt ?? this.createdAt,
       authorId: authorId ?? this.authorId,
@@ -46,5 +51,5 @@ class Message extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object> get props => [conversationId, createdAt, authorId, content];
+  List<Object> get props => [id, conversationId, createdAt, authorId, content];
 }

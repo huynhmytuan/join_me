@@ -13,6 +13,7 @@ final postsData = [
     medias: const [
       'https://images.unsplash.com/photo-1579725854926-dbeab39780bc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8NHx8YWxvbmV8ZW58MHx8MHx8&w=1000&q=80',
     ],
+    commentCount: 0,
   ),
   Post(
     id: 'id2',
@@ -26,6 +27,7 @@ final postsData = [
       'https://picsum.photos/id/237/536/354',
       'https://picsum.photos/seed/picsum/536/354'
     ],
+    commentCount: 0,
   ),
   Post(
     id: 'id3',
@@ -46,6 +48,7 @@ final postsData = [
       'https://picsum.photos/id/237/536/354',
       'https://picsum.photos/seed/picsum/536/354'
     ],
+    commentCount: 0,
   ),
   Post(
     id: 'id4',
@@ -56,11 +59,13 @@ final postsData = [
     projectInvitationId: '',
     likes: const ['123', '123', '123', '123', '123'],
     medias: const [],
+    commentCount: 0,
   ),
 ];
 
 final commentsData = [
   Comment(
+    id: '123',
     createdAt: DateTime.now(),
     content: 'Xin cha',
     authorId: 'id3',
@@ -68,6 +73,7 @@ final commentsData = [
     likes: const [],
   ),
   Comment(
+    id: '124',
     createdAt: DateTime.now().subtract(const Duration(days: 2)),
     content: 'Xin Hello Min Max and a lot of thing that we don know about',
     authorId: 'id1',
@@ -75,6 +81,7 @@ final commentsData = [
     likes: const [],
   ),
   Comment(
+    id: '125',
     createdAt: DateTime.now().subtract(const Duration(days: 3)),
     content: 'Xin Hello Min Max and a lot of thing that we don know about',
     authorId: 'id2',
@@ -82,6 +89,7 @@ final commentsData = [
     likes: const [],
   ),
   Comment(
+    id: '126',
     createdAt: DateTime.now().subtract(const Duration(days: 2)),
     content: 'Xin Hello Min Max and a lot of thing that we don know about',
     authorId: 'id1',
@@ -155,30 +163,36 @@ final conversationsData = [
 
 final messagesData = [
   Message(
+    id: '123',
     conversationId: 'id1',
     createdAt: DateTime.now(),
     authorId: 'id4',
     content: 'Hello, Nice to meet you 5',
   ),
   Message(
+    id: '124',
     conversationId: 'id1',
     createdAt: DateTime.now().subtract(const Duration(minutes: 2)),
     authorId: 'id2',
-    content: 'Hello, Nice to meet you 4',
+    content:
+        'Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 Hello, Nice to meet you 4 ',
   ),
   Message(
+    id: '125',
     conversationId: 'id1',
     createdAt: DateTime.now().subtract(const Duration(minutes: 5)),
     authorId: 'id4',
     content: 'Hello, Nice to meet you 3',
   ),
   Message(
+    id: '126',
     conversationId: 'id1',
     createdAt: DateTime.now().subtract(const Duration(minutes: 6)),
     authorId: 'id1',
     content: 'Hello, Nice to meet you 2',
   ),
   Message(
+    id: '127',
     conversationId: 'id1',
     createdAt: DateTime.now().subtract(const Duration(minutes: 20)),
     authorId: 'id1',
@@ -196,6 +210,7 @@ final projectsData = [
     categories: kDefaultTaskCategories,
     description: 'This is a project which we play together. LOL, thats nice!',
     members: const ['id1', 'id2', 'id4'],
+    requests: const [],
   ),
   Project(
     id: 'id2',
@@ -206,6 +221,7 @@ final projectsData = [
     categories: kDefaultTaskCategories,
     description: 'This is a project which we play together. LOL, thats nice!',
     members: const ['id1', 'id3', 'id4'],
+    requests: const [],
   ),
   Project(
     id: 'id3',
@@ -216,6 +232,7 @@ final projectsData = [
     categories: kDefaultTaskCategories,
     description: 'This is a project which we play together. LOL, thats nice!',
     members: const ['id3', 'id2', 'id4'],
+    requests: const [],
   )
 ];
 

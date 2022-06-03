@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:join_me/data/models/models.dart';
+
 import 'package:join_me/utilities/keys/project_keys.dart';
 import 'package:join_me/utilities/keys/task_keys.dart';
 
@@ -9,14 +11,15 @@ class ProjectRepository {
 
   final FirebaseFirestore _firebaseFirestore;
 
-  Stream<Project> getProjectById(String projectId) {
+  Stream<Project?> getProjectById(String projectId) {
     try {
       final querySnapshots = _firebaseFirestore
           .collection(ProjectKeys.collection)
           .doc(projectId)
           .snapshots();
 
-      return querySnapshots.map((doc) => Project.fromJson(doc.data()!));
+      return querySnapshots
+          .map((doc) => doc.exists ? Project.fromJson(doc.data()!) : null);
     } catch (e) {
       rethrow;
     }
@@ -90,6 +93,27 @@ class ProjectRepository {
       for (final task in tasks.docs) {
         await task.reference.delete();
       }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  ///Add a new request
+  Future<void> addJoinRequest({
+    required Project project,
+    required String requester,
+  }) async {
+    try {
+      //Get Project request referent and delete all.
+      final ref =
+          _firebaseFirestore.collection(ProjectKeys.collection).doc(project.id);
+      //Update request Id
+      await ref.set(
+        <String, dynamic>{
+          ProjectKeys.requests: FieldValue.arrayUnion(<String>[requester])
+        },
+        SetOptions(merge: true),
+      );
     } catch (e) {
       rethrow;
     }

@@ -44,8 +44,12 @@ class _MessagesPageState extends State<MessagesPage> {
             SliverToBoxAdapter(
               child: Container(
                 height: 30,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+                margin: const EdgeInsets.symmetric(
+                  vertical: kDefaultPadding,
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: kDefaultPadding,
+                ),
                 child: Center(
                   child: InkWell(
                     borderRadius: BorderRadius.circular(kDefaultRadius),

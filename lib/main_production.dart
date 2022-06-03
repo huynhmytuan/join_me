@@ -7,13 +7,14 @@
 
 import 'package:join_me/app/app.dart';
 import 'package:join_me/bootstrap.dart';
+import 'package:join_me/config/router/route_guard/project_check_member.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/data/repositories/repositories.dart';
 
 void main() {
   bootstrap(
     () => App(
-      appRouter: AppRouter(),
+      appRouter: AppRouter(checkIsProjectMember: CheckIsProjectMember()),
       authenticationRepository: AuthenticationRepository(),
     ),
   );

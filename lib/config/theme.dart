@@ -6,13 +6,12 @@ class AppTheme {
     brightness: Brightness.light,
     fontFamily: kFontFamily,
     primaryColor: kPrimaryLightColor,
-    splashColor: kSecondaryGreen.withOpacity(.3),
+    scaffoldBackgroundColor: Colors.white,
     colorScheme: ThemeData().colorScheme.copyWith(
           brightness: Brightness.light,
           primary: kPrimaryLightColor,
         ),
     highlightColor: kSecondaryGreen.withOpacity(.2),
-    scaffoldBackgroundColor: Colors.white,
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
       elevation: 0,
@@ -23,6 +22,9 @@ class AppTheme {
         fontWeight: FontWeight.w700,
         color: kTextColorPrimaryLight,
       ),
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      shape: kTopBorderRadiusShape,
     ),
     checkboxTheme: CheckboxThemeData(
       fillColor: MaterialStateColor.resolveWith(
@@ -42,15 +44,15 @@ class AppTheme {
   static final darkTheme = ThemeData(
     brightness: Brightness.dark,
     fontFamily: kFontFamily,
-    primaryColor: kPrimaryLightColor,
-    splashColor: kSecondaryGreen.withOpacity(.3),
+    primaryColor: kPrimaryDarkColor,
     highlightColor: kSecondaryGreen.withOpacity(.2),
     colorScheme: ThemeData().colorScheme.copyWith(
           brightness: Brightness.dark,
           primary: kPrimaryLightColor,
         ),
+    scaffoldBackgroundColor: kBackgroundDarkColor,
     appBarTheme: const AppBarTheme(
-      backgroundColor: kBackgroundDarkColor,
+      backgroundColor: kCardDarkColor,
       elevation: 0,
       foregroundColor: kTextColorPrimaryDark,
       centerTitle: false,
@@ -59,6 +61,17 @@ class AppTheme {
         fontWeight: FontWeight.w700,
         color: kTextColorPrimaryDark,
       ),
+    ),
+    cardColor: kCardDarkColor,
+    chipTheme: const ChipThemeData(
+      backgroundColor: kCardDarkColor,
+    ),
+    dialogTheme: const DialogTheme(
+      backgroundColor: kBackgroundDarkColor,
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      backgroundColor: kCardDarkColor,
+      shape: kTopBorderRadiusShape,
     ),
     checkboxTheme: CheckboxThemeData(
       fillColor: MaterialStateColor.resolveWith(
@@ -81,7 +94,7 @@ class CustomTextStyle {
     return Theme.of(context).textTheme.headline1!.copyWith(
           fontSize: 32,
           fontWeight: FontWeight.w700,
-          color: kTextColorPrimaryLight,
+          // color: Theme.of(context).textTheme. kTextColorPrimaryLight,
         );
   }
 
@@ -89,7 +102,7 @@ class CustomTextStyle {
     return Theme.of(context).textTheme.headline2!.copyWith(
           fontSize: 20,
           fontWeight: FontWeight.w700,
-          color: kTextColorPrimaryLight,
+          // color: kTextColorPrimaryLight,
         );
   }
 
@@ -97,7 +110,7 @@ class CustomTextStyle {
     return Theme.of(context).textTheme.headline3!.copyWith(
           fontSize: 16,
           fontWeight: FontWeight.w700,
-          color: kTextColorPrimaryLight,
+          // color: kTextColorPrimaryLight,
         );
   }
 
@@ -105,7 +118,7 @@ class CustomTextStyle {
     return Theme.of(context).textTheme.headline4!.copyWith(
           fontSize: 14,
           fontWeight: FontWeight.w700,
-          color: kTextColorPrimaryLight,
+          // color: kTextColorPrimaryLight,
         );
   }
 
@@ -113,7 +126,7 @@ class CustomTextStyle {
     return Theme.of(context).textTheme.bodyLarge!.copyWith(
           fontSize: 16,
           fontWeight: FontWeight.normal,
-          color: kTextColorPrimaryLight,
+          // color: kTextColorPrimaryLight,
         );
   }
 
@@ -121,7 +134,7 @@ class CustomTextStyle {
     return Theme.of(context).textTheme.bodyMedium!.copyWith(
           fontSize: 14,
           fontWeight: FontWeight.normal,
-          color: kTextColorPrimaryLight,
+          // color: kTextColorPrimaryLight,
         );
   }
 
@@ -129,7 +142,7 @@ class CustomTextStyle {
     return Theme.of(context).textTheme.bodySmall!.copyWith(
           fontSize: 12,
           fontWeight: FontWeight.normal,
-          color: kTextColorPrimaryLight,
+          // color: kTextColorPrimaryLight,
         );
   }
 

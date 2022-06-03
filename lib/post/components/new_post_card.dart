@@ -15,10 +15,13 @@ class NewPostCard extends StatelessWidget {
     return BlocBuilder<AppBloc, AppState>(
       builder: (context, state) {
         return RoundedContainer(
-          margin: const EdgeInsets.symmetric(
-            horizontal: kDefaultPadding / 2,
+          margin: const EdgeInsets.fromLTRB(
+            kDefaultPadding / 2,
+            kDefaultPadding,
+            kDefaultPadding / 2,
+            kDefaultPadding / 2,
           ),
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: Theme.of(context).cardColor,
           child: Padding(
             padding: const EdgeInsets.all(kDefaultPadding / 2),
             child: Row(

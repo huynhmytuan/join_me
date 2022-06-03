@@ -92,7 +92,9 @@ class _CustomAppBarState extends State<_CustomAppBar>
               children: [
                 if (state.status == ImagePickersStatus.success)
                   Text(
-                    state.currentAlbum!.name,
+                    (state.currentAlbum != null)
+                        ? state.currentAlbum!.name
+                        : 'No Media',
                     style: const TextStyle(fontSize: 16),
                   ),
                 const SizedBox(

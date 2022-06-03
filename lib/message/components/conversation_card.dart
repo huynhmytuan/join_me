@@ -18,7 +18,8 @@ class ConversationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //Get current user
-    const _user = dummy_data.currentUser;
+    // TODO: Edit this one
+    const _user = AppUser.empty;
     final sender = dummy_data.usersData.firstWhere(
       (user) =>
           user.id == (conversation.members.firstWhere((u) => u != _user.id)),

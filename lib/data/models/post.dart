@@ -24,14 +24,29 @@ class Post extends Equatable {
     required this.medias,
     required this.projectInvitationId,
     required this.likes,
+    required this.commentCount,
   });
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
+
+  factory Post.empty() {
+    return Post(
+      id: '',
+      type: PostType.unknown,
+      authorId: '',
+      createdAt: DateTime.now(),
+      content: '',
+      medias: const [],
+      projectInvitationId: '',
+      likes: const [],
+      commentCount: 0,
+    );
+  }
 
   Map<String, dynamic> toJson() => _$PostToJson(this);
 
   //Properties
   @JsonKey(name: PostKeys.id)
-  final String? id;
+  final String id;
 
   ///Type Of Post
   @JsonKey(name: PostKeys.type)
@@ -56,11 +71,14 @@ class Post extends Equatable {
   ///Return id [String] of the project which post invite to
   ///If this a an normal post, this field can be 'null' or 'empty'
   @JsonKey(name: PostKeys.projectInvitationId)
-  final String? projectInvitationId;
+  final String projectInvitationId;
 
   ///Return a list of id [String], contain all user's id.
   @JsonKey(name: PostKeys.likes)
   final List<String> likes;
+
+  @JsonKey(name: PostKeys.commentCount)
+  final int commentCount;
 
   Post copyWith({
     String? id,
@@ -70,7 +88,8 @@ class Post extends Equatable {
     String? content,
     String? projectInvitationId,
     List<String>? likes,
-    List<String>? imageUrls,
+    List<String>? medias,
+    int? commentCount,
   }) {
     return Post(
       id: id ?? this.id,
@@ -78,13 +97,22 @@ class Post extends Equatable {
       authorId: authorId ?? this.authorId,
       createdAt: createdAt ?? this.createdAt,
       content: content ?? this.content,
-      medias: imageUrls ?? this.medias,
+      medias: medias ?? this.medias,
       projectInvitationId: projectInvitationId ?? this.projectInvitationId,
       likes: likes ?? this.likes,
+      commentCount: commentCount ?? this.commentCount,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [id, type, authorId, createdAt, content, projectInvitationId, likes];
+  List<Object> get props => [
+        id,
+        type,
+        authorId,
+        createdAt,
+        projectInvitationId,
+        content,
+        likes,
+        commentCount
+      ];
 }

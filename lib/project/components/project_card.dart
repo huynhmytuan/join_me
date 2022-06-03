@@ -30,7 +30,7 @@ class ProjectCard extends StatelessWidget {
         margin: const EdgeInsets.all(10),
         padding: const EdgeInsets.all(kDefaultPadding),
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
+          color: Theme.of(context).cardColor,
           boxShadow: [kDefaultBoxShadow],
           borderRadius: BorderRadius.circular(kDefaultRadius),
         ),

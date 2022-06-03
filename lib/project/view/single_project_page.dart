@@ -3,17 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/blocs/app_bloc.dart';
-
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
-import 'package:join_me/project/bloc/project_bloc/project_bloc.dart';
+import 'package:join_me/project/bloc/project_bloc.dart';
 import 'package:join_me/project/components/components.dart';
 import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/utilities/extensions/extensions.dart';
-import 'package:join_me/widgets/dialog/custom_alert_dialog.dart';
 import 'package:join_me/widgets/bottom_sheet/selection_bottom_sheet.dart';
+import 'package:join_me/widgets/dialog/custom_alert_dialog.dart';
 
 class SingleProjectPage extends StatelessWidget {
   const SingleProjectPage({
@@ -35,7 +34,26 @@ class SingleProjectPage extends StatelessWidget {
       builder: (context, state) {
         if (state.status == ProjectStatus.loading) {
           return Scaffold(
-            appBar: AppBar(),
+            appBar: AppBar(
+              leading: GestureDetector(
+                onTap: () => AutoRouter.of(context).pop(),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: Container(
+                    margin: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(kDefaultRadius),
+                      color: Colors.white.withOpacity(.4),
+                    ),
+                    child: const Icon(
+                      Ionicons.arrow_back,
+                      size: 24,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ),
             body: const Center(
               child: CircularProgressIndicator(),
             ),
@@ -48,7 +66,26 @@ class SingleProjectPage extends StatelessWidget {
           );
         }
         return Scaffold(
-          appBar: AppBar(),
+          appBar: AppBar(
+            leading: GestureDetector(
+              onTap: () => AutoRouter.of(context).pop(),
+              child: AspectRatio(
+                aspectRatio: 1,
+                child: Container(
+                  margin: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(kDefaultRadius),
+                    color: Colors.white.withOpacity(.4),
+                  ),
+                  child: const Icon(
+                    Ionicons.arrow_back,
+                    size: 24,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
           body: const Center(
             child: Text('Something went wrong'),
           ),
@@ -203,6 +240,27 @@ class _ProjectViewState extends State<ProjectView> {
               },
               title: 'Members',
               iconData: Ionicons.people_outline,
+              trailing: projectBloc.state.project.requests.isNotEmpty
+                  ? Container(
+                      height: 20,
+                      width: 20,
+                      alignment: Alignment.center,
+                      decoration: const BoxDecoration(
+                        color: Colors.red,
+                        shape: BoxShape.circle,
+                      ),
+                      child: FittedBox(
+                        child: Text(
+                          projectBloc.state.project.requests.length > 99
+                              ? '99+'
+                              : projectBloc.state.project.requests.length
+                                  .toString(),
+                          style: CustomTextStyle.heading4(context)
+                              .copyWith(color: Colors.white),
+                        ),
+                      ),
+                    )
+                  : null,
             ),
             if (isOwner)
               SelectionRow(
@@ -222,6 +280,7 @@ class _ProjectViewState extends State<ProjectView> {
                         ).then((choice) {
                           if (choice != null && choice) {
                             projectBloc.add(DeleteProject(widget.project));
+                            AutoRouter.of(context).pop();
                           }
                         }),
                       );
@@ -255,6 +314,7 @@ class _ProjectViewState extends State<ProjectView> {
                                 ),
                               ),
                             );
+                            AutoRouter.of(context).pop();
                           }
                         }),
                       );
@@ -280,85 +340,124 @@ class _ProjectViewState extends State<ProjectView> {
     return AutoTabsScaffold(
       resizeToAvoidBottomInset: false,
       routes: _routes,
-      appBarBuilder: (context, tabsRouter) => AppBar(
-        leading: IconButton(
-          onPressed: () => AutoRouter.of(context).pop(),
-          icon: const Icon(Ionicons.chevron_back_outline),
-        ),
-        actions: [
-          IconButton(
-            onPressed: () =>
-                _showMoreMenuBottomSheet(context.read<ProjectBloc>()),
-            icon: const Icon(Ionicons.ellipsis_horizontal_circle_outline),
+      appBarBuilder: (context, tabsRouter) {
+        final projectBloc = context.read<ProjectBloc>();
+        return AppBar(
+          leading: GestureDetector(
+            onTap: () => AutoRouter.of(context).pop(),
+            child: AspectRatio(
+              aspectRatio: 1,
+              child: Container(
+                margin: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(kDefaultRadius),
+                  color: Colors.grey.withOpacity(.1),
+                ),
+                child: const Icon(
+                  Ionicons.chevron_back,
+                  size: 24,
+                  color: kTextColorGrey,
+                ),
+              ),
+            ),
           ),
-        ],
-        elevation: 0,
-        title: GestureDetector(
-          onTap: () {
-            //Show Selections
-            _showSelectViewBottomSheet(context).then(
-              (viewType) {
-                if (viewType == null) {
-                  return;
-                }
-                if (viewType == widget.project.viewType) {
-                  return;
-                }
-                final routeNames = _routes.map((e) => e.routeName).toList();
-                final pageIndex = routeNames.indexOf(viewType.toRouteName());
-                context.tabsRouter.setActiveIndex(pageIndex);
-                context.read<ProjectBloc>().add(
-                      EditProject(
-                        widget.project.copyWith(viewType: viewType),
+          actions: [
+            Stack(
+              clipBehavior: Clip.none,
+              children: [
+                IconButton(
+                  onPressed: () => _showMoreMenuBottomSheet(projectBloc),
+                  icon: const Icon(Ionicons.ellipsis_horizontal_circle_outline),
+                ),
+                if (projectBloc.state.project.requests.isNotEmpty)
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      width: 10,
+                      height: 10,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.red,
                       ),
-                    );
-              },
-            );
-          },
-          child: Column(
-            children: [
-              Text(
-                widget.project.name,
-                textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .appBarTheme
-                    .titleTextStyle!
-                    .copyWith(fontSize: 16),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    widget.project.viewType.toTitle(),
-                    style: CustomTextStyle.heading4(context)
-                        .copyWith(color: kTextColorGrey),
+                    ),
                   ),
-                  const Icon(
-                    Ionicons.chevron_down_outline,
-                    size: 15,
-                    color: kTextColorGrey,
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
+          ],
+          elevation: 0,
+          title: GestureDetector(
+            onTap: () {
+              //Show Selections
+              _showSelectViewBottomSheet(context).then(
+                (viewType) {
+                  if (viewType == null) {
+                    return;
+                  }
+                  if (viewType == widget.project.viewType) {
+                    return;
+                  }
+                  final routeNames = _routes.map((e) => e.routeName).toList();
+                  final pageIndex = routeNames.indexOf(viewType.toRouteName());
+                  context.tabsRouter.setActiveIndex(pageIndex);
+                  projectBloc.add(
+                    EditProject(
+                      widget.project.copyWith(viewType: viewType),
+                    ),
+                  );
+                },
+              );
+            },
+            child: Column(
+              children: [
+                Text(
+                  widget.project.name,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context)
+                      .appBarTheme
+                      .titleTextStyle!
+                      .copyWith(fontSize: 16),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.project.viewType.toTitle(),
+                      style: CustomTextStyle.heading4(context)
+                          .copyWith(color: kTextColorGrey),
+                    ),
+                    const Icon(
+                      Ionicons.chevron_down_outline,
+                      size: 15,
+                      color: kTextColorGrey,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-        ),
-        centerTitle: true,
-      ),
+          centerTitle: true,
+        );
+      },
       floatingActionButton: widget.project.viewType != ProjectViewType.dashBoard
           ? BlocBuilder<TasksOverviewBloc, TasksOverviewState>(
               builder: (context, state) {
-                return FloatingActionButton(
-                  heroTag: 'new_task',
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12), // <-- Radius
+                return Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom + 40,
                   ),
-                  backgroundColor: Theme.of(context).primaryColor,
-                  onPressed: _showNewTaskDialog,
-                  child: const Icon(
-                    Icons.note_add_outlined,
-                    size: 30,
+                  child: FloatingActionButton(
+                    heroTag: 'new_task',
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12), // <-- Radius
+                    ),
+                    backgroundColor: Theme.of(context).primaryColor,
+                    onPressed: _showNewTaskDialog,
+                    child: const Icon(
+                      Icons.note_add_outlined,
+                      size: 30,
+                    ),
                   ),
                 );
               },

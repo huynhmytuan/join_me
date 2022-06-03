@@ -47,11 +47,10 @@ class RoundedTextField extends StatelessWidget {
         Container(
           width: width,
           decoration: BoxDecoration(
-            color: kBackgroundPostLight,
+            color: Theme.of(context).brightness == Brightness.light
+                ? kTextFieldLightColor
+                : kTextFieldDarkColor,
             borderRadius: BorderRadius.circular(kDefaultRadius),
-            border: Border.all(
-              color: kDividerColor,
-            ),
           ),
           child: TextField(
             controller: controller,

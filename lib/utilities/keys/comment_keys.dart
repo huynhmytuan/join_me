@@ -1,5 +1,6 @@
 class CommentKeys {
   static const String collection = 'comments';
+  static const String id = 'id';
   static const String authorId = 'authorId';
   static const String createdAt = 'createdAt';
   static const String postId = 'postId';

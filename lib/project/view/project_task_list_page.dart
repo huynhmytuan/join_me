@@ -2,11 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/data/dummy_data.dart' as dummy_data;
-import 'package:join_me/data/models/models.dart';
-import 'package:join_me/project/bloc/project_bloc/project_bloc.dart';
+import 'package:join_me/project/bloc/project_bloc.dart';
 import 'package:join_me/project/components/components.dart';
-import 'package:join_me/task/bloc/task_bloc.dart';
 import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
@@ -129,13 +126,14 @@ class _TaskListViewState extends State<TaskListView> {
     required Item item,
   }) {
     return ExpansionPanel(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       canTapOnHeader: true,
       headerBuilder: (context, isExpanded) {
         return Align(
           alignment: Alignment.centerLeft,
           child: Text(
             item.headerValue,
-            style: CustomTextStyle.heading4(context),
+            style: CustomTextStyle.heading3(context),
           ),
         );
       },

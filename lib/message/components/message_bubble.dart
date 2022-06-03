@@ -35,18 +35,21 @@ class MessageBubble extends StatelessWidget {
                 ),
               ),
             Container(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * .75,
+              ),
               margin: const EdgeInsets.only(right: 10, left: 40, top: 8),
               padding: const EdgeInsets.all(kDefaultPadding / 2),
               decoration: BoxDecoration(
                 color: isSender
                     ? Theme.of(context).primaryColor
-                    : Theme.of(context).scaffoldBackgroundColor,
+                    : Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(kDefaultRadius),
                 boxShadow: [kDefaultBoxShadow],
               ),
               child: Text(
                 message.content,
-                style: CustomTextStyle.bodyMedium(context).copyWith(
+                style: TextStyle(
                   color: isSender ? Colors.white : null,
                 ),
               ),

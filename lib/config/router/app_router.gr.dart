@@ -13,7 +13,12 @@
 part of 'app_router.dart';
 
 class _$AppRouter extends RootStackRouter {
-  _$AppRouter([GlobalKey<NavigatorState>? navigatorKey]) : super(navigatorKey);
+  _$AppRouter(
+      {GlobalKey<NavigatorState>? navigatorKey,
+      required this.checkIsProjectMember})
+      : super(navigatorKey);
+
+  final CheckIsProjectMember checkIsProjectMember;
 
   @override
   final Map<String, PageFactory> pagesMap = {
@@ -58,12 +63,24 @@ class _$AppRouter extends RootStackRouter {
           routeData: routeData,
           child: SingleProjectPage(projectId: args.projectId, key: args.key));
     },
+    SingleProjectGuestViewRoute.name: (routeData) {
+      final pathParams = routeData.inheritedPathParams;
+      final args = routeData.argsAs<SingleProjectGuestViewRouteArgs>(
+          orElse: () => SingleProjectGuestViewRouteArgs(
+              projectId: pathParams.getString('projectId')));
+      return MaterialPageX<dynamic>(
+          routeData: routeData,
+          child: SingleProjectGuestViewPage(
+              projectId: args.projectId, key: args.key));
+    },
     ProjectMembersRoute.name: (routeData) {
       final args = routeData.argsAs<ProjectMembersRouteArgs>();
       return MaterialPageX<dynamic>(
           routeData: routeData,
-          child:
-              ProjectMembersPage(key: args.key, projectBloc: args.projectBloc));
+          child: ProjectMembersPage(
+            key: args.key,
+            projectBloc: args.projectBloc,
+          ));
     },
     PostDetailRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
@@ -227,6 +244,9 @@ class _$AppRouter extends RootStackRouter {
                 RouteConfig(SingleProjectRoute.name,
                     path: ':projectId',
                     parent: MainWrapperRouter.name,
+                    guards: [
+                      checkIsProjectMember
+                    ],
                     children: [
                       RouteConfig(ProjectDashboardRoute.name,
                           path: 'dashboard', parent: SingleProjectRoute.name),
@@ -236,6 +256,9 @@ class _$AppRouter extends RootStackRouter {
                           path: 'task-by-calendar',
                           parent: SingleProjectRoute.name)
                     ]),
+                RouteConfig(SingleProjectGuestViewRoute.name,
+                    path: ':projectId/guest-view',
+                    parent: MainWrapperRouter.name),
                 RouteConfig(ProjectMembersRoute.name,
                     path: 'members', parent: MainWrapperRouter.name),
                 RouteConfig(PostDetailRoute.name,
@@ -366,6 +389,33 @@ class SingleProjectRouteArgs {
   @override
   String toString() {
     return 'SingleProjectRouteArgs{projectId: $projectId, key: $key}';
+  }
+}
+
+/// generated route for
+/// [SingleProjectGuestViewPage]
+class SingleProjectGuestViewRoute
+    extends PageRouteInfo<SingleProjectGuestViewRouteArgs> {
+  SingleProjectGuestViewRoute({required String projectId, Key? key})
+      : super(SingleProjectGuestViewRoute.name,
+            path: ':projectId/guest-view',
+            args:
+                SingleProjectGuestViewRouteArgs(projectId: projectId, key: key),
+            rawPathParams: <String, dynamic>{'projectId': projectId});
+
+  static const String name = 'SingleProjectGuestViewRoute';
+}
+
+class SingleProjectGuestViewRouteArgs {
+  const SingleProjectGuestViewRouteArgs({required this.projectId, this.key});
+
+  final String projectId;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'SingleProjectGuestViewRouteArgs{projectId: $projectId, key: $key}';
   }
 }
 

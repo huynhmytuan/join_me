@@ -1,14 +1,9 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/data/dummy_data.dart';
 import 'package:join_me/data/models/models.dart';
-import 'package:join_me/data/repositories/repositories.dart';
-import 'package:join_me/post/components/components.dart';
 import 'package:join_me/project/components/components.dart';
-import 'package:join_me/user/bloc/users_search_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/avatar_circle_widget.dart';
 import 'package:join_me/widgets/persistent_header_delegate.dart';
@@ -173,7 +168,10 @@ class _UserInfoPageState extends State<UserInfoPage>
   }
 
   Widget _buildPostView() {
-    final posts = postsData.toList();
+    // final posts = postsData.toList();
+    //TODO: Edit and setup this shit
+    //And also bring it to single widget please
+    final posts = <Post>[];
     return CustomScrollView(
       key: const PageStorageKey('posts-view'),
       physics: const NeverScrollableScrollPhysics(),
@@ -181,7 +179,8 @@ class _UserInfoPageState extends State<UserInfoPage>
         SliverList(
           delegate: SliverChildBuilderDelegate(
             (context, index) {
-              return PostCard(postId: posts[index].id!);
+              // return PostCard(postId: posts[index].id!);
+              const SizedBox();
             },
             childCount: posts.length,
           ),
@@ -191,7 +190,7 @@ class _UserInfoPageState extends State<UserInfoPage>
   }
 
   Widget _buildProjectView() {
-    final projects = projectsData.toList();
+    final projects = <Project>[];
     return CustomScrollView(
       key: const PageStorageKey('projects-view'),
       physics: const NeverScrollableScrollPhysics(),

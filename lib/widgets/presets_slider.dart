@@ -64,23 +64,7 @@ class _PresetsSliderState extends State<PresetsSlider>
               ),
             ),
             if (_isShowed && widget.imageList.length > 1)
-              Positioned(
-                top: 5,
-                right: 5,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(.4),
-                    borderRadius: BorderRadius.circular(kDefaultRadius),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                  child: Text(
-                    '${_current + 1} / ${widget.imageList.length}',
-                    style: CustomTextStyle.bodyMedium(context)
-                        .copyWith(color: Colors.white),
-                  ),
-                ),
-              ),
+              _imageCountLabel(context),
           ],
         ),
         if (widget.imageList.length > 1)
@@ -99,6 +83,30 @@ class _PresetsSliderState extends State<PresetsSlider>
             ),
           ),
       ],
+    );
+  }
+
+  Positioned _imageCountLabel(BuildContext context) {
+    Future<void>.delayed(const Duration(seconds: 3)).then((v) {
+      setState(() {
+        _isShowed = false;
+      });
+    });
+    return Positioned(
+      top: 5,
+      right: 5,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.black.withOpacity(.4),
+          borderRadius: BorderRadius.circular(kDefaultRadius),
+        ),
+        padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        child: Text(
+          '${_current + 1} / ${widget.imageList.length}',
+          style:
+              CustomTextStyle.bodyMedium(context).copyWith(color: Colors.white),
+        ),
+      ),
     );
   }
 
@@ -170,11 +178,7 @@ class _PresetsSliderState extends State<PresetsSlider>
           children: [
             Positioned.fill(
               child: Container(
-                color: Theme.of(context)
-                    .textTheme
-                    .bodyText1!
-                    .color!
-                    .withOpacity(.7),
+                color: Colors.black.withOpacity(.7),
               ),
             ),
             Positioned(

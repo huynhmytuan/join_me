@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/blocs/app_bloc.dart';
+import 'package:join_me/config/theme.dart';
 
 import 'package:join_me/data/models/models.dart';
-import 'package:join_me/project/bloc/project_bloc/project_bloc.dart';
+import 'package:join_me/project/bloc/project_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 
 import 'package:join_me/widgets/widgets.dart';
@@ -79,22 +80,40 @@ class ProjectMembersPage extends StatelessWidget {
                 kDefaultPadding,
               ),
               separatorBuilder: (context, index) => const Divider(),
-              itemCount: state.members.length,
-              itemBuilder: (context, index) => ListTile(
-                leading: CircleAvatarWidget(
-                  imageUrl: state.members[index].photoUrl,
-                  size: 40,
-                ),
-                title: Text(
-                  state.members[index].name,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-                subtitle: Text(state.members[index].email),
-                trailing: state.members[index].id == state.owner.id
-                    ? const Icon(Ionicons.key_outline)
-                    : null,
-              ),
+              itemCount: state.members.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return ListTile(
+                    onTap: () {},
+                    title: const Text('Join Request'),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (projectBloc.state.project.requests.isNotEmpty)
+                          CountBadge(
+                            count: projectBloc.state.project.requests.length,
+                          ),
+                        const Icon(Ionicons.chevron_forward)
+                      ],
+                    ),
+                  );
+                }
+                return ListTile(
+                  leading: CircleAvatarWidget(
+                    imageUrl: state.members[index - 1].photoUrl,
+                    size: 40,
+                  ),
+                  title: Text(
+                    state.members[index - 1].name,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                  subtitle: Text(state.members[index - 1].email),
+                  trailing: state.members[index - 1].id == state.owner.id
+                      ? const Icon(Ionicons.key_outline)
+                      : null,
+                );
+              },
             ),
           );
         }

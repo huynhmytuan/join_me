@@ -8,6 +8,7 @@ part 'comment.g.dart';
 @JsonSerializable()
 class Comment extends Equatable {
   const Comment({
+    required this.id,
     required this.createdAt,
     required this.content,
     required this.authorId,
@@ -19,6 +20,8 @@ class Comment extends Equatable {
 
   Map<String, dynamic> toJson() => _$CommentToJson(this);
   //properties
+  @JsonKey(name: CommentKeys.id)
+  final String id;
   @JsonKey(name: CommentKeys.createdAt)
   final DateTime createdAt;
   @JsonKey(name: CommentKeys.content)
@@ -30,6 +33,7 @@ class Comment extends Equatable {
   final List<String> likes;
 
   Comment copyWith({
+    String? id,
     DateTime? createdAt,
     String? content,
     String? authorId,
@@ -37,6 +41,7 @@ class Comment extends Equatable {
     List<String>? likes,
   }) {
     return Comment(
+      id: id ?? this.id,
       createdAt: createdAt ?? this.createdAt,
       content: content ?? this.content,
       authorId: authorId ?? this.authorId,
@@ -49,6 +54,6 @@ class Comment extends Equatable {
   bool get stringify => true;
   @override
   List<Object> get props {
-    return [createdAt, content, authorId, postId, likes];
+    return [id, createdAt, content, authorId, postId, likes];
   }
 }

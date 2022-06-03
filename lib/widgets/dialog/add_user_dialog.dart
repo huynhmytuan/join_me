@@ -102,11 +102,10 @@ class _AddUserDialogState extends State<AddUserDialog> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: kBackgroundPostLight,
+        color: Theme.of(context).brightness == Brightness.light
+            ? kTextFieldLightColor
+            : kTextFieldDarkColor,
         borderRadius: BorderRadius.circular(kDefaultRadius),
-        border: Border.all(
-          color: kDividerColor,
-        ),
       ),
       child: BlocBuilder<UsersSearchBloc, UsersSearchState>(
         bloc: _userBloc,

@@ -45,7 +45,11 @@ class LoginForm extends StatelessWidget {
             Stack(
               children: [
                 SvgPicture.asset(kLogoBackgroundDir),
-                SvgPicture.asset(kLogoLightDir),
+                SvgPicture.asset(
+                  Theme.of(context).brightness == Brightness.light
+                      ? kLogoLightDir
+                      : kLogoDarkDir,
+                ),
               ],
             ),
             Text(

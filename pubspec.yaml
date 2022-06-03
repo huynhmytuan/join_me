@@ -9,6 +9,7 @@ environment:
 dependencies:
   auto_route: ^3.2.4
   bloc: ^8.0.3
+  bloc_concurrency: ^0.2.0
   cached_network_image: ^3.2.0
   carousel_slider: ^4.1.1
   cloud_firestore: ^3.1.12
@@ -32,6 +33,7 @@ dependencies:
   keyboard_dismisser: ^2.0.1
   photo_manager: ^2.1.1
   smooth_page_indicator: ^1.0.0+2
+  stream_transform: ^2.0.0
   table_calendar: ^3.0.5
   timeago: ^3.2.2
 

@@ -7,7 +7,7 @@ import 'package:join_me/app/blocs/app_bloc.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 
-import 'package:join_me/project/bloc/project_bloc/project_bloc.dart';
+import 'package:join_me/project/bloc/project_bloc.dart';
 import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
 
 import 'package:join_me/utilities/constant.dart';
@@ -42,160 +42,146 @@ class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
           );
         }
         if (state.status == ProjectStatus.success) {
-          return SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Container(
-              padding: const EdgeInsets.all(kDefaultPadding),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildDataRow(
-                    context: context,
-                    iconData: Ionicons.person_outline,
-                    rowTitle: 'Owned By',
-                    rowData: Row(
-                      children: [
-                        CircleAvatarWidget(
-                          imageUrl: state.owner.photoUrl,
-                          size: 24,
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          state.owner.email,
-                          style: CustomTextStyle.bodySmall(context),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Divider(),
-                  _buildDataRow(
-                    context: context,
-                    iconData: Ionicons.time_outline,
-                    rowTitle: 'Created At',
-                    rowData: Text(
-                      DateFormat.yMMMMEEEEd(appLocale.languageCode)
-                          .format(state.project.createdAt),
-                    ),
-                  ),
-                  const Divider(),
-                  GestureDetector(
-                    onTap: () {
-                      AutoRouter.of(context).push(
-                        ProjectMembersRoute(
-                          projectBloc: context.read<ProjectBloc>(),
-                        ),
-                      );
-                    },
-                    child: _buildDataRow(
-                      context: context,
-                      iconData: Ionicons.people_outline,
-                      rowTitle: 'Members',
-                      rowData: StackedImages(
-                        imageUrlList:
-                            state.members.map((user) => user.photoUrl).toList(),
-                        totalCount: state.project.members.length,
-                        imageSize: 24,
-                      ),
-                    ),
-                  ),
-                  const Divider(),
-                  Text(
-                    'Description',
-                    style: CustomTextStyle.heading4(context)
-                        .copyWith(color: kTextColorGrey),
-                  ),
-                  InkWell(
-                    onTap: currentUser.id == state.owner.id
-                        ? () {
-                            AutoRouter.of(context)
-                                .push(
-                              TextEditingRoute(
-                                initialText: state.project.description,
-                                hintText: 'Edit description',
-                              ),
-                            )
-                                .then((textEdited) {
-                              if (textEdited != null &&
-                                  textEdited != state.project.description) {
-                                context.read<ProjectBloc>().add(
-                                      EditProject(
-                                        state.project.copyWith(
-                                          description: textEdited as String,
-                                        ),
-                                      ),
-                                    );
-                              }
-                            });
-                          }
-                        : null,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: state.project.description.isEmpty
-                            ? kDefaultPadding
-                            : 0,
-                        vertical: kDefaultPadding / 2,
-                      ),
-                      child: (state.project.description.isEmpty)
-                          ? Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: const [
-                                Icon(Ionicons.add),
-                                Text('Add description'),
-                              ],
-                            )
-                          : Text(
-                              state.project.description,
-                              style: CustomTextStyle.bodyMedium(context),
-                            ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  BlocBuilder<TasksOverviewBloc, TasksOverviewState>(
-                    builder: (context, state) {
-                      if (state is TasksOverviewLoading) {
-                        return const CircularProgressIndicator();
-                      }
-                      if (state is TasksOverviewLoadSuccess) {
-                        return Wrap(
-                          alignment: WrapAlignment.spaceAround,
+          return CustomScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(kDefaultPadding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDataRow(
+                        context: context,
+                        iconData: Ionicons.person_outline,
+                        rowTitle: 'Owned By',
+                        rowData: Row(
                           children: [
-                            DataBadge(
-                              badgeTitle: 'Pending Task',
-                              iconColor: kSecondaryYellow,
-                              iconData: Ionicons.document_text,
-                              valueCount: state.tasks
-                                  .where((task) => task.task.isComplete)
-                                  .toList()
-                                  .length,
+                            CircleAvatarWidget(
+                              imageUrl: state.owner.photoUrl,
+                              size: 24,
                             ),
-                            DataBadge(
-                              badgeTitle: 'Complete',
-                              iconColor: kSecondaryGreen,
-                              iconData: Ionicons.checkbox_outline,
-                              valueCount: state.tasks
-                                  .where((task) => !task.task.isComplete)
-                                  .toList()
-                                  .length,
+                            const SizedBox(
+                              width: 5,
                             ),
-                            DataBadge(
-                              badgeTitle: 'All',
-                              iconColor: kSecondaryBlue,
-                              iconData: Ionicons.bag_handle_outline,
-                              valueCount: state.tasks.length,
+                            Text(
+                              state.owner.email,
+                              style: CustomTextStyle.bodySmall(context),
                             ),
                           ],
-                        );
-                      }
-                      return const SizedBox();
-                    },
+                        ),
+                      ),
+                      const SizedBox(
+                        height: kDefaultPadding,
+                      ),
+                      _buildDataRow(
+                        context: context,
+                        iconData: Ionicons.time_outline,
+                        rowTitle: 'Created At',
+                        rowData: Text(
+                          DateFormat.yMMMMEEEEd(appLocale.languageCode)
+                              .format(state.project.createdAt),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: kDefaultPadding,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          AutoRouter.of(context).push(
+                            ProjectMembersRoute(
+                              projectBloc: context.read<ProjectBloc>(),
+                            ),
+                          );
+                        },
+                        child: _buildDataRow(
+                          context: context,
+                          iconData: Ionicons.people_outline,
+                          rowTitle: 'Members',
+                          rowData: StackedImages(
+                            imageUrlList: state.members
+                                .map((user) => user.photoUrl)
+                                .toList(),
+                            totalCount: state.project.members.length,
+                            imageSize: 24,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: kDefaultPadding,
+                      ),
+                      Text(
+                        'Description',
+                        style: CustomTextStyle.heading4(context)
+                            .copyWith(color: kTextColorGrey),
+                      ),
+                      InkWell(
+                        onTap: currentUser.id == state.owner.id
+                            ? () {
+                                AutoRouter.of(context)
+                                    .push(
+                                  TextEditingRoute(
+                                    initialText: state.project.description,
+                                    hintText: 'Edit description',
+                                  ),
+                                )
+                                    .then((textEdited) {
+                                  if (textEdited == null ||
+                                      textEdited is! String) {
+                                    return;
+                                  }
+                                  if (textEdited != state.project.description) {
+                                    context.read<ProjectBloc>().add(
+                                          EditProject(
+                                            state.project.copyWith(
+                                              description: textEdited,
+                                            ),
+                                          ),
+                                        );
+                                  }
+                                });
+                              }
+                            : null,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: state.project.description.isEmpty
+                                ? kDefaultPadding
+                                : 0,
+                            vertical: kDefaultPadding / 2,
+                          ),
+                          child: Builder(
+                            builder: (context) {
+                              if (state.project.description.isNotEmpty) {
+                                return Text(
+                                  state.project.description,
+                                  style: CustomTextStyle.bodyMedium(context),
+                                );
+                              }
+                              if (currentUser.id != state.owner.id) {
+                                return Text(
+                                  'No description.',
+                                  style: CustomTextStyle.bodyMedium(context),
+                                );
+                              }
+                              return Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: const [
+                                  Icon(Ionicons.add),
+                                  Text('Add description'),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              const _ListInfoCards()
+            ],
           );
         }
         return const Text('Something went wrong');
@@ -233,8 +219,59 @@ class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
   }
 }
 
-class DataBadge extends StatelessWidget {
-  const DataBadge({
+class _ListInfoCards extends StatelessWidget {
+  const _ListInfoCards({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<TasksOverviewBloc, TasksOverviewState>(
+      builder: (context, state) {
+        if (state is TasksOverviewLoading) {
+          return const CircularProgressIndicator();
+        }
+        if (state is TasksOverviewLoadSuccess) {
+          return SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            sliver: SliverList(
+              delegate: SliverChildListDelegate.fixed(
+                [
+                  _DataBadge(
+                    badgeTitle: 'Pending Task',
+                    iconColor: kSecondaryYellow,
+                    iconData: Ionicons.document_text,
+                    valueCount: state.tasks
+                        .where((task) => !task.task.isComplete)
+                        .toList()
+                        .length,
+                  ),
+                  _DataBadge(
+                    badgeTitle: 'Complete',
+                    iconColor: kSecondaryGreen,
+                    iconData: Ionicons.checkbox_outline,
+                    valueCount: state.tasks
+                        .where((task) => task.task.isComplete)
+                        .toList()
+                        .length,
+                  ),
+                  _DataBadge(
+                    badgeTitle: 'All',
+                    iconColor: kSecondaryBlue,
+                    iconData: Ionicons.bag_handle_outline,
+                    valueCount: state.tasks.length,
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        return const SizedBox();
+      },
+    );
+  }
+}
+
+class _DataBadge extends StatelessWidget {
+  const _DataBadge({
     required this.badgeTitle,
     required this.iconData,
     required this.iconColor,
@@ -247,22 +284,23 @@ class DataBadge extends StatelessWidget {
   final int valueCount;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: const BoxConstraints(
-        minWidth: 165,
-        minHeight: 80,
-      ),
-      margin: const EdgeInsets.all(5),
-      padding: const EdgeInsets.all(kDefaultPadding / 2),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        borderRadius: BorderRadius.circular(kDefaultRadius),
-        boxShadow: [kDefaultBoxShadow],
-      ),
+    return Padding(
+      padding: const EdgeInsets.all(kDefaultPadding),
       child: Row(
         mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          CircleAvatar(
+            backgroundColor: iconColor.withOpacity(.3),
+            radius: 24,
+            child: Icon(
+              iconData,
+              color: iconColor,
+            ),
+          ),
+          const SizedBox(
+            width: kDefaultPadding,
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -273,20 +311,10 @@ class DataBadge extends StatelessWidget {
               ),
               Text(
                 valueCount.toString(),
-                style: CustomTextStyle.heading4(context),
+                style: CustomTextStyle.heading2(context),
               ),
             ],
           ),
-          const SizedBox(
-            width: kDefaultPadding,
-          ),
-          CircleAvatar(
-            backgroundColor: iconColor,
-            child: Icon(
-              iconData,
-              color: Colors.white,
-            ),
-          )
         ],
       ),
     );

@@ -1,7 +1,10 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:join_me/app/cubit/app_message_cubit.dart';
 import 'package:join_me/config/router/router.dart';
+import 'package:join_me/config/theme.dart';
 import 'package:join_me/utilities/constant.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,18 +17,59 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      child: SafeArea(
-        child: AutoTabsScaffold(
-          routes: const [
-            PostsRoute(),
-            MessagesRouter(),
-            ProjectsRoute(),
-            NotificationRoute(),
-            MenuRoute(),
-          ],
-          bottomNavigationBuilder: _buildBottomBar,
+    return BlocListener<AppMessageCubit, AppMessageState>(
+      listener: (context, state) {
+        if (state.messageStatus == AppMessageStatus.none) {
+          return;
+        }
+        final message = state.message;
+        var iconData = Icons.info_outline;
+        Color? backgroundColor;
+        if (state.messageStatus == AppMessageStatus.successful) {
+          iconData = Icons.check_circle_outline;
+          backgroundColor = Theme.of(context).primaryColor;
+        }
+        if (state.messageStatus == AppMessageStatus.errorMessage) {
+          iconData = Icons.error_outline;
+          backgroundColor = Theme.of(context).errorColor;
+        }
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              backgroundColor: backgroundColor,
+              content: Row(
+                children: [
+                  Icon(
+                    iconData,
+                    color: Colors.white,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    message,
+                    style: CustomTextStyle.heading4(context).copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+      },
+      child: Container(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: SafeArea(
+          child: AutoTabsScaffold(
+            routes: const [
+              PostsRoute(),
+              MessagesRouter(),
+              ProjectsRoute(),
+              NotificationRoute(),
+              MenuRoute(),
+            ],
+            bottomNavigationBuilder: _buildBottomBar,
+          ),
         ),
       ),
     );
@@ -33,9 +77,9 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildBottomBar(BuildContext context, TabsRouter tabsRouter) {
     return BottomNavigationBar(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: Theme.of(context).cardColor,
       type: BottomNavigationBarType.fixed,
-      elevation: 1,
+      elevation: 8,
       selectedFontSize: 12,
       selectedItemColor: Theme.of(context).primaryColor,
       unselectedItemColor: kTextColorGrey,

@@ -1,12 +1,19 @@
 import 'package:flutter/material.dart';
 
-// Colors
-const kPrimaryLightColor = Color(0xFF0ebf7e);
-const kPrimaryDarkColor = Color(0xFF38b0a2);
-const kBackgroundDarkColor = Color(0xFF141e26);
+//  Colors
+//Light Theme
+const kPrimaryLightColor = Color(0xFF2eb653);
 const kBackgroundPostLight = Color(0xFFF5F5F5);
 const kDividerColor = Color(0xFFF4F6FA);
+const kTextFieldLightColor = Color(0xFFeff3f4);
 
+//Dark Theme
+const kPrimaryDarkColor = Color(0xFF38b0a2);
+const kBackgroundDarkColor = Color(0xFF122333);
+const kCardDarkColor = Color(0xFF182b3c);
+const kTextFieldDarkColor = Color(0xFF21374a);
+
+//Secondary Colors
 const kSecondaryRed = Color(0xFFFF4F4F);
 const kSecondaryBlue = Color(0xFF0066FF);
 const kSecondaryGreen = Color(0xFF5CD4A8);
@@ -24,7 +31,7 @@ const kTextColorPrimaryDark = Color(0xFFffffff);
 const kShadowColor = Color(0xFF364564);
 
 const kDefaultPadding = 20.0;
-const kDefaultRadius = 10.0;
+const kDefaultRadius = 15.0;
 
 //Text
 const kFontFamily = 'Nunito';
@@ -32,14 +39,15 @@ const kFontFamily = 'Nunito';
 //Asset Constant
 const _kAssetImageDir = 'assets/images';
 const kLogoLightDir = '$_kAssetImageDir/logo_light.svg';
+const kLogoDarkDir = '$_kAssetImageDir/logo_dark.svg';
 const kLogoBackgroundDir = '$_kAssetImageDir/logo_background.svg';
 const kIconDir = 'assets/icons';
 
 //Design
 final kDefaultBoxShadow = BoxShadow(
-  color: Colors.grey.withOpacity(0.2),
-  blurRadius: 10,
-  offset: const Offset(0, 4),
+  color: kShadowColor.withOpacity(.1),
+  blurRadius: 20,
+  offset: const Offset(0, 10),
 );
 
 const kTopBorderRadiusShape = RoundedRectangleBorder(

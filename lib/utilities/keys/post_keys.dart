@@ -8,4 +8,5 @@ class PostKeys {
   static const String projectInvitationId = 'projectInvitationId';
   static const String medias = 'medias';
   static const String likes = 'likes';
+  static const String commentCount = 'commentCount';
 }

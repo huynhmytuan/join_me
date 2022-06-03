@@ -46,7 +46,7 @@ class SelectionBottomSheet extends StatelessWidget {
             kDefaultPadding,
             0,
             kDefaultPadding,
-            kDefaultPadding,
+            40,
           ),
           child: ListView.separated(
             separatorBuilder: (context, index) => const Divider(),
@@ -67,33 +67,40 @@ class SelectionRow extends StatelessWidget {
     required this.title,
     required this.iconData,
     this.color,
+    this.trailing,
     Key? key,
   }) : super(key: key);
   final String title;
   final IconData iconData;
   final Function onTap;
   final Color? color;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       // ignore: avoid_dynamic_calls
       onTap: () => onTap.call(),
-      child: Row(
-        children: [
-          Icon(
-            iconData,
-            color: color,
-            size: 24,
-          ),
-          const SizedBox(
-            width: kDefaultPadding,
-          ),
-          Text(
-            title,
-            style: CustomTextStyle.heading4(context).copyWith(color: color),
-          ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        child: Row(
+          children: [
+            Icon(
+              iconData,
+              color: color,
+              size: 24,
+            ),
+            const SizedBox(
+              width: kDefaultPadding,
+            ),
+            Text(
+              title,
+              style: CustomTextStyle.heading4(context).copyWith(color: color),
+            ),
+            const Spacer(),
+            trailing ?? const SizedBox(),
+          ],
+        ),
       ),
     );
   }

@@ -1,31 +1,37 @@
 part of 'posts_bloc.dart';
 
-enum PostsStatus { initial, success, failure }
+enum PostsStatus { initial, loading, success, failure }
 
-class PostsState extends Equatable {
+class PostsState {
   const PostsState({
-    this.post = const <PostViewModel>[],
-    this.status = PostsStatus.initial,
-    this.hasReachedMax = false,
+    required this.postsPages,
+    required this.status,
+    required this.hasReachedMax,
   });
 
-  final List<PostViewModel> post;
+  factory PostsState.initial() {
+    return const PostsState(
+      postsPages: [],
+      status: PostsStatus.initial,
+      hasReachedMax: false,
+    );
+  }
+
+  final List<List<PostViewModel>> postsPages;
   final PostsStatus status;
   final bool hasReachedMax;
 
-  @override
-  List<Object> get props => [post, status, hasReachedMax];
-}
+  List<PostViewModel> get posts => postsPages.expand((e) => e).toList();
 
-class PostViewModel extends Equatable {
-  const PostViewModel(this.author, this.post);
-
-  final AppUser author;
-  final Post post;
-
-  @override
-  List<Object> get props => [author, post];
-
-  @override
-  bool get stringify => true;
+  PostsState copyWith({
+    List<List<PostViewModel>>? postsPages,
+    PostsStatus? status,
+    bool? hasReachedMax,
+  }) {
+    return PostsState(
+      postsPages: postsPages ?? this.postsPages,
+      status: status ?? this.status,
+      hasReachedMax: hasReachedMax ?? this.hasReachedMax,
+    );
+  }
 }

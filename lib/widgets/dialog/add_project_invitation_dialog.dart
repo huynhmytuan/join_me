@@ -125,7 +125,12 @@ class _ProjectList extends StatelessWidget {
             AutoRouter.of(context).pop(projects[index]);
           },
           dense: true,
-          title: Text(projects[index].name),
+          title: Text(
+            projects[index].name,
+            style: CustomTextStyle.heading4(context),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -154,13 +159,12 @@ class _ProjectSearchInput extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: kBackgroundPostLight,
+        color: Theme.of(context).brightness == Brightness.light
+            ? kTextFieldLightColor
+            : kTextFieldDarkColor,
         borderRadius: BorderRadius.circular(kDefaultRadius),
-        border: Border.all(
-          color: kDividerColor,
-        ),
       ),
       child: Row(
         children: [

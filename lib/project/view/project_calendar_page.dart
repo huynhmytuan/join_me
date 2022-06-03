@@ -3,14 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/data/dummy_data.dart' as dummy_data;
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/project/components/task_card.dart';
 import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/utilities/extensions/extensions.dart';
-import 'package:join_me/widgets/rounded_container.dart';
 import 'package:join_me/widgets/bottom_sheet/selection_bottom_sheet.dart';
+import 'package:join_me/widgets/rounded_container.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 enum DayFilter {

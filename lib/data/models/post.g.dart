@@ -7,7 +7,7 @@ part of 'post.dart';
 // **************************************************************************
 
 Post _$PostFromJson(Map<String, dynamic> json) => Post(
-      id: json['id'] as String?,
+      id: json['id'] as String,
       type: $enumDecode(_$PostTypeEnumMap, json['type']),
       authorId: json['authorId'] as String,
       createdAt: DateTime.parse(json['createdAt'] as String),
@@ -15,10 +15,11 @@ Post _$PostFromJson(Map<String, dynamic> json) => Post(
       medias: (json['medias'] as List<dynamic>)
           .map((dynamic e) => e as String)
           .toList(),
-      projectInvitationId: json['projectInvitationId'] as String?,
+      projectInvitationId: json['projectInvitationId'] as String,
       likes: (json['likes'] as List<dynamic>)
           .map((dynamic e) => e as String)
           .toList(),
+      commentCount: json['commentCount'] as int,
     );
 
 Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
@@ -30,6 +31,7 @@ Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'content': instance.content,
       'projectInvitationId': instance.projectInvitationId,
       'likes': instance.likes,
+      'commentCount': instance.commentCount,
     };
 
 const _$PostTypeEnumMap = {

@@ -22,7 +22,7 @@ class MenuPage extends StatelessWidget {
         title: const Text('Menu'),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
+        padding: const EdgeInsets.all(kDefaultPadding),
         child: Column(
           children: [
             GestureDetector(
@@ -32,7 +32,7 @@ class MenuPage extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(
                   vertical: kDefaultPadding * 2,
                 ),
-                color: Theme.of(context).scaffoldBackgroundColor,
+                color: Theme.of(context).cardColor,
                 child: Center(
                   child: Column(
                     children: [
@@ -61,60 +61,69 @@ class MenuPage extends StatelessWidget {
             const SizedBox(
               height: kDefaultPadding,
             ),
-            SizedBox(
-              height: 170,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildSettingCard(
-                    context: context,
-                    onTap: () => AutoRouter.of(context).push(
-                      const LanguageSettingRoute(),
-                    ),
-                    iconData: Ionicons.globe_outline,
-                    iconColor: kSecondaryBlue,
-                    title: 'Language',
+            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildSettingCard(
+                  context: context,
+                  onTap: () => AutoRouter.of(context).push(
+                    const LanguageSettingRoute(),
                   ),
-                  _buildSettingCard(
-                    context: context,
-                    onTap: () => AutoRouter.of(context).push(
-                      const ThemeSettingRoute(),
-                    ),
-                    iconData: Ionicons.sunny_outline,
-                    iconColor: kSecondaryYellow,
-                    title: 'Theme',
+                  iconData: Ionicons.globe_outline,
+                  iconColor: kSecondaryBlue,
+                  title: 'Language',
+                ),
+                const SizedBox(
+                  height: kDefaultPadding,
+                ),
+                _buildSettingCard(
+                  context: context,
+                  onTap: () => AutoRouter.of(context).push(
+                    const ThemeSettingRoute(),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(
-              height: kDefaultPadding,
-            ),
-            SizedBox(
-              height: 170,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildSettingCard(
-                    context: context,
-                    onTap: () => AutoRouter.of(context).push(
-                      const AboutUsRoute(),
-                    ),
-                    iconData: Ionicons.information_circle_outline,
-                    iconColor: kTextColorGrey,
-                    title: 'About Us',
+                  iconData: Ionicons.sunny_outline,
+                  iconColor: kSecondaryYellow,
+                  title: 'Theme',
+                ),
+                const SizedBox(
+                  height: kDefaultPadding,
+                ),
+                _buildSettingCard(
+                  context: context,
+                  onTap: () => AutoRouter.of(context).push(
+                    const AboutUsRoute(),
                   ),
-                  _buildSettingCard(
-                    context: context,
-                    onTap: () {
-                      context.read<AppBloc>().add(AppLogoutRequested());
-                    },
-                    iconData: Ionicons.log_out_outline,
-                    iconColor: kSecondaryRed,
-                    title: 'Logout',
-                  ),
-                ],
-              ),
+                  iconData: Ionicons.information_circle_outline,
+                  iconColor: kTextColorGrey,
+                  title: 'About Us',
+                ),
+                const SizedBox(
+                  height: kDefaultPadding,
+                ),
+                _buildSettingCard(
+                  context: context,
+                  onTap: () {
+                    showDialog<bool>(
+                      context: context,
+                      builder: (context) => CustomAlertDialog(
+                        title: 'Confirm LogOut',
+                        content: 'Are you sure you want to log out?',
+                        submitButtonColor: Theme.of(context).errorColor,
+                        submitLabel: 'Log Out',
+                        onCancel: () => AutoRouter.of(context).pop(false),
+                        onSubmit: () => AutoRouter.of(context).pop(true),
+                      ),
+                    ).then((choice) {
+                      if (choice != null && choice) {
+                        context.read<AppBloc>().add(AppLogoutRequested());
+                      }
+                    });
+                  },
+                  iconData: Ionicons.log_out_outline,
+                  iconColor: kSecondaryRed,
+                  title: 'Log Out',
+                ),
+              ],
             )
           ],
         ),
@@ -131,29 +140,26 @@ class MenuPage extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: RoundedContainer(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              RoundedContainer(
-                padding: const EdgeInsets.all(10),
-                margin: const EdgeInsets.symmetric(vertical: 10),
-                color: kIconColorGrey,
-                child: Icon(
-                  iconData,
-                  color: iconColor,
-                  size: 40,
-                ),
+      child: RoundedContainer(
+        color: Theme.of(context).cardColor,
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          children: [
+            RoundedContainer(
+              padding: const EdgeInsets.all(10),
+              margin: const EdgeInsets.all(10),
+              color: iconColor.withOpacity(.4),
+              child: Icon(
+                iconData,
+                color: iconColor,
+                size: 24,
               ),
-              Text(
-                title,
-                style: CustomTextStyle.heading3(context),
-              ),
-            ],
-          ),
+            ),
+            Text(
+              title,
+              style: CustomTextStyle.heading3(context),
+            ),
+          ],
         ),
       ),
     );

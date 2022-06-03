@@ -4,7 +4,7 @@ abstract class ProjectEvent extends Equatable {
   const ProjectEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class LoadProject extends ProjectEvent {
@@ -18,9 +18,9 @@ class LoadProject extends ProjectEvent {
 class UpdateProject extends ProjectEvent {
   const UpdateProject(this.project);
 
-  final Project project;
+  final Project? project;
   @override
-  List<Object> get props => [project];
+  List<Object?> get props => [project];
 }
 
 class EditProject extends ProjectEvent {
@@ -37,4 +37,12 @@ class DeleteProject extends ProjectEvent {
   final Project project;
   @override
   List<Object> get props => [project];
+}
+
+class AddJoinRequest extends ProjectEvent {
+  const AddJoinRequest({required this.project, required this.userId});
+  final Project project;
+  final String userId;
+  @override
+  List<Object> get props => [userId];
 }

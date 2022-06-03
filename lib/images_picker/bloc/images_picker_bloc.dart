@@ -25,10 +25,15 @@ class ImagesPickerBloc extends Bloc<ImagesPickerEvent, ImagesPickerState> {
     emit(state.copyWith(status: ImagePickersStatus.loading));
     try {
       final albums = await _mediaRepository.fetchAllAlbums();
-      final currentAlbum = albums.first;
-      final albumMedias = await _mediaRepository.getAllAlbumAssets(
-        album: currentAlbum,
-      );
+      AssetPathEntity? currentAlbum;
+      var albumMedias = <AssetEntity>[];
+      if (albums.isNotEmpty) {
+        final currentAlbum = albums.first;
+        albumMedias = await _mediaRepository.getAllAlbumAssets(
+          album: currentAlbum,
+        );
+      }
+
       emit(
         state.copyWith(
           albums: albums,

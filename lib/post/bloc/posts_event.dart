@@ -10,16 +10,33 @@ abstract class PostsEvent extends Equatable {
 class FetchPosts extends PostsEvent {
   const FetchPosts({this.userId});
 
-  ///Pass userId in case need to
+  ///Pass userId to
   ///Fetch all posts of an certain user.
   final String? userId;
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+}
 
-    return other is FetchPosts && other.userId == userId;
-  }
+class LoadMorePosts extends PostsEvent {
+  const LoadMorePosts({this.userId});
 
+  final String? userId;
+}
+
+class DeletePost extends PostsEvent {
+  const DeletePost({required this.postId});
+
+  final String postId;
+}
+
+class PostsPageUpdates extends PostsEvent {
+  const PostsPageUpdates({
+    required this.pageNumber,
+    required this.newPostsPage,
+    this.userId,
+  });
+
+  final int pageNumber;
+  final List<Post> newPostsPage;
+  final String? userId;
   @override
-  int get hashCode => userId.hashCode;
+  List<Object> get props => [pageNumber, newPostsPage];
 }
