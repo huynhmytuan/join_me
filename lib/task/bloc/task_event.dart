@@ -31,6 +31,14 @@ class EditTask extends TaskEvent {
   List<Object> get props => [task];
 }
 
+class UpdateSubtask extends TaskEvent {
+  const UpdateSubtask(this.subTasks);
+
+  final List<Task> subTasks;
+  @override
+  List<Object> get props => [subTasks];
+}
+
 class AddSubTask extends TaskEvent {
   const AddSubTask(this.task);
 
@@ -46,3 +54,5 @@ class DeleteTask extends TaskEvent {
   @override
   List<Object> get props => [task];
 }
+
+class TaskNotFound extends TaskEvent {}

@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '114164703660',
     projectId: 'join-me-ad622',
     storageBucket: 'join-me-ad622.appspot.com',
-    iosClientId: '114164703660-j1tna7ilngm2mta7v77eajn5vahr34md.apps.googleusercontent.com',
+    iosClientId:
+        '114164703660-j1tna7ilngm2mta7v77eajn5vahr34md.apps.googleusercontent.com',
     iosBundleId: 'com.pinkteam.joinme',
   );
 }

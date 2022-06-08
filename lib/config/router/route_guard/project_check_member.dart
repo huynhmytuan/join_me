@@ -1,6 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:join_me/app/blocs/app_bloc.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/data/repositories/project_repository.dart';

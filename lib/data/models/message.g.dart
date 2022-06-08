@@ -12,6 +12,9 @@ Message _$MessageFromJson(Map<String, dynamic> json) => Message(
       createdAt: DateTime.parse(json['createdAt'] as String),
       authorId: json['authorId'] as String,
       content: json['content'] as String,
+      seenBy: (json['seenBy'] as List<dynamic>)
+          .map((dynamic e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
@@ -20,4 +23,5 @@ Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
       'createdAt': instance.createdAt.toIso8601String(),
       'authorId': instance.authorId,
       'content': instance.content,
+      'seenBy': instance.seenBy,
     };

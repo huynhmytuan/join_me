@@ -2,9 +2,15 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/app/cubit/app_message_cubit.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
+import 'package:join_me/message/bloc/conversations_bloc.dart';
+import 'package:join_me/message/bloc/messages_bloc.dart';
+import 'package:join_me/notification/bloc/notification_bloc.dart';
+import 'package:join_me/post/bloc/posts_bloc.dart';
+import 'package:join_me/project/bloc/project_overview_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,6 +21,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  @override
+  void initState() {
+    final currentUser = context.read<AppBloc>().state.user;
+    context.read<ConversationsBloc>().add(FetchConversations(currentUser.id));
+    context.read<ProjectOverviewBloc>().add(LoadProjects(currentUser.id));
+    context.read<NotificationBloc>().add(LoadNotifications(currentUser.id));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<AppMessageCubit, AppMessageState>(

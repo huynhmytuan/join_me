@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/data/models/notification.dart';
+import 'package:join_me/data/repositories/notification_repository.dart';
 import 'package:join_me/utilities/keys/comment_keys.dart';
 import 'package:join_me/utilities/keys/post_keys.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -11,11 +14,15 @@ class PostRepository {
   PostRepository({
     FirebaseFirestore? firebaseFirestore,
     FirebaseStorage? firebaseStorage,
+    NotificationRepository? notificationRepository,
   })  : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
-        _firebaseStorage = firebaseStorage ?? FirebaseStorage.instance;
+        _firebaseStorage = firebaseStorage ?? FirebaseStorage.instance,
+        _notificationRepository =
+            notificationRepository ?? NotificationRepository();
 
   final FirebaseFirestore _firebaseFirestore;
   final FirebaseStorage _firebaseStorage;
+  final NotificationRepository _notificationRepository;
 
   Stream<List<Post>> fetchPosts({
     Post? lastedPost,
@@ -52,12 +59,12 @@ class PostRepository {
   }
 
   //Get post
-  Stream<Post> getPostById({required String postId}) {
+  Stream<Post?> getPostById({required String postId}) {
     return _firebaseFirestore
         .collection(PostKeys.collection)
         .doc(postId)
         .snapshots()
-        .map((doc) => Post.fromJson(doc.data()!));
+        .map((doc) => doc.exists ? Post.fromJson(doc.data()!) : null);
   }
 
   //Add Post
@@ -130,12 +137,39 @@ class PostRepository {
     } else {
       likes.add(userId);
     }
-
     await ref.set(
       <String, dynamic>{PostKeys.likes: likes},
       SetOptions(
         merge: true,
       ),
     );
+    if (userId != post.authorId && !post.likes.contains(userId)) {
+      final notification = await _notificationRepository.findNotification(
+        type: NotificationType.likePost,
+        actorId: userId,
+        targetId: post.id,
+        notifier: post.authorId,
+      );
+      if (notification == null) {
+        unawaited(
+          _notificationRepository.addNotification(
+            notification: NotificationModel(
+              id: '',
+              createdAt: DateTime.now(),
+              notificationType: NotificationType.likePost,
+              actorId: userId,
+              targetId: post.id,
+              notifierId: post.authorId,
+            ),
+          ),
+        );
+      } else {
+        unawaited(
+          _notificationRepository.update(
+            notification: notification.copyWith(createdAt: DateTime.now()),
+          ),
+        );
+      }
+    }
   }
 }

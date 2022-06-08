@@ -38,6 +38,14 @@ class SingleTaskPage extends StatelessWidget {
           }
         },
         builder: (context, state) {
+          if (state.status == TaskStateStatus.notFound) {
+            return Scaffold(
+              appBar: AppBar(),
+              body: const Center(
+                child: Text('Not Found'),
+              ),
+            );
+          }
           if (state.status == TaskStateStatus.loading) {
             return Scaffold(
               appBar: AppBar(),
@@ -594,6 +602,7 @@ class _TaskViewState extends State<TaskView> {
                       ).then((choice) {
                         if (choice != null && choice) {
                           taskBloc.add(DeleteTask(taskBloc.state.task));
+                          AutoRouter.of(context).pop();
                         }
                       });
                     },

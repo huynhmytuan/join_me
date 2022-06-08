@@ -89,6 +89,7 @@ class StackedImages extends StatelessWidget {
     return imageUrlList.isEmpty
         ? emptyHandler ?? const Text('Empty')
         : Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Stack(
                 alignment: Alignment.centerLeft,

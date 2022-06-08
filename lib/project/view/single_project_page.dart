@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:join_me/app/blocs/app_bloc.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
@@ -12,6 +12,7 @@ import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/utilities/extensions/extensions.dart';
 import 'package:join_me/widgets/bottom_sheet/selection_bottom_sheet.dart';
+import 'package:join_me/widgets/count_badge.dart';
 import 'package:join_me/widgets/dialog/custom_alert_dialog.dart';
 
 class SingleProjectPage extends StatelessWidget {
@@ -241,25 +242,7 @@ class _ProjectViewState extends State<ProjectView> {
               title: 'Members',
               iconData: Ionicons.people_outline,
               trailing: projectBloc.state.project.requests.isNotEmpty
-                  ? Container(
-                      height: 20,
-                      width: 20,
-                      alignment: Alignment.center,
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                      child: FittedBox(
-                        child: Text(
-                          projectBloc.state.project.requests.length > 99
-                              ? '99+'
-                              : projectBloc.state.project.requests.length
-                                  .toString(),
-                          style: CustomTextStyle.heading4(context)
-                              .copyWith(color: Colors.white),
-                        ),
-                      ),
-                    )
+                  ? CountBadge(count: projectBloc.state.project.requests.length)
                   : null,
             ),
             if (isOwner)

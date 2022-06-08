@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:join_me/data/models/app_user.dart';
@@ -44,22 +46,28 @@ class NewPostCubit extends Cubit<NewPostState> {
   }
 
   Future<void> submitPost() async {
-    await _postRepository.addPost(
-      post: Post(
-        id: '',
-        type: state.invitedProject.id.isEmpty
-            ? PostType.normal
-            : PostType.invitation,
-        authorId: _author.id,
-        createdAt: DateTime.now(),
-        content: state.content,
-        medias: const [],
-        projectInvitationId:
-            state.invitedProject.id.isEmpty ? '' : state.invitedProject.id,
-        likes: const [],
-        commentCount: 0,
-      ),
-      medias: state.medias,
-    );
+    try {
+      emit(state.copyWith(status: NewPostStatus.newPostUpload));
+      await _postRepository.addPost(
+        post: Post(
+          id: '',
+          type: state.invitedProject.id.isEmpty
+              ? PostType.normal
+              : PostType.invitation,
+          authorId: _author.id,
+          createdAt: DateTime.now(),
+          content: state.content,
+          medias: const [],
+          projectInvitationId:
+              state.invitedProject.id.isEmpty ? '' : state.invitedProject.id,
+          likes: const [],
+          commentCount: 0,
+          follower: [_author.id],
+        ),
+        medias: state.medias,
+      );
+    } catch (e) {
+      log(e.toString());
+    }
   }
 }

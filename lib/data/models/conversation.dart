@@ -17,10 +17,19 @@ class Conversation extends Equatable {
   const Conversation({
     required this.id,
     required this.createdAt,
+    required this.lastModified,
     required this.creator,
     required this.type,
     required this.members,
   });
+  factory Conversation.empty() => Conversation(
+        id: '',
+        createdAt: DateTime.now(),
+        lastModified: DateTime.now(),
+        creator: '',
+        type: ConversationType.unknown,
+        members: const [],
+      );
 
   factory Conversation.fromJson(Map<String, dynamic> json) =>
       _$ConversationFromJson(json);
@@ -31,6 +40,8 @@ class Conversation extends Equatable {
   final String id;
   @JsonKey(name: ConversationKeys.createdAt)
   final DateTime createdAt;
+  @JsonKey(name: ConversationKeys.lastModified)
+  final DateTime lastModified;
   @JsonKey(name: ConversationKeys.creator)
   final String creator;
   @JsonKey(name: ConversationKeys.type)
@@ -40,6 +51,6 @@ class Conversation extends Equatable {
 
   @override
   List<Object> get props {
-    return [id, createdAt, creator, type, members];
+    return [id, createdAt, creator, type, members, lastModified];
   }
 }

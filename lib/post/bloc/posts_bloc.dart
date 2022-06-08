@@ -182,7 +182,8 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
   }
 
   Future<PostViewModel> getViewModel(Post post) async {
-    final author = await _userRepository.getUserById(userId: post.authorId);
+    final author =
+        await _userRepository.getUserById(userId: post.authorId).first;
     final project = post.projectInvitationId.isNotEmpty
         ? await _projectRepository
             .getProjectById(post.projectInvitationId)

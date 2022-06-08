@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:join_me/data/repositories/authentication_repository.dart';
 
 import 'package:join_me/l10n/l10n.dart';
-import 'package:join_me/login/blocs/login_cubit.dart';
+import 'package:join_me/login/bloc/login_cubit.dart';
 import 'package:join_me/login/view/view.dart';
 import 'package:join_me/utilities/constant.dart';
 

@@ -22,6 +22,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
         super(PostState.initial()) {
     on<LoadPost>(_onLoadPost);
     on<UpdatePost>(_onUpdatePost);
+    on<NoPostFound>(_onNoPostFound);
   }
 
   final UserRepository _userRepository;
@@ -37,7 +38,11 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     await _postSubscription?.cancel();
     _postSubscription =
         _postRepository.getPostById(postId: event.postId).listen((post) {
-      add(UpdatePost(post));
+      if (post == null) {
+        add(NoPostFound());
+      } else {
+        add(UpdatePost(post));
+      }
     });
   }
 
@@ -47,7 +52,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   ) async {
     try {
       final author =
-          await _userRepository.getUserById(userId: event.post.authorId);
+          await _userRepository.getUserById(userId: event.post.authorId).first;
       final project = event.post.projectInvitationId.isNotEmpty
           ? await _projectRepository
               .getProjectById(event.post.projectInvitationId)
@@ -66,6 +71,13 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     } catch (e) {
       emit(state.copyWith(status: PostStatus.failure));
     }
+  }
+
+  void _onNoPostFound(
+    NoPostFound event,
+    Emitter<PostState> emit,
+  ) async {
+    emit(state.copyWith(status: PostStatus.notFound));
   }
 
   @override

@@ -20,6 +20,9 @@ Post _$PostFromJson(Map<String, dynamic> json) => Post(
           .map((dynamic e) => e as String)
           .toList(),
       commentCount: json['commentCount'] as int,
+      follower: (json['follower'] as List<dynamic>)
+          .map((dynamic e) => e as String)
+          .toList(),
     );
 
 Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
@@ -32,6 +35,7 @@ Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'projectInvitationId': instance.projectInvitationId,
       'likes': instance.likes,
       'commentCount': instance.commentCount,
+      'follower': instance.follower,
     };
 
 const _$PostTypeEnumMap = {

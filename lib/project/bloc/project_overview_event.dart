@@ -8,7 +8,7 @@ abstract class ProjectEvent extends Equatable {
 }
 
 class LoadProjects extends ProjectEvent {
-  const LoadProjects({required this.userId});
+  const LoadProjects(this.userId);
 
   final String userId;
 

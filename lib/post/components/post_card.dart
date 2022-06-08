@@ -3,8 +3,9 @@ import 'dart:developer';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:join_me/app/blocs/app_bloc.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
@@ -144,13 +145,15 @@ class _PostReaction extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appLocale = Localizations.localeOf(context);
+
     return Padding(
       padding: const EdgeInsets.all(10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '''${post.likes.length.toString()} like, ${post.commentCount} comments''',
+            '''${NumberFormat.compact(locale: appLocale.languageCode).format(post.likes.length)} like, ${NumberFormat.compact(locale: appLocale.languageCode).format(post.commentCount)} comments''',
             style: CustomTextStyle.bodySmall(context)
                 .copyWith(color: kTextColorGrey),
           ),

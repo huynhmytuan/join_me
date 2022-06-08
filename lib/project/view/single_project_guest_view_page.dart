@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:join_me/app/blocs/app_bloc.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/app/cubit/app_message_cubit.dart';
+import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/repositories/repositories.dart';
 
@@ -71,6 +72,7 @@ class _ProjectInformationList extends StatelessWidget {
   Widget build(BuildContext context) {
     final appLocale = Localizations.localeOf(context);
     return BlocBuilder<ProjectBloc, ProjectState>(
+      bloc: projectBloc,
       builder: (context, state) {
         return SliverFillRemaining(
           child: Container(
@@ -129,7 +131,10 @@ class _ProjectInformationList extends StatelessWidget {
                       imageUrl: state.owner.photoUrl,
                       size: 40,
                     ),
-                    title: Text(state.owner.name),
+                    title: Text(
+                      state.owner.name,
+                      style: CustomTextStyle.heading4(context),
+                    ),
                   ),
                   const SizedBox(
                     height: kDefaultPadding,
@@ -145,6 +150,9 @@ class _ProjectInformationList extends StatelessWidget {
                     itemCount:
                         (state.members.length >= 5) ? 5 : state.members.length,
                     itemBuilder: (context, index) => ListTile(
+                      onTap: () => AutoRouter.of(context).push(
+                        UserInfoRoute(userId: state.members[index].id),
+                      ),
                       contentPadding: EdgeInsets.zero,
                       visualDensity: VisualDensity.comfortable,
                       leading: CircleAvatarWidget(
@@ -182,7 +190,8 @@ class _JoinProjectButton extends StatelessWidget {
     return BlocBuilder<ProjectBloc, ProjectState>(
       bloc: projectBloc,
       builder: (context, state) {
-        final isMember = state.members.contains(_currentUser);
+        final isMember =
+            state.members.any((user) => user.id == _currentUser.id);
         final isRequested = state.project.requests.contains(_currentUser.id);
         var title = '';
         if (isMember) {
@@ -238,22 +247,12 @@ class _AppBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverAppBar(
       backgroundColor: Theme.of(context).primaryColor,
-      leading: GestureDetector(
+      leading: RoundedIconButton(
         onTap: () => AutoRouter.of(context).pop(),
-        child: AspectRatio(
-          aspectRatio: 1,
-          child: Container(
-            margin: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(kDefaultRadius),
-              color: Colors.white.withOpacity(.4),
-            ),
-            child: const Icon(
-              Ionicons.chevron_back,
-              size: 24,
-              color: Colors.white,
-            ),
-          ),
+        icon: const Icon(
+          Ionicons.chevron_back,
+          size: 24,
+          color: Colors.white,
         ),
       ),
       expandedHeight: 130,

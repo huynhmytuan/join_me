@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
@@ -152,6 +153,7 @@ class AuthenticationRepository {
   final StreamController<AppUser> _userStreamController =
       StreamController.broadcast();
   late Stream<AppUser> _userStream;
+  StreamSubscription? _userDataSubscription;
 
   @visibleForTesting
   static const userCacheKey = '__user_cache_key__';
@@ -159,10 +161,8 @@ class AuthenticationRepository {
   Future<void> checkLoggedUser() async {
     final firebaseUser = _firebaseAuth.currentUser;
     if (firebaseUser != null) {
-      var user = firebaseUser.toUser;
-      _userStreamController.add(user);
-      user = await _userRepository.getUserById(userId: user.id);
-      _userStreamController.add(user);
+      final user = firebaseUser.toUser;
+      onAuthenticated(user);
     }
   }
 
@@ -173,6 +173,20 @@ class AuthenticationRepository {
         return user;
       },
     );
+  }
+
+  void onAuthenticated(AppUser user) {
+    Future.wait([_userRepository.writeUserDeviceToken(user.id)]);
+    _userDataSubscription?.cancel();
+    _userDataSubscription =
+        _userRepository.getUserById(userId: user.id).listen((user) {
+      log(user.toString(), name: 'APP_USER');
+      _userStreamController.add(user);
+    });
+  }
+
+  void cancelUserDataStream() {
+    _userDataSubscription?.cancel();
   }
 
   AppUser get currentUser {
@@ -195,7 +209,7 @@ class AuthenticationRepository {
         user = await _userRepository.createNewUserDetail(
           user: user.copyWith(name: name),
         );
-        _userStreamController.add(user);
+        onAuthenticated(user);
       }
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw SignUpWithEmailAndPasswordFailure.fromCode(e.code);
@@ -224,7 +238,7 @@ class AuthenticationRepository {
       if (firebaseUser != null) {
         var user = firebaseUser.toUser;
         user = await _userRepository.createNewUserDetail(user: user);
-        _userStreamController.add(user);
+        onAuthenticated(user);
       }
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw LogInWithGoogleFailure.fromCode(e.code);
@@ -247,9 +261,8 @@ class AuthenticationRepository {
       );
       final firebaseUser = userCredential.user;
       if (firebaseUser != null) {
-        var user = firebaseUser.toUser;
-        user = await _userRepository.getUserById(userId: user.id);
-        _userStreamController.add(user);
+        final user = firebaseUser.toUser;
+        onAuthenticated(user);
       }
     } on firebase_auth.FirebaseAuthException catch (e) {
       throw LogInWithEmailAndPasswordFailure.fromCode(e.code);
@@ -264,10 +277,12 @@ class AuthenticationRepository {
   /// Throws a [LogOutFailure] if an exception occurs.
   Future<void> logOut() async {
     try {
+      await _userRepository.removeUserDeviceToken(currentUser.id);
       await Future.wait([
         _firebaseAuth.signOut(),
         _googleSignIn.signOut(),
       ]);
+      cancelUserDataStream();
       _userStreamController.add(AppUser.empty);
     } catch (_) {
       throw LogOutFailure();

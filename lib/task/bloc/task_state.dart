@@ -6,6 +6,7 @@ enum TaskStateStatus {
   success,
   failure,
   deleted,
+  notFound,
 }
 
 class TaskState extends Equatable {

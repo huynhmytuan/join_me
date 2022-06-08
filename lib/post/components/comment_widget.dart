@@ -59,14 +59,14 @@ class _CommentWidgetState extends State<CommentWidget> {
             onLongPress: widget.onLongPressed,
             child: Container(
               constraints: BoxConstraints(
-                maxWidth: MediaQuery.of(context).size.width * 0.75,
+                maxWidth: MediaQuery.of(context).size.width * 0.70,
               ),
               padding: const EdgeInsets.symmetric(
                 vertical: kDefaultPadding / 2,
                 horizontal: kDefaultPadding,
               ),
               decoration: BoxDecoration(
-                color: Theme.of(context).scaffoldBackgroundColor,
+                color: Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(kDefaultRadius),
                 boxShadow: [kDefaultBoxShadow],
               ),

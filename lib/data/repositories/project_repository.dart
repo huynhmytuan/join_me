@@ -118,4 +118,45 @@ class ProjectRepository {
       rethrow;
     }
   }
+
+  Future<void> acceptJoinRequest({
+    required String projectId,
+    required String requesterId,
+  }) async {
+    try {
+      //Get Project request referent and delete all.
+      final ref =
+          _firebaseFirestore.collection(ProjectKeys.collection).doc(projectId);
+      //Update request Id
+      await ref.set(
+        <String, dynamic>{
+          ProjectKeys.members: FieldValue.arrayUnion(<String>[requesterId]),
+          ProjectKeys.requests: FieldValue.arrayRemove(<String>[requesterId]),
+        },
+        SetOptions(merge: true),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> rejectJoinRequest({
+    required String projectId,
+    required String requesterId,
+  }) async {
+    try {
+      //Get Project request referent and delete all.
+      final ref =
+          _firebaseFirestore.collection(ProjectKeys.collection).doc(projectId);
+      //Update request Id
+      await ref.set(
+        <String, dynamic>{
+          ProjectKeys.requests: FieldValue.arrayRemove(<String>[requesterId])
+        },
+        SetOptions(merge: true),
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

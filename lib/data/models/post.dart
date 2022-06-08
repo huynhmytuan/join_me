@@ -25,6 +25,7 @@ class Post extends Equatable {
     required this.projectInvitationId,
     required this.likes,
     required this.commentCount,
+    required this.follower,
   });
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
@@ -39,6 +40,7 @@ class Post extends Equatable {
       projectInvitationId: '',
       likes: const [],
       commentCount: 0,
+      follower: const [],
     );
   }
 
@@ -80,6 +82,11 @@ class Post extends Equatable {
   @JsonKey(name: PostKeys.commentCount)
   final int commentCount;
 
+  ///Return a list of id [String], contain all user's id who will receive
+  ///notification update about this post
+  @JsonKey(name: PostKeys.follower)
+  final List<String> follower;
+
   Post copyWith({
     String? id,
     PostType? type,
@@ -90,6 +97,7 @@ class Post extends Equatable {
     List<String>? likes,
     List<String>? medias,
     int? commentCount,
+    List<String>? follower,
   }) {
     return Post(
       id: id ?? this.id,
@@ -101,6 +109,7 @@ class Post extends Equatable {
       projectInvitationId: projectInvitationId ?? this.projectInvitationId,
       likes: likes ?? this.likes,
       commentCount: commentCount ?? this.commentCount,
+      follower: follower ?? this.follower,
     );
   }
 
@@ -113,6 +122,7 @@ class Post extends Equatable {
         projectInvitationId,
         content,
         likes,
-        commentCount
+        commentCount,
+        follower,
       ];
 }

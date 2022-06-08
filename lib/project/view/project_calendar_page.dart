@@ -51,18 +51,18 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
     return tasksInDay;
   }
 
-  List<Task> _loadDayTask(List<Task> tasks) {
-    List<Task> tasksInDay;
+  List<TaskViewModel> _loadDayTask(List<TaskViewModel> tasks) {
+    List<TaskViewModel> tasksInDay;
     switch (_dayFilter) {
       case DayFilter.filterByCreatedDate:
         tasksInDay = tasks
-            .where((task) => isSameDay(task.createdAt, _selectedDay))
+            .where((taskVM) => isSameDay(taskVM.task.createdAt, _selectedDay))
             .toList();
 
         break;
       case DayFilter.filterByDueDate:
         tasksInDay = tasks
-            .where((task) => isSameDay(task.dueDate, _selectedDay))
+            .where((taskVM) => isSameDay(taskVM.task.dueDate, _selectedDay))
             .toList();
         break;
     }
@@ -222,7 +222,9 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
     return Container(
       padding: const EdgeInsets.all(5),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4F6FA),
+        color: Theme.of(context).brightness == Brightness.light
+            ? kIconColorGrey.withOpacity(.4)
+            : Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(kDefaultRadius),
       ),
       child: TableCalendar<Task>(
@@ -301,19 +303,18 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
     String languageCode,
     List<TaskViewModel> tasks,
   ) {
+    final dayTasks = _loadDayTask(tasks);
     return Expanded(
       child: tasks.isEmpty
           ? const Text('No task in this day.')
           : Scrollbar(
               child: ListView.builder(
                 physics: const BouncingScrollPhysics(),
-                itemCount: _loadDayTask(
-                  tasks.map((task) => task.task).toList(),
-                ).length,
+                itemCount: dayTasks.length,
                 itemBuilder: (context, index) {
-                  final taskViewModel = tasks[index];
-
+                  final taskViewModel = dayTasks[index];
                   return TaskCard(
+                    key: UniqueKey(),
                     task: taskViewModel.task,
                     assignedTo: taskViewModel.assignee,
                   );

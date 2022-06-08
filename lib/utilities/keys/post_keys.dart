@@ -9,4 +9,5 @@ class PostKeys {
   static const String medias = 'medias';
   static const String likes = 'likes';
   static const String commentCount = 'commentCount';
+  static const String follower = 'follower';
 }

@@ -2,8 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:join_me/app/blocs/app_bloc.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
@@ -30,16 +31,12 @@ class PostDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //Get appLocale to get language code
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) => PostBloc(
-            userRepository: context.read<UserRepository>(),
-            postRepository: context.read<PostRepository>(),
-            projectRepository: context.read<ProjectRepository>(),
-          )..add(LoadPost(postId: postId)),
-        ),
-      ],
+    return BlocProvider(
+      create: (context) => PostBloc(
+        userRepository: context.read<UserRepository>(),
+        postRepository: context.read<PostRepository>(),
+        projectRepository: context.read<ProjectRepository>(),
+      )..add(LoadPost(postId: postId)),
       child: const _PostView(),
     );
   }
@@ -191,6 +188,12 @@ class _PostContent extends StatelessWidget {
     final _currentUser = context.read<AppBloc>().state.user;
     return BlocBuilder<PostBloc, PostState>(
       builder: (context, state) {
+        if (state.status == PostStatus.notFound) {
+          return const Center(
+            child: Text('Not Found'),
+          );
+        }
+        final appLocale = Localizations.localeOf(context);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -269,7 +272,7 @@ class _PostContent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '''${state.postViewModel.post.likes.length.toString()} like, ${state.postViewModel.post.commentCount} comments''',
+                    '''${NumberFormat.compact(locale: appLocale.languageCode).format(state.postViewModel.post.likes.length)} like, ${NumberFormat.compact(locale: appLocale.languageCode).format(state.postViewModel.post.commentCount)} comments''',
                     style: CustomTextStyle.bodySmall(context)
                         .copyWith(color: kTextColorGrey),
                   ),
@@ -496,27 +499,32 @@ class _CommentInput extends StatefulWidget {
 class _CommentInputState extends State<_CommentInput> {
   @override
   Widget build(BuildContext context) {
-    return BottomTextField(
-      textEditingController: widget.commentTextInputController,
-      focusNode: widget.commentFocusNode,
-      hintText: 'Write a comment...',
-      onSubmit: () {
-        // print(widget.commentTextInputController.text);
-        final currentUser = context.read<AppBloc>().state.user;
-        final commentContent = widget.commentTextInputController.text;
-        context.read<CommentBloc>().add(
-              AddComment(
-                Comment(
-                  id: '',
-                  createdAt: DateTime.now(),
-                  content: commentContent,
-                  authorId: currentUser.id,
-                  postId: widget.postId,
-                  likes: const [],
-                ),
-              ),
-            );
-        widget.commentTextInputController.clear();
+    return BlocBuilder<PostBloc, PostState>(
+      builder: (context, state) {
+        return BottomTextField(
+          textEditingController: widget.commentTextInputController,
+          focusNode: widget.commentFocusNode,
+          hintText: 'Write a comment...',
+          onSubmit: () {
+            // print(widget.commentTextInputController.text);
+            final currentUser = context.read<AppBloc>().state.user;
+            final commentContent = widget.commentTextInputController.text;
+            context.read<CommentBloc>().add(
+                  AddComment(
+                    Comment(
+                      id: '',
+                      createdAt: DateTime.now(),
+                      content: commentContent,
+                      authorId: currentUser.id,
+                      postId: widget.postId,
+                      likes: const [],
+                    ),
+                    state.postViewModel.post,
+                  ),
+                );
+            widget.commentTextInputController.clear();
+          },
+        );
       },
     );
   }

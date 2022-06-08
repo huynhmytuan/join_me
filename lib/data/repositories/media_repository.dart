@@ -9,13 +9,17 @@ class MediaRepository {
     return ps.isAuth;
   }
 
-  Future<List<AssetPathEntity>> fetchAllAlbums() async {
+  Future<List<AssetPathEntity>> fetchAllAlbums({
+    RequestType? requestType,
+  }) async {
     //Check photo permission
     final isAuth = await _photoPermissionAuth();
     if (!isAuth) {
       throw MediaAssetNotGranted();
     }
-    return PhotoManager.getAssetPathList();
+    return PhotoManager.getAssetPathList(
+      type: requestType ?? RequestType.common,
+    );
   }
 
   Future<List<AssetEntity>> getAllAlbumAssets({

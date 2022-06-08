@@ -7,8 +7,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/l10n/l10n.dart';
-import 'package:join_me/login/blocs/login_cubit.dart';
-import 'package:join_me/login/blocs/login_state.dart';
+import 'package:join_me/login/bloc/login_cubit.dart';
+import 'package:join_me/login/bloc/login_state.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
 
@@ -44,8 +44,8 @@ class LoginForm extends StatelessWidget {
             const Spacer(flex: 2),
             Stack(
               children: [
-                SvgPicture.asset(kLogoBackgroundDir),
-                SvgPicture.asset(
+                Image.asset(kLogoBackgroundDir),
+                Image.asset(
                   Theme.of(context).brightness == Brightness.light
                       ? kLogoLightDir
                       : kLogoDarkDir,

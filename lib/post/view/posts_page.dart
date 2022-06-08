@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:join_me/app/cubit/app_message_cubit.dart';
 
 import 'package:join_me/post/bloc/posts_bloc.dart';
 import 'package:join_me/post/components/components.dart';
@@ -48,7 +47,7 @@ class _PostsPageState extends State<PostsPage> {
               elevation: 0,
               title: Row(
                 children: [
-                  SvgPicture.asset(
+                  Image.asset(
                     Theme.of(context).brightness == Brightness.light
                         ? kLogoLightDir
                         : kLogoDarkDir,

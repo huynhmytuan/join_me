@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:join_me/app/blocs/app_bloc.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
@@ -22,6 +22,41 @@ import 'package:photo_manager/photo_manager.dart';
 
 class NewPostPage extends StatelessWidget {
   const NewPostPage({Key? key}) : super(key: key);
+
+  Future<bool> _onWillPop(BuildContext context) async {
+    final newPostBlocState = context.read<NewPostCubit>().state;
+    if (newPostBlocState.status == NewPostStatus.newPostUpload) {
+      return true;
+    }
+    var isPop = false;
+    if (newPostBlocState.content.isNotEmpty ||
+        newPostBlocState.medias.isNotEmpty ||
+        newPostBlocState.invitedProject.id.isNotEmpty) {
+      await showDialog<bool>(
+        context: context,
+        builder: (context) => CustomAlertDialog(
+          title: 'Discard all changes?',
+          content: 'All contents which editing will be lost. Continue?',
+          submitLabel: 'Delete',
+          submitButtonColor: Colors.red,
+          onSubmit: () {
+            AutoRouter.of(context).pop(true);
+          },
+          onCancel: () {
+            AutoRouter.of(context).pop(false);
+          },
+        ),
+      ).then((value) {
+        if (value != null && value) {
+          isPop = true;
+        }
+      });
+    } else {
+      isPop = true;
+    }
+    return isPop;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -29,48 +64,58 @@ class NewPostPage extends StatelessWidget {
         postRepository: context.read<PostRepository>(),
         author: context.read<AppBloc>().state.user,
       ),
-      child: KeyboardDismisser(
-        // ignore: prefer_const_literals_to_create_immutables
-        gestures: [
-          GestureType.onTap,
-        ],
-        child: Scaffold(
-          appBar: AppBar(
-            leading: const _CloseButton(),
-            title: const Text('Create new post'),
-            actions: const [_AddNewPostButton()],
-          ),
-          body: Container(
-            margin: const EdgeInsets.only(bottom: 40),
-            child: Scrollbar(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.all(10),
-                child: Column(
-                  children: const [
-                    _UserInfo(),
-                    _PostContentInput(),
-                    _MediaPreview(),
-                    _InvitationAdded(),
-                  ],
+      child: BlocBuilder<NewPostCubit, NewPostState>(
+        builder: (context, state) {
+          return WillPopScope(
+            onWillPop: () async {
+              final value = await _onWillPop(context);
+              return value;
+            },
+            child: KeyboardDismisser(
+              // ignore: prefer_const_literals_to_create_immutables
+              gestures: [
+                GestureType.onTap,
+              ],
+              child: Scaffold(
+                appBar: AppBar(
+                  leading: const _CloseButton(),
+                  title: const Text('Create new post'),
+                  actions: const [_AddNewPostButton()],
+                ),
+                body: Container(
+                  margin: const EdgeInsets.only(bottom: 40),
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      padding: const EdgeInsets.all(10),
+                      child: Column(
+                        children: const [
+                          _UserInfo(),
+                          _PostContentInput(),
+                          _MediaPreview(),
+                          _InvitationAdded(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                floatingActionButton: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  physics: const BouncingScrollPhysics(),
+                  child: Row(
+                    children: const [
+                      _AddMediaButton(),
+                      SizedBox(
+                        width: kDefaultPadding,
+                      ),
+                      _AddInvitationButton()
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          floatingActionButton: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            physics: const BouncingScrollPhysics(),
-            child: Row(
-              children: const [
-                _AddMediaButton(),
-                SizedBox(
-                  width: kDefaultPadding,
-                ),
-                _AddInvitationButton()
-              ],
-            ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }
@@ -85,32 +130,7 @@ class _CloseButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: () {
-        final newPostBlocState = context.read<NewPostCubit>().state;
-        if (newPostBlocState.content.isNotEmpty ||
-            newPostBlocState.medias.isNotEmpty ||
-            newPostBlocState.invitedProject.id.isNotEmpty) {
-          showDialog<bool>(
-            context: context,
-            builder: (context) => CustomAlertDialog(
-              title: 'Discard all changes?',
-              content: 'All contents which editing will be lost. Continue?',
-              submitLabel: 'Delete',
-              submitButtonColor: Colors.red,
-              onSubmit: () {
-                AutoRouter.of(context).pop(true);
-              },
-              onCancel: () {
-                AutoRouter.of(context).pop(false);
-              },
-            ),
-          ).then((value) {
-            if (value != null && value) {
-              AutoRouter.of(context).pop();
-            }
-          });
-        } else {
-          AutoRouter.of(context).pop();
-        }
+        AutoRouter.of(context).pop();
       },
       icon: const Icon(Ionicons.close),
     );
@@ -326,8 +346,11 @@ class _AddNewPostButton extends StatelessWidget {
     return BlocBuilder<NewPostCubit, NewPostState>(
       builder: (context, state) {
         return IconButton(
+          key: UniqueKey(),
           color: Theme.of(context).primaryColor,
-          onPressed: (state.content.isNotEmpty || state.medias.isNotEmpty)
+          onPressed: (state.content.isNotEmpty ||
+                  state.medias.isNotEmpty ||
+                  state.invitedProject.id.isNotEmpty)
               ? () {
                   context.read<NewPostCubit>().submitPost();
                   AutoRouter.of(context).pop();

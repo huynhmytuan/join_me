@@ -9,6 +9,7 @@ part 'images_picker_state.dart';
 class ImagesPickerBloc extends Bloc<ImagesPickerEvent, ImagesPickerState> {
   ImagesPickerBloc({
     required MediaRepository mediaRepository,
+    required this.limit,
   })  : _mediaRepository = mediaRepository,
         super(const ImagesPickerState()) {
     on<LoadMedias>(_onLoadMedias);
@@ -17,6 +18,7 @@ class ImagesPickerBloc extends Bloc<ImagesPickerEvent, ImagesPickerState> {
   }
 
   final MediaRepository _mediaRepository;
+  final int? limit;
 
   Future<void> _onLoadMedias(
     LoadMedias event,
@@ -24,7 +26,9 @@ class ImagesPickerBloc extends Bloc<ImagesPickerEvent, ImagesPickerState> {
   ) async {
     emit(state.copyWith(status: ImagePickersStatus.loading));
     try {
-      final albums = await _mediaRepository.fetchAllAlbums();
+      final albums = await _mediaRepository.fetchAllAlbums(
+        requestType: event.requestType,
+      );
       AssetPathEntity? currentAlbum;
       var albumMedias = <AssetEntity>[];
       if (albums.isNotEmpty) {
@@ -33,7 +37,6 @@ class ImagesPickerBloc extends Bloc<ImagesPickerEvent, ImagesPickerState> {
           album: currentAlbum,
         );
       }
-
       emit(
         state.copyWith(
           albums: albums,
@@ -82,6 +85,9 @@ class ImagesPickerBloc extends Bloc<ImagesPickerEvent, ImagesPickerState> {
     if (selections.contains(event.media)) {
       selections.remove(event.media);
     } else {
+      if (limit != null && selections.length >= limit!) {
+        return;
+      }
       selections.add(event.media);
     }
     emit(state.copyWith(selectedAssets: selections));

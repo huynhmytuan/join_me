@@ -9,6 +9,8 @@ class CircleAvatarWidget extends StatelessWidget {
     required this.imageUrl,
     this.size,
     this.border,
+    this.padding,
+    this.overlay,
   }) : super(key: key);
 
   final String imageUrl;
@@ -18,39 +20,53 @@ class CircleAvatarWidget extends StatelessWidget {
   //
   final BoxBorder? border;
 
+  final EdgeInsets? padding;
+
+  final Widget? overlay;
+
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: padding,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular((size != null) ? size! / 2 : 15),
+        shape: BoxShape.circle,
         border: border,
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular((size != null) ? size! / 2 : 15),
-        child: (imageUrl.isEmpty)
-            ? CircleAvatar(
-                radius: (size != null) ? size! / 2 : 15,
-                backgroundColor: kIconColorGrey,
-                foregroundColor: kTextColorGrey,
-                child: Icon(
-                  Ionicons.person,
-                  size: (size != null) ? size! / 2 : 15,
-                ),
-              )
-            : CachedNetworkImage(
-                imageUrl: imageUrl,
-                errorWidget: (context, url, dynamic error) => CircleAvatar(
-                  radius: (size != null) ? size! / 2 : 15,
-                  foregroundColor: kTextColorGrey,
-                  child: Icon(
-                    Icons.image_not_supported_outlined,
-                    size: (size != null) ? size! / 2 : 15,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          ClipRRect(
+            borderRadius:
+                BorderRadius.circular((size != null) ? size! / 2 : 15),
+            child: (imageUrl.isEmpty)
+                ? CircleAvatar(
+                    radius: (size != null) ? size! / 2 : 15,
+                    backgroundColor: kIconColorGrey,
+                    foregroundColor: kTextColorGrey,
+                    child: Icon(
+                      Ionicons.person,
+                      size: (size != null) ? size! / 2 : 15,
+                    ),
+                  )
+                : CachedNetworkImage(
+                    imageUrl: imageUrl,
+                    errorWidget: (context, url, dynamic error) => CircleAvatar(
+                      radius: (size != null) ? size! / 2 : 15,
+                      foregroundColor: kTextColorGrey,
+                      child: Icon(
+                        Icons.image_not_supported_outlined,
+                        size: (size != null) ? size! / 2 : 15,
+                      ),
+                    ),
+                    fit: BoxFit.cover,
+                    height: size ?? 30,
+                    width: size ?? 30,
                   ),
-                ),
-                fit: BoxFit.cover,
-                height: size ?? 30,
-                width: size ?? 30,
-              ),
+          ),
+          Positioned.fill(
+            child: overlay ?? const SizedBox(),
+          ),
+        ],
       ),
     );
   }

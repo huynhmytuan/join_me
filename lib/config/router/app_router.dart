@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:join_me/config/router/root_wrapper_page.dart';
 import 'package:join_me/config/router/route_guard/project_check_member.dart';
 import 'package:join_me/home/view/view.dart';
-import 'package:join_me/images_picker/view/albums_list_page.dart';
-import 'package:join_me/images_picker/view/images_picker_page.dart';
-import 'package:join_me/images_picker/view/media_grid_page.dart';
+import 'package:join_me/images_picker/view/view.dart';
 import 'package:join_me/login/view/view.dart';
 import 'package:join_me/menu/view/view.dart';
+import 'package:join_me/message/view/new_chat_page.dart';
 import 'package:join_me/message/view/view.dart';
 import 'package:join_me/notification/view/view.dart';
 import 'package:join_me/post/view/view.dart';
@@ -15,6 +14,8 @@ import 'package:join_me/project/bloc/project_bloc.dart';
 import 'package:join_me/project/view/view.dart';
 import 'package:join_me/sign_up/view/view.dart';
 import 'package:join_me/task/view/view.dart';
+import 'package:join_me/user/bloc/user_bloc.dart';
+import 'package:join_me/user/view/edit_profile_page.dart';
 import 'package:join_me/user/view/view.dart';
 import 'package:join_me/widgets/widgets.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -62,7 +63,7 @@ part 'app_router.gr.dart';
                 AutoRoute<dynamic>(
                   path: 'messages',
                   name: 'MessagesRouter',
-                  page: MessagesPage,
+                  page: ConversationsPage,
                 ),
                 AutoRoute<dynamic>(
                   path: 'projects',
@@ -117,6 +118,10 @@ part 'app_router.gr.dart';
               page: SingleProjectGuestViewPage,
             ),
             AutoRoute<dynamic>(
+              path: ':projectId/requests',
+              page: RequestsPage,
+            ),
+            AutoRoute<dynamic>(
               path: 'members',
               page: ProjectMembersPage,
             ),
@@ -141,6 +146,10 @@ part 'app_router.gr.dart';
               page: ChatPage,
             ),
             AutoRoute<dynamic>(
+              path: 'new-chat',
+              page: NewChatPage,
+            ),
+            AutoRoute<dynamic>(
               path: 'language-setting',
               page: LanguageSettingPage,
             ),
@@ -155,6 +164,10 @@ part 'app_router.gr.dart';
             AutoRoute<dynamic>(
               path: 'user-info/:userId',
               page: UserInfoPage,
+            ),
+            AutoRoute<dynamic>(
+              path: 'edit-profile',
+              page: EditProfilePage,
             ),
           ],
         )

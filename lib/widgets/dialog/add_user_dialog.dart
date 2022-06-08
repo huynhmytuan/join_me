@@ -7,8 +7,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
-import 'package:join_me/data/repositories/user_repository.dart';
-import 'package:join_me/user/bloc/users_search_bloc.dart';
+import 'package:join_me/user/cubit/search_user_cubit.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/avatar_circle_widget.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
@@ -37,10 +36,9 @@ class AddUserDialog extends StatefulWidget {
 class _AddUserDialogState extends State<AddUserDialog> {
   List<AppUser> selectedUser = [];
   final searchTextController = TextEditingController();
-  late UsersSearchBloc _userBloc;
+
   @override
   void initState() {
-    _userBloc = UsersSearchBloc(userRepository: UserRepository());
     selectedUser.addAll(widget.initialUserList);
     super.initState();
   }
@@ -107,76 +105,44 @@ class _AddUserDialogState extends State<AddUserDialog> {
             : kTextFieldDarkColor,
         borderRadius: BorderRadius.circular(kDefaultRadius),
       ),
-      child: BlocBuilder<UsersSearchBloc, UsersSearchState>(
-        bloc: _userBloc,
+      child: BlocBuilder<SearchUserCubit, SearchUserState>(
         builder: (context, state) {
-          return TypeAheadField<AppUser>(
-            hideSuggestionsOnKeyboardHide: false,
-            hideOnLoading: true,
+          return TypeAheadFormField<AppUser?>(
             textFieldConfiguration: const TextFieldConfiguration(
               autofocus: true,
               decoration: InputDecoration(
-                isDense: true,
-                hintText: 'Search for username or email',
                 border: InputBorder.none,
               ),
             ),
-            suggestionsCallback: (pattern) {
-              if (pattern.isEmpty) {
-                return [];
+            itemBuilder: (BuildContext context, user) {
+              if (widget.withoutUsers.contains(user)) {
+                return const SizedBox();
               }
-              var returnData = <AppUser>[];
-
-              //Check if search data is null
-              if (widget.searchData != null) {
-                returnData = widget.searchData!
-                    .where(
-                      (user) =>
-                          user.name
-                              .toLowerCase()
-                              .contains(pattern.toLowerCase()) ||
-                          user.email.toLowerCase().contains(
-                                pattern.toLowerCase(),
-                              ),
-                    )
-                    .toList();
-              } else {
-                //Search User by UserBloc
-                _userBloc.add(
-                  SearchUserByName(searchString: pattern),
-                );
-                if (state is UserSearchResult) {
-                  returnData = state.searchResults;
-                  returnData = List.from(
-                    Set<AppUser>.from(returnData).difference(
-                      Set<AppUser>.from(selectedUser),
-                    ),
-                  );
-                }
-              }
-              if (widget.withoutUsers.isNotEmpty) {
-                for (final user in widget.withoutUsers) {
-                  returnData.remove(user);
-                }
-              }
-              return returnData;
-            },
-            noItemsFoundBuilder: (context) => const ListTile(
-              title: Text('No user found.'),
-            ),
-            itemBuilder: (context, userSuggestion) {
               return ListTile(
-                leading: CircleAvatarWidget(
-                  imageUrl: userSuggestion.photoUrl,
-                ),
-                title: Text(userSuggestion.name),
-                subtitle: Text(userSuggestion.email),
+                leading: CircleAvatarWidget(imageUrl: user!.photoUrl),
+                title: Text(user.name),
               );
             },
-            onSuggestionSelected: (userSuggestion) {
+            suggestionsBoxDecoration: SuggestionsBoxDecoration(
+              color: Theme.of(context).cardColor,
+              shape: kBorderRadiusShape,
+            ),
+            hideOnError: true,
+            hideOnLoading: true,
+            onSuggestionSelected: (AppUser? user) {
               setState(() {
-                selectedUser.add(userSuggestion);
+                selectedUser.add(user!);
               });
+            },
+            suggestionsCallback: (String pattern) {
+              if (widget.searchData != null) {
+                return widget.searchData!.where(
+                  (element) => element.name.toLowerCase().contains(
+                        pattern.toLowerCase(),
+                      ),
+                );
+              }
+              return context.read<SearchUserCubit>().searchUsers(pattern);
             },
           );
         },
@@ -225,7 +191,6 @@ class _AddUserDialogState extends State<AddUserDialog> {
 
   @override
   void dispose() {
-    _userBloc.close();
     searchTextController.dispose();
     super.dispose();
   }

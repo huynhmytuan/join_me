@@ -8,13 +8,16 @@ class TaskRepository {
 
   final FirebaseFirestore _firebaseFirestore;
 
-  Stream<Task> getTaskById(String taskId) {
+  Stream<Task?> getTaskById(String taskId) {
     try {
       final querySnapshots = _firebaseFirestore
           .collection(TaskKeys.collection)
           .doc(taskId)
           .snapshots();
-      return querySnapshots.map((doc) => Task.fromJson(doc.data()!));
+
+      return querySnapshots.map(
+        (doc) => doc.exists ? Task.fromJson(doc.data()!) : null,
+      );
     } catch (e) {
       rethrow;
     }
@@ -32,15 +35,16 @@ class TaskRepository {
     });
   }
 
-  Future<List<Task>> getSubTask({required List<String> taskIds}) async {
-    final ref = await _firebaseFirestore
+  Stream<List<Task>> getSubTasks({required String parentId}) {
+    return _firebaseFirestore
         .collection(TaskKeys.collection)
-        .where(TaskKeys.id, whereIn: taskIds)
+        .where(TaskKeys.subTaskOf, isEqualTo: parentId)
         .where(TaskKeys.type, isEqualTo: 'sub-task')
         .orderBy(TaskKeys.createdAt, descending: true)
-        .get();
-
-    return ref.docs.map((doc) => Task.fromJson(doc.data())).toList();
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((data) => Task.fromJson(data.data())).toList();
+    });
   }
 
   Future<void> addTask(Task task) async {

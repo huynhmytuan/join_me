@@ -52,7 +52,10 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
           routeData: routeData,
           child: ImagesPickerPage(
-              initialMedias: args.initialMedias, key: args.key));
+              initialMedias: args.initialMedias,
+              limit: args.limit,
+              type: args.type,
+              key: args.key));
     },
     SingleProjectRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
@@ -73,14 +76,18 @@ class _$AppRouter extends RootStackRouter {
           child: SingleProjectGuestViewPage(
               projectId: args.projectId, key: args.key));
     },
+    RequestsRoute.name: (routeData) {
+      final args = routeData.argsAs<RequestsRouteArgs>();
+      return MaterialPageX<dynamic>(
+          routeData: routeData,
+          child: RequestsPage(projectId: args.projectId, key: args.key));
+    },
     ProjectMembersRoute.name: (routeData) {
       final args = routeData.argsAs<ProjectMembersRouteArgs>();
       return MaterialPageX<dynamic>(
           routeData: routeData,
-          child: ProjectMembersPage(
-            key: args.key,
-            projectBloc: args.projectBloc,
-          ));
+          child:
+              ProjectMembersPage(key: args.key, projectBloc: args.projectBloc));
     },
     PostDetailRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
@@ -122,6 +129,10 @@ class _$AppRouter extends RootStackRouter {
           routeData: routeData,
           child: ChatPage(conversationId: args.conversationId, key: args.key));
     },
+    NewChatRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+          routeData: routeData, child: const NewChatPage());
+    },
     LanguageSettingRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
           routeData: routeData, child: const LanguageSettingPage());
@@ -143,13 +154,19 @@ class _$AppRouter extends RootStackRouter {
           routeData: routeData,
           child: UserInfoPage(userId: args.userId, key: args.key));
     },
+    EditProfileRoute.name: (routeData) {
+      final args = routeData.argsAs<EditProfileRouteArgs>();
+      return MaterialPageX<dynamic>(
+          routeData: routeData,
+          child: EditProfilePage(userBloc: args.userBloc, key: args.key));
+    },
     PostsRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
           routeData: routeData, child: const PostsPage());
     },
     MessagesRouter.name: (routeData) {
       return MaterialPageX<dynamic>(
-          routeData: routeData, child: const MessagesPage());
+          routeData: routeData, child: const ConversationsPage());
     },
     ProjectsRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
@@ -259,6 +276,9 @@ class _$AppRouter extends RootStackRouter {
                 RouteConfig(SingleProjectGuestViewRoute.name,
                     path: ':projectId/guest-view',
                     parent: MainWrapperRouter.name),
+                RouteConfig(RequestsRoute.name,
+                    path: ':projectId/requests',
+                    parent: MainWrapperRouter.name),
                 RouteConfig(ProjectMembersRoute.name,
                     path: 'members', parent: MainWrapperRouter.name),
                 RouteConfig(PostDetailRoute.name,
@@ -271,6 +291,8 @@ class _$AppRouter extends RootStackRouter {
                     path: ':taskId', parent: MainWrapperRouter.name),
                 RouteConfig(ChatRoute.name,
                     path: ':conversationId', parent: MainWrapperRouter.name),
+                RouteConfig(NewChatRoute.name,
+                    path: 'new-chat', parent: MainWrapperRouter.name),
                 RouteConfig(LanguageSettingRoute.name,
                     path: 'language-setting', parent: MainWrapperRouter.name),
                 RouteConfig(ThemeSettingRoute.name,
@@ -278,7 +300,9 @@ class _$AppRouter extends RootStackRouter {
                 RouteConfig(AboutUsRoute.name,
                     path: 'about-us', parent: MainWrapperRouter.name),
                 RouteConfig(UserInfoRoute.name,
-                    path: 'user-info/:userId', parent: MainWrapperRouter.name)
+                    path: 'user-info/:userId', parent: MainWrapperRouter.name),
+                RouteConfig(EditProfileRoute.name,
+                    path: 'edit-profile', parent: MainWrapperRouter.name)
               ])
         ])
       ];
@@ -342,26 +366,37 @@ class HomeRoute extends PageRouteInfo<void> {
 class ImagesPickerRoute extends PageRouteInfo<ImagesPickerRouteArgs> {
   ImagesPickerRoute(
       {List<AssetEntity> initialMedias = const [],
+      int? limit,
+      RequestType? type,
       Key? key,
       List<PageRouteInfo>? children})
       : super(ImagesPickerRoute.name,
             path: 'pick-image',
-            args: ImagesPickerRouteArgs(initialMedias: initialMedias, key: key),
+            args: ImagesPickerRouteArgs(
+                initialMedias: initialMedias,
+                limit: limit,
+                type: type,
+                key: key),
             initialChildren: children);
 
   static const String name = 'ImagesPickerRoute';
 }
 
 class ImagesPickerRouteArgs {
-  const ImagesPickerRouteArgs({this.initialMedias = const [], this.key});
+  const ImagesPickerRouteArgs(
+      {this.initialMedias = const [], this.limit, this.type, this.key});
 
   final List<AssetEntity> initialMedias;
+
+  final int? limit;
+
+  final RequestType? type;
 
   final Key? key;
 
   @override
   String toString() {
-    return 'ImagesPickerRouteArgs{initialMedias: $initialMedias, key: $key}';
+    return 'ImagesPickerRouteArgs{initialMedias: $initialMedias, limit: $limit, type: $type, key: $key}';
   }
 }
 
@@ -416,6 +451,30 @@ class SingleProjectGuestViewRouteArgs {
   @override
   String toString() {
     return 'SingleProjectGuestViewRouteArgs{projectId: $projectId, key: $key}';
+  }
+}
+
+/// generated route for
+/// [RequestsPage]
+class RequestsRoute extends PageRouteInfo<RequestsRouteArgs> {
+  RequestsRoute({required String projectId, Key? key})
+      : super(RequestsRoute.name,
+            path: ':projectId/requests',
+            args: RequestsRouteArgs(projectId: projectId, key: key));
+
+  static const String name = 'RequestsRoute';
+}
+
+class RequestsRouteArgs {
+  const RequestsRouteArgs({required this.projectId, this.key});
+
+  final String projectId;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'RequestsRouteArgs{projectId: $projectId, key: $key}';
   }
 }
 
@@ -556,6 +615,14 @@ class ChatRouteArgs {
 }
 
 /// generated route for
+/// [NewChatPage]
+class NewChatRoute extends PageRouteInfo<void> {
+  const NewChatRoute() : super(NewChatRoute.name, path: 'new-chat');
+
+  static const String name = 'NewChatRoute';
+}
+
+/// generated route for
 /// [LanguageSettingPage]
 class LanguageSettingRoute extends PageRouteInfo<void> {
   const LanguageSettingRoute()
@@ -607,6 +674,30 @@ class UserInfoRouteArgs {
 }
 
 /// generated route for
+/// [EditProfilePage]
+class EditProfileRoute extends PageRouteInfo<EditProfileRouteArgs> {
+  EditProfileRoute({required UserBloc userBloc, Key? key})
+      : super(EditProfileRoute.name,
+            path: 'edit-profile',
+            args: EditProfileRouteArgs(userBloc: userBloc, key: key));
+
+  static const String name = 'EditProfileRoute';
+}
+
+class EditProfileRouteArgs {
+  const EditProfileRouteArgs({required this.userBloc, this.key});
+
+  final UserBloc userBloc;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'EditProfileRouteArgs{userBloc: $userBloc, key: $key}';
+  }
+}
+
+/// generated route for
 /// [PostsPage]
 class PostsRoute extends PageRouteInfo<void> {
   const PostsRoute() : super(PostsRoute.name, path: 'posts');
@@ -615,7 +706,7 @@ class PostsRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [MessagesPage]
+/// [ConversationsPage]
 class MessagesRouter extends PageRouteInfo<void> {
   const MessagesRouter() : super(MessagesRouter.name, path: 'messages');
 

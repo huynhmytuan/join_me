@@ -26,11 +26,13 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<EditTask>(_onEditTask);
     on<AddSubTask>(_onAddSubTask);
     on<DeleteTask>(_onDeleteTask);
+    on<UpdateSubtask>(_onUpdateSubtask);
   }
   final TaskRepository _taskRepository;
   final UserRepository _userRepository;
   final ProjectRepository _projectRepository;
-  StreamSubscription<Task>? _taskSubscription;
+  StreamSubscription<Task?>? _taskSubscription;
+  StreamSubscription<List<Task>>? _subTaskSubscription;
 
   Future<void> _onLoadTask(
     LoadTask event,
@@ -39,9 +41,20 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     emit(state.copyWith(status: TaskStateStatus.loading));
     try {
       await _taskSubscription?.cancel();
+
       _taskSubscription =
           _taskRepository.getTaskById(event.taskId).listen((task) {
-        add(UpdateTask(task));
+        if (task != null) {
+          add(UpdateTask(task));
+        } else {
+          add(TaskNotFound());
+        }
+      });
+      //Get Subtask List
+      await _subTaskSubscription?.cancel();
+      _subTaskSubscription =
+          _taskRepository.getSubTasks(parentId: event.taskId).listen((tasks) {
+        add(UpdateSubtask(tasks));
       });
     } catch (e) {
       emit(
@@ -64,22 +77,19 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       final parent = event.task.subTaskOf.isNotEmpty
           ? await _taskRepository.getTaskById(event.task.subTaskOf).first
           : null;
-      final subTasks = event.task.subTasks.isEmpty
-          ? <Task>[]
-          : await _taskRepository.getSubTask(taskIds: event.task.subTasks);
-
       final project = event.task.projectId != state.project.id
           ? await _projectRepository.getProjectById(event.task.projectId).first
           : null;
       final createdBy = event.task.createdBy != state.createdBy.id
-          ? await _userRepository.getUserById(userId: event.task.createdBy)
+          ? await _userRepository
+              .getUserById(userId: event.task.createdBy)
+              .first
           : null;
       emit(
         state.copyWith(
           task: event.task,
           project: project,
           assignee: assignee,
-          subTasks: subTasks,
           parent: parent,
           createdBy: createdBy,
           status: TaskStateStatus.success,
@@ -93,6 +103,17 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         ),
       );
     }
+  }
+
+  void _onUpdateSubtask(
+    UpdateSubtask event,
+    Emitter<TaskState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        subTasks: event.subTasks,
+      ),
+    );
   }
 
   Future<void> _onEditTask(
@@ -141,5 +162,14 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         ),
       );
     }
+  }
+
+  void _onTaskNotFound(
+    TaskNotFound event,
+    Emitter<TaskState> emit,
+  ) async {
+    emit(state.copyWith(status: TaskStateStatus.notFound));
+    await _subTaskSubscription?.cancel();
+    await _subTaskSubscription?.cancel();
   }
 }

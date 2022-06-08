@@ -38,8 +38,9 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
         (comments) async {
           final listViewModels = <CommentViewModel>[];
           for (final comment in comments) {
-            final author =
-                await _userRepository.getUserById(userId: comment.authorId);
+            final author = await _userRepository
+                .getUserById(userId: comment.authorId)
+                .first;
             listViewModels.add(CommentViewModel(comment, author));
           }
           add(UpdateComments(listViewModels));
@@ -72,7 +73,10 @@ class CommentBloc extends Bloc<CommentEvent, CommentState> {
     Emitter<CommentState> emit,
   ) async {
     try {
-      await _commentRepository.addComment(event.comment);
+      await _commentRepository.addComment(
+        event.comment,
+        event.post,
+      );
     } catch (e) {
       emit(
         state.copyWith(

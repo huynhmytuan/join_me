@@ -2,7 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:join_me/app/blocs/app_bloc.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
 
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
@@ -14,8 +14,6 @@ class MenuPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final _currentUser = context.read<AppBloc>().state.user;
-
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -25,39 +23,7 @@ class MenuPage extends StatelessWidget {
         padding: const EdgeInsets.all(kDefaultPadding),
         child: Column(
           children: [
-            GestureDetector(
-              onTap: () => AutoRouter.of(context)
-                  .push(UserInfoRoute(userId: _currentUser.id)),
-              child: RoundedContainer(
-                padding: const EdgeInsets.symmetric(
-                  vertical: kDefaultPadding * 2,
-                ),
-                color: Theme.of(context).cardColor,
-                child: Center(
-                  child: Column(
-                    children: [
-                      RoundedContainer(
-                        margin: const EdgeInsets.symmetric(vertical: 10),
-                        padding: const EdgeInsets.all(10),
-                        color: kIconColorGrey,
-                        child: CircleAvatarWidget(
-                          imageUrl: _currentUser.photoUrl,
-                          size: 40,
-                        ),
-                      ),
-                      Text(
-                        _currentUser.name,
-                        style: CustomTextStyle.heading3(context),
-                      ),
-                      Text(
-                        'Show your profile page',
-                        style: CustomTextStyle.subText(context),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
+            _ProfileViewCard(),
             const SizedBox(
               height: kDefaultPadding,
             ),
@@ -162,6 +128,53 @@ class MenuPage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ProfileViewCard extends StatelessWidget {
+  const _ProfileViewCard({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<AppBloc, AppState>(
+      builder: (context, state) {
+        return GestureDetector(
+          onTap: () =>
+              AutoRouter.of(context).push(UserInfoRoute(userId: state.user.id)),
+          child: RoundedContainer(
+            padding: const EdgeInsets.symmetric(
+              vertical: kDefaultPadding * 2,
+            ),
+            color: Theme.of(context).cardColor,
+            child: Center(
+              child: Column(
+                children: [
+                  RoundedContainer(
+                    margin: const EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.all(10),
+                    color: kIconColorGrey,
+                    child: CircleAvatarWidget(
+                      imageUrl: state.user.photoUrl,
+                      size: 40,
+                    ),
+                  ),
+                  Text(
+                    state.user.name,
+                    style: CustomTextStyle.heading3(context),
+                  ),
+                  Text(
+                    'Show your profile page',
+                    style: CustomTextStyle.subText(context),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

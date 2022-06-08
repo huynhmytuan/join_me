@@ -4,14 +4,18 @@ abstract class ImagesPickerEvent extends Equatable {
   const ImagesPickerEvent();
 
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class LoadMedias extends ImagesPickerEvent {
-  const LoadMedias({this.initialMedias = const []});
+  const LoadMedias({
+    this.initialMedias = const [],
+    this.requestType,
+  });
   final List<AssetEntity> initialMedias;
+  final RequestType? requestType;
   @override
-  List<Object> get props => [initialMedias];
+  List<Object?> get props => [initialMedias, requestType];
 }
 
 class ChangeAlbum extends ImagesPickerEvent {

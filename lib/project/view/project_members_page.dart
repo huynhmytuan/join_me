@@ -2,8 +2,8 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
-import 'package:join_me/app/blocs/app_bloc.dart';
-import 'package:join_me/config/theme.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
+import 'package:join_me/config/router/app_router.dart';
 
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/project/bloc/project_bloc.dart';
@@ -67,7 +67,7 @@ class ProjectMembersPage extends StatelessWidget {
                             );
                           });
                         },
-                        icon: const Icon(Ionicons.pencil_outline),
+                        icon: const Icon(Ionicons.person_add_outline),
                       )
                     ]
                   : null,
@@ -84,7 +84,10 @@ class ProjectMembersPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return ListTile(
-                    onTap: () {},
+                    onTap: () {
+                      AutoRouter.of(context)
+                          .push(RequestsRoute(projectId: state.project.id));
+                    },
                     title: const Text('Join Request'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -99,6 +102,9 @@ class ProjectMembersPage extends StatelessWidget {
                   );
                 }
                 return ListTile(
+                  onTap: () => AutoRouter.of(context).push(
+                    UserInfoRoute(userId: state.members[index - 1].id),
+                  ),
                   leading: CircleAvatarWidget(
                     imageUrl: state.members[index - 1].photoUrl,
                     size: 40,

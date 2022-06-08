@@ -24,3 +24,5 @@ class UpdatePost extends PostEvent {
   @override
   List<Object> get props => [post];
 }
+
+class NoPostFound extends PostEvent {}

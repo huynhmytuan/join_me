@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:join_me/data/repositories/authentication_repository.dart';
-import 'package:join_me/login/blocs/login_state.dart';
+import 'package:join_me/login/bloc/login_state.dart';
 import 'package:join_me/utilities/validators/form_inputs/form_inputs.dart';
 
 class LoginCubit extends Cubit<LoginState> {

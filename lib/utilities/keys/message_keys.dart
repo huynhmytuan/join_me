@@ -5,4 +5,5 @@ class MessageKeys {
   static const String authorId = 'authorId';
   static const String content = 'content';
   static const String createdAt = 'createdAt';
+  static const String seenBy = 'seenBy';
 }

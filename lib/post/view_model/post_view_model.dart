@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 import 'package:join_me/data/models/models.dart';
-import 'package:join_me/project/bloc/project_bloc.dart';
 
 class PostViewModel extends Equatable {
   const PostViewModel({

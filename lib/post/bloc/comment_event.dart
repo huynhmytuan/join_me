@@ -17,12 +17,13 @@ class LoadComments extends CommentEvent {
 }
 
 class AddComment extends CommentEvent {
-  const AddComment(this.comment);
+  const AddComment(this.comment, this.post);
 
   final Comment comment;
+  final Post post;
 
   @override
-  List<Object> get props => [comment];
+  List<Object> get props => [comment, post];
 }
 
 class DeleteComment extends CommentEvent {

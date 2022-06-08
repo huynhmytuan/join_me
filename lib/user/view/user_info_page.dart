@@ -1,9 +1,20 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
+
+import 'package:join_me/app/cubit/app_message_cubit.dart';
+import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/data/models/models.dart';
+
+import 'package:join_me/data/repositories/repositories.dart';
+
+import 'package:join_me/post/bloc/posts_bloc.dart';
+import 'package:join_me/post/components/components.dart';
+import 'package:join_me/project/bloc/project_overview_bloc.dart';
 import 'package:join_me/project/components/components.dart';
+import 'package:join_me/user/bloc/user_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/avatar_circle_widget.dart';
 import 'package:join_me/widgets/persistent_header_delegate.dart';
@@ -22,192 +33,284 @@ class UserInfoPage extends StatefulWidget {
 
 class _UserInfoPageState extends State<UserInfoPage>
     with SingleTickerProviderStateMixin {
-  late AppUser _user;
   bool isProjectView = false;
   late TabController _tabController;
+  late UserBloc userBloc;
+  late PostsBloc postsBloc;
+  late ProjectOverviewBloc projectOverviewBloc;
+
   @override
   void initState() {
-    // _user = UsersBloc(userRepository: context.read<UserRepository>()).add();
+    userBloc = UserBloc(
+      userRepository: context.read<UserRepository>(),
+    )..add(LoadUser(widget.userId));
+    postsBloc = PostsBloc(
+      userRepository: context.read<UserRepository>(),
+      postRepository: context.read<PostRepository>(),
+      projectRepository: context.read<ProjectRepository>(),
+      appMessageCubit: context.read<AppMessageCubit>(),
+    )..add(FetchPosts(userId: widget.userId));
+    projectOverviewBloc = ProjectOverviewBloc(
+      projectRepository: context.read<ProjectRepository>(),
+      taskRepository: context.read<TaskRepository>(),
+      userRepository: context.read<UserRepository>(),
+    )..add(LoadProjects(widget.userId));
     _tabController = TabController(length: 2, vsync: this);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: DefaultTabController(
-        length: 2,
-        child: NestedScrollView(
-          headerSliverBuilder: (context, innerBoxIsScrolled) {
-            return [
-              SliverAppBar(
-                pinned: true,
-                centerTitle: false,
-                elevation: 0,
-                leading: GestureDetector(
-                  onTap: () => AutoRouter.of(context).pop(),
-                  child: const Icon(Ionicons.chevron_back),
+    return BlocProvider(
+      create: (context) => UserBloc(
+        userRepository: context.read<UserRepository>(),
+      ),
+      child: Scaffold(
+        body: DefaultTabController(
+          length: 2,
+          child: NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) {
+              return [
+                _MyAppBar(userBloc: userBloc),
+                SliverToBoxAdapter(
+                  child: _UserInfoSection(userBloc: userBloc),
                 ),
-                leadingWidth: 40,
-                title: Text(
-                  _user.name,
-                  style: CustomTextStyle.heading3(context),
-                ),
-              ),
-              SliverToBoxAdapter(
-                child: _buildInfoSection(context),
-              ),
-              SliverPersistentHeader(
-                pinned: true,
-                delegate: PersistentHeaderDelegate(
-                  child: TabBar(
-                    controller: _tabController,
-                    indicatorSize: TabBarIndicatorSize.label,
-                    indicatorColor: Theme.of(context).primaryColor,
-                    labelColor: Theme.of(context).primaryColor,
-                    unselectedLabelColor: kTextColorGrey,
-                    labelStyle: CustomTextStyle.heading3(context),
-                    tabs: [
-                      Tab(
-                        text: 'Post'.toUpperCase(),
-                      ),
-                      Tab(
-                        text: 'Projects'.toUpperCase(),
-                      )
-                    ],
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: PersistentHeaderDelegate(
+                    child: TabBar(
+                      controller: _tabController,
+                      indicatorSize: TabBarIndicatorSize.label,
+                      indicatorColor: Theme.of(context).primaryColor,
+                      labelColor: Theme.of(context).primaryColor,
+                      unselectedLabelColor: kTextColorGrey,
+                      labelStyle: CustomTextStyle.heading3(context),
+                      tabs: [
+                        Tab(
+                          text: 'Post'.toUpperCase(),
+                        ),
+                        Tab(
+                          text: 'Project'.toUpperCase(),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ];
-          },
-          body: TabBarView(
-            controller: _tabController,
-            children: [
-              _buildPostView(),
-              _buildProjectView(),
-            ],
+              ];
+            },
+            body: TabBarView(
+              controller: _tabController,
+              children: [
+                _UserPostView(
+                  postsBloc: postsBloc,
+                ),
+                _UserProjectView(
+                  projectOverviewBloc: projectOverviewBloc,
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildInfoSection(BuildContext context) {
-    return Container(
-      color: Theme.of(context).scaffoldBackgroundColor,
-      margin: const EdgeInsets.only(
-        top: kDefaultPadding,
-        left: kDefaultPadding,
-        right: kDefaultPadding,
-      ),
-      child: Column(
-        children: [
-          CircleAvatarWidget(
-            imageUrl: _user.photoUrl,
-            size: 100,
+class _MyAppBar extends StatelessWidget {
+  const _MyAppBar({required this.userBloc, Key? key}) : super(key: key);
+  final UserBloc userBloc;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<UserBloc, UserState>(
+      bloc: userBloc,
+      builder: (context, state) {
+        return SliverAppBar(
+          pinned: true,
+          centerTitle: false,
+          elevation: 0,
+          leading: GestureDetector(
+            onTap: () => AutoRouter.of(context).pop(),
+            child: const Icon(Ionicons.chevron_back),
           ),
-          const SizedBox(
-            height: 10,
-          ),
-          Text(
-            _user.name,
+          leadingWidth: 40,
+          title: Text(
+            state.user.name,
             style: CustomTextStyle.heading3(context),
           ),
-          const SizedBox(
-            height: 8,
+          actions: [
+            if (state.user.id == context.read<AppBloc>().state.user.id)
+              IconButton(
+                onPressed: () => AutoRouter.of(context).push(
+                  EditProfileRoute(userBloc: userBloc),
+                ),
+                icon: const Icon(Icons.edit_note),
+              )
+          ],
+        );
+      },
+    );
+  }
+}
+
+class _UserInfoSection extends StatelessWidget {
+  const _UserInfoSection({required this.userBloc, Key? key}) : super(key: key);
+  final UserBloc userBloc;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<UserBloc, UserState>(
+      bloc: userBloc,
+      builder: (context, state) {
+        return Container(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          margin: const EdgeInsets.only(
+            top: kDefaultPadding,
+            left: kDefaultPadding,
+            right: kDefaultPadding,
           ),
-          Text(_user.personalBio),
-          const SizedBox(
-            height: 8,
-          ),
-          const Divider(),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          child: Column(
             children: [
-              RoundedButton(
-                height: 30,
-                minWidth: 120,
-                child: Row(
-                  children: const [
-                    Icon(
-                      Ionicons.paper_plane_outline,
-                      size: 20,
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text('Send Message'),
-                  ],
-                ),
-                onPressed: () {},
+              CircleAvatarWidget(
+                imageUrl: state.user.photoUrl,
+                size: 100,
               ),
-              RoundedButton(
-                height: 30,
-                minWidth: 120,
-                color: kSecondaryBlue,
-                child: Row(
-                  children: const [
-                    Icon(
-                      Ionicons.add_circle_outline,
-                      size: 20,
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text('Invite To Project'),
-                  ],
-                ),
-                onPressed: () {},
+              const SizedBox(
+                height: 10,
               ),
+              Text(
+                state.user.name,
+                style: CustomTextStyle.heading3(context),
+              ),
+              const SizedBox(
+                height: 8,
+              ),
+              if (state.user.personalBio.isNotEmpty)
+                Text(state.user.personalBio),
+              const SizedBox(
+                height: 8,
+              ),
+              const Divider(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  RoundedButton(
+                    height: 30,
+                    minWidth: 120,
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Ionicons.paper_plane_outline,
+                          size: 20,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text('Send Message'),
+                      ],
+                    ),
+                    onPressed: () {},
+                  ),
+                  RoundedButton(
+                    height: 30,
+                    minWidth: 120,
+                    color: kSecondaryBlue,
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Ionicons.add_circle_outline,
+                          size: 20,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text('Invite To Project'),
+                      ],
+                    ),
+                    onPressed: () {},
+                  ),
+                ],
+              ),
+              const Divider(),
             ],
           ),
-          const Divider(),
-        ],
-      ),
+        );
+      },
     );
   }
+}
 
-  Widget _buildPostView() {
-    // final posts = postsData.toList();
-    //TODO: Edit and setup this shit
-    //And also bring it to single widget please
-    final posts = <Post>[];
-    return CustomScrollView(
-      key: const PageStorageKey('posts-view'),
-      physics: const NeverScrollableScrollPhysics(),
-      slivers: [
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              // return PostCard(postId: posts[index].id!);
-              const SizedBox();
-            },
-            childCount: posts.length,
-          ),
-        ),
-      ],
+class _UserPostView extends StatelessWidget {
+  const _UserPostView({required this.postsBloc, Key? key}) : super(key: key);
+  final PostsBloc postsBloc;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<PostsBloc, PostsState>(
+      bloc: postsBloc,
+      builder: (context, state) {
+        if (state.status == PostsStatus.initial ||
+            state.status == PostsStatus.loading) {
+          return const SizedBox();
+        }
+        return CustomScrollView(
+          key: const PageStorageKey('posts-view'),
+          physics: const NeverScrollableScrollPhysics(),
+          slivers: [
+            SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) {
+                  return PostCard(
+                    post: state.posts[index].post,
+                    author: state.posts[index].author,
+                    project: state.posts[index].project,
+                  );
+                },
+                childCount: state.posts.length,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
+}
 
-  Widget _buildProjectView() {
-    final projects = <Project>[];
-    return CustomScrollView(
-      key: const PageStorageKey('projects-view'),
-      physics: const NeverScrollableScrollPhysics(),
-      slivers: [
-        SliverList(
-          delegate: SliverChildBuilderDelegate(
-            (context, index) {
-              return ProjectCard(
-                project: projects[index],
-                users: const [],
-                tasks: const [],
-              );
-            },
-            childCount: projects.length,
-          ),
-        ),
-      ],
+class _UserProjectView extends StatelessWidget {
+  const _UserProjectView({required this.projectOverviewBloc, Key? key})
+      : super(key: key);
+  final ProjectOverviewBloc projectOverviewBloc;
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ProjectOverviewBloc, ProjectOverviewState>(
+      bloc: projectOverviewBloc,
+      builder: (context, state) {
+        if (state is ProjectsLoading || state is ProjectsInitial) {
+          return const SizedBox();
+        }
+        if (state is ProjectsLoaded) {
+          return CustomScrollView(
+            key: const PageStorageKey('projects-view'),
+            physics: const NeverScrollableScrollPhysics(),
+            slivers: [
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return ProjectCard(
+                      project: state.projects[index].project,
+                      users: state.projects[index].members,
+                      tasks: state.projects[index].tasks,
+                    );
+                  },
+                  childCount: state.projects.length,
+                ),
+              ),
+            ],
+          );
+        }
+        return const SizedBox();
+      },
     );
   }
 }

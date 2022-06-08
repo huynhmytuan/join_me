@@ -38,9 +38,9 @@ const kFontFamily = 'Nunito';
 
 //Asset Constant
 const _kAssetImageDir = 'assets/images';
-const kLogoLightDir = '$_kAssetImageDir/logo_light.svg';
-const kLogoDarkDir = '$_kAssetImageDir/logo_dark.svg';
-const kLogoBackgroundDir = '$_kAssetImageDir/logo_background.svg';
+const kLogoLightDir = '$_kAssetImageDir/logo_light.png';
+const kLogoDarkDir = '$_kAssetImageDir/logo_dark.png';
+const kLogoBackgroundDir = '$_kAssetImageDir/logo_background.png';
 const kIconDir = 'assets/icons';
 
 //Design

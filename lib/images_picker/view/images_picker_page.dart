@@ -14,16 +14,21 @@ import 'package:photo_manager/photo_manager.dart';
 class ImagesPickerPage extends StatelessWidget {
   const ImagesPickerPage({
     this.initialMedias = const [],
+    this.limit,
+    this.type,
     Key? key,
   }) : super(key: key);
   final List<AssetEntity> initialMedias;
+  final int? limit;
+  final RequestType? type;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          ImagesPickerBloc(mediaRepository: context.read<MediaRepository>())
-            ..add(LoadMedias(initialMedias: initialMedias)),
+      create: (context) => ImagesPickerBloc(
+        mediaRepository: context.read<MediaRepository>(),
+        limit: limit,
+      )..add(LoadMedias(initialMedias: initialMedias, requestType: type)),
       child: AutoTabsScaffold(
         routes: const [MediaGridRoute(), AlbumsListRoute()],
         appBarBuilder: (context, tabsRouter) => _CustomAppBar(

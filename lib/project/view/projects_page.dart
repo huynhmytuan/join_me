@@ -1,43 +1,27 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:join_me/app/blocs/app_bloc.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/project/bloc/project_overview_bloc.dart';
 
 import 'package:join_me/project/components/components.dart';
 
-class ProjectsPage extends StatefulWidget {
+class ProjectsPage extends StatelessWidget {
   const ProjectsPage({Key? key}) : super(key: key);
 
-  @override
-  State<ProjectsPage> createState() => _ProjectsPageState();
-}
-
-class _ProjectsPageState extends State<ProjectsPage> {
-  void _showNewProjectDialog() {
+  void _showNewProjectDialog(BuildContext context) {
     showDialog<void>(
       context: context,
       builder: (context) => const NewProjectDialog(),
     );
   }
 
-  void _loadData() {
+  void _loadData(BuildContext context) {
     final currentUserId = context.read<AppBloc>().state.user.id;
     context.read<ProjectOverviewBloc>().add(
-          LoadProjects(userId: currentUserId),
+          LoadProjects(currentUserId),
         );
-  }
-
-  @override
-  void initState() {
-    _loadData();
-    super.initState();
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
   }
 
   @override
@@ -52,7 +36,12 @@ class _ProjectsPageState extends State<ProjectsPage> {
             ),
           ];
         },
-        body: const _ProjectListView(),
+        body: RefreshIndicator(
+          onRefresh: () async {
+            _loadData(context);
+          },
+          child: const _ProjectListView(),
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'new_project',
@@ -60,7 +49,7 @@ class _ProjectsPageState extends State<ProjectsPage> {
           borderRadius: BorderRadius.circular(12), // <-- Radius
         ),
         backgroundColor: Theme.of(context).primaryColor,
-        onPressed: _showNewProjectDialog,
+        onPressed: () => _showNewProjectDialog(context),
         child: const Icon(
           Icons.add,
           size: 30,

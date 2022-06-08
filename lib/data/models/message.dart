@@ -13,6 +13,7 @@ class Message extends Equatable {
     required this.createdAt,
     required this.authorId,
     required this.content,
+    required this.seenBy,
   });
   factory Message.fromJson(Map<String, dynamic> json) =>
       _$MessageFromJson(json);
@@ -30,6 +31,8 @@ class Message extends Equatable {
   final String authorId;
   @JsonKey(name: MessageKeys.content)
   final String content;
+  @JsonKey(name: MessageKeys.seenBy)
+  final List<String> seenBy;
 
   Message copyWith({
     String? id,
@@ -37,6 +40,7 @@ class Message extends Equatable {
     DateTime? createdAt,
     String? authorId,
     String? content,
+    List<String>? seenBy,
   }) {
     return Message(
       id: id ?? this.id,
@@ -44,6 +48,7 @@ class Message extends Equatable {
       createdAt: createdAt ?? this.createdAt,
       authorId: authorId ?? this.authorId,
       content: content ?? this.content,
+      seenBy: seenBy ?? this.seenBy,
     );
   }
 
@@ -51,5 +56,6 @@ class Message extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object> get props => [id, conversationId, createdAt, authorId, content];
+  List<Object> get props =>
+      [id, conversationId, createdAt, authorId, content, seenBy];
 }

@@ -1,18 +1,22 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/data/models/notification.dart';
+import 'package:join_me/data/repositories/notification_repository.dart';
 import 'package:join_me/utilities/keys/comment_keys.dart';
 import 'package:join_me/utilities/keys/post_keys.dart';
 
 class CommentRepository {
   CommentRepository({
     FirebaseFirestore? firebaseFirestore,
-    FirebaseStorage? firebaseStorage,
+    NotificationRepository? notificationRepository,
   })  : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
-        _firebaseStorage = firebaseStorage ?? FirebaseStorage.instance;
+        _notificationRepository =
+            notificationRepository ?? NotificationRepository();
 
   final FirebaseFirestore _firebaseFirestore;
-  final FirebaseStorage _firebaseStorage;
+  final NotificationRepository _notificationRepository;
 
   Stream<List<Comment>> fetchAllPostComment({required String postId}) {
     return _firebaseFirestore
@@ -30,8 +34,18 @@ class CommentRepository {
         );
   }
 
+  Future<Comment?> getCommentById(String postId, String commentId) async {
+    final doc = await _firebaseFirestore
+        .collection(CommentKeys.collection)
+        .doc(postId)
+        .collection(CommentKeys.collection)
+        .doc(commentId)
+        .get();
+    return doc.exists ? Comment.fromJson(doc.data()!) : null;
+  }
+
   //Add Comment
-  Future<void> addComment(Comment comment) async {
+  Future<void> addComment(Comment comment, Post post) async {
     final ref = await _firebaseFirestore
         .collection(CommentKeys.collection)
         .doc(comment.postId)
@@ -51,7 +65,25 @@ class CommentRepository {
         _firebaseFirestore.collection(PostKeys.collection).doc(comment.postId);
     await postRef.update(<String, dynamic>{
       PostKeys.commentCount: FieldValue.increment(1),
+      PostKeys.follower: FieldValue.arrayUnion(<String>[post.authorId]),
     });
+
+    //Add Notification
+    if (comment.authorId != post.authorId) {
+      // Add comment author to post follower
+      unawaited(
+        _notificationRepository.addNotification(
+          notification: NotificationModel(
+            id: '',
+            createdAt: comment.createdAt,
+            notificationType: NotificationType.comment,
+            actorId: comment.authorId,
+            targetId: '${post.id}/${ref.id}'.trim(),
+            notifierId: post.authorId,
+          ),
+        ),
+      );
+    }
   }
 
   //Delete Comment
@@ -91,5 +123,33 @@ class CommentRepository {
         merge: true,
       ),
     );
+    if (userId != comment.authorId && likes.contains(userId)) {
+      final notification = await _notificationRepository.findNotification(
+        type: NotificationType.likeComment,
+        actorId: userId,
+        targetId: '${comment.postId}/${comment.id}'.trim(),
+        notifier: comment.authorId,
+      );
+      if (notification == null) {
+        unawaited(
+          _notificationRepository.addNotification(
+            notification: NotificationModel(
+              id: '',
+              createdAt: DateTime.now(),
+              notificationType: NotificationType.likeComment,
+              actorId: userId,
+              targetId: '${comment.postId}/${comment.id}'.trim(),
+              notifierId: comment.authorId,
+            ),
+          ),
+        );
+      } else {
+        unawaited(
+          _notificationRepository.update(
+            notification: notification.copyWith(createdAt: DateTime.now()),
+          ),
+        );
+      }
+    }
   }
 }

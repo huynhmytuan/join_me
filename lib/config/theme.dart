@@ -52,7 +52,7 @@ class AppTheme {
         ),
     scaffoldBackgroundColor: kBackgroundDarkColor,
     appBarTheme: const AppBarTheme(
-      backgroundColor: kCardDarkColor,
+      backgroundColor: kBackgroundDarkColor,
       elevation: 0,
       foregroundColor: kTextColorPrimaryDark,
       centerTitle: false,
