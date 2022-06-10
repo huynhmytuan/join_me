@@ -15,6 +15,9 @@ class MenuPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).brightness == Brightness.light
+          ? kBackgroundPostLight
+          : null,
       appBar: AppBar(
         elevation: 0,
         title: const Text('Menu'),
@@ -23,7 +26,7 @@ class MenuPage extends StatelessWidget {
         padding: const EdgeInsets.all(kDefaultPadding),
         child: Column(
           children: [
-            _ProfileViewCard(),
+            const _ProfileViewCard(),
             const SizedBox(
               height: kDefaultPadding,
             ),

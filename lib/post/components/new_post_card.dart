@@ -17,9 +17,9 @@ class NewPostCard extends StatelessWidget {
         return RoundedContainer(
           margin: const EdgeInsets.fromLTRB(
             kDefaultPadding / 2,
-            kDefaultPadding,
             kDefaultPadding / 2,
             kDefaultPadding / 2,
+            5,
           ),
           color: Theme.of(context).cardColor,
           child: Padding(

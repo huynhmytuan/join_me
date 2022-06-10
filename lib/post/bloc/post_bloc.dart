@@ -76,7 +76,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   void _onNoPostFound(
     NoPostFound event,
     Emitter<PostState> emit,
-  ) async {
+  ) {
     emit(state.copyWith(status: PostStatus.notFound));
   }
 

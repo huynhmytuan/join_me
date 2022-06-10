@@ -26,6 +26,7 @@ class NotificationModel extends Equatable {
     required this.actorId,
     required this.targetId,
     required this.notifierId,
+    required this.isRead,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) =>
@@ -45,6 +46,8 @@ class NotificationModel extends Equatable {
   final String targetId;
   @JsonKey(name: NotificationKeys.notifierId)
   final String notifierId;
+  @JsonKey(name: NotificationKeys.isRead)
+  final bool isRead;
 
   NotificationModel copyWith({
     String? id,
@@ -53,6 +56,7 @@ class NotificationModel extends Equatable {
     String? actorId,
     String? targetId,
     String? notifierId,
+    bool? isRead,
   }) {
     return NotificationModel(
       id: id ?? this.id,
@@ -61,6 +65,7 @@ class NotificationModel extends Equatable {
       actorId: actorId ?? this.actorId,
       targetId: targetId ?? this.targetId,
       notifierId: notifierId ?? this.notifierId,
+      isRead: isRead ?? this.isRead,
     );
   }
 
@@ -68,6 +73,14 @@ class NotificationModel extends Equatable {
   bool get stringify => true;
   @override
   List<Object> get props {
-    return [id, createdAt, actorId, targetId, notificationType, notifierId];
+    return [
+      id,
+      createdAt,
+      actorId,
+      targetId,
+      notificationType,
+      notifierId,
+      isRead
+    ];
   }
 }

@@ -17,10 +17,7 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -49,6 +46,16 @@ class DefaultFirebaseOptions {
     }
   }
 
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyBsVHatMR8-Yn8EXqVY3AeJqCpJoquk1-c',
+    appId: '1:114164703660:web:71d08edd00f536fd131a09',
+    messagingSenderId: '114164703660',
+    projectId: 'join-me-ad622',
+    authDomain: 'join-me-ad622.firebaseapp.com',
+    storageBucket: 'join-me-ad622.appspot.com',
+    measurementId: 'G-7PM77PK9RY',
+  );
+
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBH-wl-D7LlNwJS-XDi_yQX0PZak7KV-RM',
     appId: '1:114164703660:android:ec1319f6dd7c01aa131a09',
@@ -63,8 +70,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '114164703660',
     projectId: 'join-me-ad622',
     storageBucket: 'join-me-ad622.appspot.com',
-    iosClientId:
-        '114164703660-j1tna7ilngm2mta7v77eajn5vahr34md.apps.googleusercontent.com',
+    androidClientId: '114164703660-5mbfik2jlr0i9fknn10jgtggf0nvvoun.apps.googleusercontent.com',
+    iosClientId: '114164703660-j1tna7ilngm2mta7v77eajn5vahr34md.apps.googleusercontent.com',
     iosBundleId: 'com.pinkteam.joinme',
   );
 }

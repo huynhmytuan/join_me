@@ -35,8 +35,10 @@ class TaskCard extends StatelessWidget {
         ),
         margin: const EdgeInsets.symmetric(vertical: 10),
         decoration: BoxDecoration(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          boxShadow: [kDefaultBoxShadow],
+          color: Theme.of(context).cardColor,
+          boxShadow: Theme.of(context).brightness == Brightness.light
+              ? kDefaultBoxShadow
+              : null,
           borderRadius: BorderRadius.circular(kDefaultRadius),
         ),
         child: Row(

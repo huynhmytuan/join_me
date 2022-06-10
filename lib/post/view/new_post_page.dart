@@ -77,7 +77,9 @@ class NewPostPage extends StatelessWidget {
                 GestureType.onTap,
               ],
               child: Scaffold(
+                backgroundColor: Theme.of(context).cardColor,
                 appBar: AppBar(
+                  centerTitle: true,
                   leading: const _CloseButton(),
                   title: const Text('Create new post'),
                   actions: const [_AddNewPostButton()],
@@ -154,7 +156,7 @@ class _InvitationAdded extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).scaffoldBackgroundColor,
               borderRadius: BorderRadius.circular(kDefaultRadius),
-              boxShadow: [kDefaultBoxShadow],
+              boxShadow: kDefaultBoxShadow,
             ),
             child: ListTile(
               title: Text('Invitation to: ${state.invitedProject.name}'),
@@ -168,7 +170,7 @@ class _InvitationAdded extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Theme.of(context).scaffoldBackgroundColor,
                     shape: BoxShape.circle,
-                    boxShadow: [kDefaultBoxShadow],
+                    boxShadow: kDefaultBoxShadow,
                   ),
                   child: const Icon(
                     Icons.close,
@@ -378,6 +380,7 @@ class _PostContentInput extends StatelessWidget {
           textInputAction: TextInputAction.newline,
           maxLines: null,
           decoration: const InputDecoration(
+            contentPadding: EdgeInsets.all(5),
             border: InputBorder.none,
             hintText: 'What on your mind?',
           ),

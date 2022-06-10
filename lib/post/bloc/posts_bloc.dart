@@ -141,25 +141,20 @@ class PostsBloc extends Bloc<PostsEvent, PostsState> {
 
     //Case 1: Initial fetch posts
     if (postsPages.length <= pageNumber) {
-      log('Case 1');
       postsPages.add(newPage);
       hasReachedMax = newPage.length < _paginationSize;
     }
     //Case 2: Edit at last page
     else if (pageNumber == postsPages.length - 1 && newPage.isNotEmpty) {
-      log('Case 2');
       hasReachedMax = newPage.length != _paginationSize;
       postsPages[pageNumber].clear();
-      print('hello ${postsPages[pageNumber]}');
       postsPages[pageNumber].addAll(newPage);
-      print(postsPages[pageNumber]);
     }
     // Case: update a list page
     else if (newPage.length == postsPages[pageNumber].length &&
         newPage.map((e) => e.post.id).every(
               (e) => postsPages[pageNumber].map((e) => e.post.id).contains(e),
             )) {
-      log('Case 3');
       postsPages[pageNumber].clear();
       postsPages[pageNumber].addAll(newPage);
     }

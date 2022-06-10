@@ -15,6 +15,7 @@ NotificationModel _$NotificationModelFromJson(Map<String, dynamic> json) =>
       actorId: json['actorId'] as String,
       targetId: json['targetId'] as String,
       notifierId: json['notifierId'] as String,
+      isRead: json['isRead'] as bool,
     );
 
 Map<String, dynamic> _$NotificationModelToJson(NotificationModel instance) =>
@@ -25,6 +26,7 @@ Map<String, dynamic> _$NotificationModelToJson(NotificationModel instance) =>
       'actorId': instance.actorId,
       'targetId': instance.targetId,
       'notifierId': instance.notifierId,
+      'isRead': instance.isRead,
     };
 
 const _$NotificationTypeEnumMap = {

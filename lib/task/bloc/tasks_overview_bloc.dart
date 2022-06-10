@@ -55,7 +55,7 @@ class TasksOverviewBloc extends Bloc<TasksOverviewEvent, TasksOverviewState> {
     Emitter<TasksOverviewState> emit,
   ) {
     try {
-      _taskRepository.addTask(event.newTask);
+      _taskRepository.addTask(event.newTask, event.currentUserId);
     } catch (e, stackTrace) {
       log(e.toString(), stackTrace: stackTrace);
     }
@@ -66,7 +66,10 @@ class TasksOverviewBloc extends Bloc<TasksOverviewEvent, TasksOverviewState> {
     Emitter<TasksOverviewState> emit,
   ) {
     try {
-      _taskRepository.updateTask(task: event.task);
+      _taskRepository.updateTask(
+        task: event.task,
+        currentUser: event.currentUserId,
+      );
     } catch (e, stackTrace) {
       log(e.toString(), stackTrace: stackTrace);
     }

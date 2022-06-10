@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 
 import 'package:join_me/post/bloc/posts_bloc.dart';
 import 'package:join_me/post/components/components.dart';
 
 import 'package:join_me/utilities/constant.dart';
+import 'package:join_me/widgets/handlers/empty_handler_widget.dart';
 
 class PostsPage extends StatefulWidget {
   const PostsPage({Key? key}) : super(key: key);
@@ -33,42 +33,41 @@ class _PostsPageState extends State<PostsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).brightness == Brightness.light
+          ? kBackgroundPostLight
+          : null,
+      appBar: AppBar(
+        title: Row(
+          children: [
+            Image.asset(
+              Theme.of(context).brightness == Brightness.light
+                  ? kLogoLightDir
+                  : kLogoDarkDir,
+              height: 40,
+              width: 40,
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            const Text('Home Page'),
+          ],
+        ),
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
           context.read<PostsBloc>().add(const FetchPosts());
         },
-        child: CustomScrollView(
+        child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics(),
           ),
           controller: _scrollController,
-          slivers: [
-            SliverAppBar(
-              elevation: 0,
-              title: Row(
-                children: [
-                  Image.asset(
-                    Theme.of(context).brightness == Brightness.light
-                        ? kLogoLightDir
-                        : kLogoDarkDir,
-                    height: 40,
-                    width: 40,
-                  ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  const Text('Home Page'),
-                ],
-              ),
-              floating: true,
-            ),
-            const SliverToBoxAdapter(
-              child: NewPostCard(),
-            ),
-            const SliverToBoxAdapter(
-              child: _PostsListView(),
-            )
-          ],
+          child: Column(
+            children: const [
+              NewPostCard(),
+              _PostsListView(),
+            ],
+          ),
         ),
       ),
     );
@@ -118,10 +117,20 @@ class _PostsListViewState extends State<_PostsListView> {
         }
         // if the status is success but the list is empty (no items i)
         if (state.status == PostsStatus.success && state.posts.isEmpty) {
-          return const Center(child: Text('The list is empty!'));
+          return Padding(
+            padding:
+                EdgeInsets.only(top: MediaQuery.of(context).size.width * .3),
+            child: EmptyHandlerWidget(
+              imageHandlerDir: kNoPostPicDir,
+              titleHandler: 'No post created yet.',
+              textHandler: "Let't fill it up with your activity!",
+              size: MediaQuery.of(context).size.width * .5,
+            ),
+          );
         }
         // and eventually loading following pages
         return ListView.builder(
+          padding: EdgeInsets.zero,
           clipBehavior: Clip.none,
           physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,

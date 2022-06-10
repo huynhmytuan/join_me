@@ -22,7 +22,7 @@ class RoundedIconButton extends StatelessWidget {
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(kDefaultRadius),
-            color: backgroundColor ?? Colors.white.withOpacity(.4),
+            color: backgroundColor ?? Theme.of(context).cardColor,
           ),
           child: icon,
         ),

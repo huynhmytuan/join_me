@@ -66,6 +66,10 @@ class _$AppRouter extends RootStackRouter {
           routeData: routeData,
           child: SingleProjectPage(projectId: args.projectId, key: args.key));
     },
+    NotFoundRoute.name: (routeData) {
+      return MaterialPageX<dynamic>(
+          routeData: routeData, child: const NotFoundPage());
+    },
     SingleProjectGuestViewRoute.name: (routeData) {
       final pathParams = routeData.inheritedPathParams;
       final args = routeData.argsAs<SingleProjectGuestViewRouteArgs>(
@@ -128,6 +132,19 @@ class _$AppRouter extends RootStackRouter {
       return MaterialPageX<dynamic>(
           routeData: routeData,
           child: ChatPage(conversationId: args.conversationId, key: args.key));
+    },
+    ConversationInfoRoute.name: (routeData) {
+      final args = routeData.argsAs<ConversationInfoRouteArgs>();
+      return MaterialPageX<dynamic>(
+          routeData: routeData,
+          child: ConversationInfoPage(chatBloc: args.chatBloc, key: args.key));
+    },
+    ConversationMembersRoute.name: (routeData) {
+      final args = routeData.argsAs<ConversationMembersRouteArgs>();
+      return MaterialPageX<dynamic>(
+          routeData: routeData,
+          child:
+              ConversationMembersPage(chatBloc: args.chatBloc, key: args.key));
     },
     NewChatRoute.name: (routeData) {
       return MaterialPageX<dynamic>(
@@ -273,6 +290,8 @@ class _$AppRouter extends RootStackRouter {
                           path: 'task-by-calendar',
                           parent: SingleProjectRoute.name)
                     ]),
+                RouteConfig(NotFoundRoute.name,
+                    path: 'page-not-found', parent: MainWrapperRouter.name),
                 RouteConfig(SingleProjectGuestViewRoute.name,
                     path: ':projectId/guest-view',
                     parent: MainWrapperRouter.name),
@@ -280,7 +299,7 @@ class _$AppRouter extends RootStackRouter {
                     path: ':projectId/requests',
                     parent: MainWrapperRouter.name),
                 RouteConfig(ProjectMembersRoute.name,
-                    path: 'members', parent: MainWrapperRouter.name),
+                    path: 'project-members', parent: MainWrapperRouter.name),
                 RouteConfig(PostDetailRoute.name,
                     path: ':postId', parent: MainWrapperRouter.name),
                 RouteConfig(NewPostRoute.name,
@@ -291,6 +310,11 @@ class _$AppRouter extends RootStackRouter {
                     path: ':taskId', parent: MainWrapperRouter.name),
                 RouteConfig(ChatRoute.name,
                     path: ':conversationId', parent: MainWrapperRouter.name),
+                RouteConfig(ConversationInfoRoute.name,
+                    path: 'conversation-info', parent: MainWrapperRouter.name),
+                RouteConfig(ConversationMembersRoute.name,
+                    path: 'conversation-members',
+                    parent: MainWrapperRouter.name),
                 RouteConfig(NewChatRoute.name,
                     path: 'new-chat', parent: MainWrapperRouter.name),
                 RouteConfig(LanguageSettingRoute.name,
@@ -428,6 +452,14 @@ class SingleProjectRouteArgs {
 }
 
 /// generated route for
+/// [NotFoundPage]
+class NotFoundRoute extends PageRouteInfo<void> {
+  const NotFoundRoute() : super(NotFoundRoute.name, path: 'page-not-found');
+
+  static const String name = 'NotFoundRoute';
+}
+
+/// generated route for
 /// [SingleProjectGuestViewPage]
 class SingleProjectGuestViewRoute
     extends PageRouteInfo<SingleProjectGuestViewRouteArgs> {
@@ -483,7 +515,7 @@ class RequestsRouteArgs {
 class ProjectMembersRoute extends PageRouteInfo<ProjectMembersRouteArgs> {
   ProjectMembersRoute({Key? key, required ProjectBloc projectBloc})
       : super(ProjectMembersRoute.name,
-            path: 'members',
+            path: 'project-members',
             args: ProjectMembersRouteArgs(key: key, projectBloc: projectBloc));
 
   static const String name = 'ProjectMembersRoute';
@@ -611,6 +643,55 @@ class ChatRouteArgs {
   @override
   String toString() {
     return 'ChatRouteArgs{conversationId: $conversationId, key: $key}';
+  }
+}
+
+/// generated route for
+/// [ConversationInfoPage]
+class ConversationInfoRoute extends PageRouteInfo<ConversationInfoRouteArgs> {
+  ConversationInfoRoute({required ChatBloc chatBloc, Key? key})
+      : super(ConversationInfoRoute.name,
+            path: 'conversation-info',
+            args: ConversationInfoRouteArgs(chatBloc: chatBloc, key: key));
+
+  static const String name = 'ConversationInfoRoute';
+}
+
+class ConversationInfoRouteArgs {
+  const ConversationInfoRouteArgs({required this.chatBloc, this.key});
+
+  final ChatBloc chatBloc;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'ConversationInfoRouteArgs{chatBloc: $chatBloc, key: $key}';
+  }
+}
+
+/// generated route for
+/// [ConversationMembersPage]
+class ConversationMembersRoute
+    extends PageRouteInfo<ConversationMembersRouteArgs> {
+  ConversationMembersRoute({required ChatBloc chatBloc, Key? key})
+      : super(ConversationMembersRoute.name,
+            path: 'conversation-members',
+            args: ConversationMembersRouteArgs(chatBloc: chatBloc, key: key));
+
+  static const String name = 'ConversationMembersRoute';
+}
+
+class ConversationMembersRouteArgs {
+  const ConversationMembersRouteArgs({required this.chatBloc, this.key});
+
+  final ChatBloc chatBloc;
+
+  final Key? key;
+
+  @override
+  String toString() {
+    return 'ConversationMembersRouteArgs{chatBloc: $chatBloc, key: $key}';
   }
 }
 

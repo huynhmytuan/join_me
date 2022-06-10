@@ -7,7 +7,6 @@ class RoundedContainer extends StatelessWidget {
     this.padding,
     this.margin,
     this.child,
-    this.isElevation = true,
     this.width,
     this.height,
     Key? key,
@@ -16,7 +15,7 @@ class RoundedContainer extends StatelessWidget {
   final EdgeInsets? margin;
   final Color? color;
   final Widget? child;
-  final bool isElevation;
+
   final double? width;
   final double? height;
 
@@ -30,7 +29,6 @@ class RoundedContainer extends StatelessWidget {
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(kDefaultRadius),
-        boxShadow: isElevation ? [kDefaultBoxShadow] : null,
       ),
       child: child,
     );

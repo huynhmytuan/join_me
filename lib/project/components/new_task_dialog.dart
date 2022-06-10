@@ -44,7 +44,7 @@ class NewTaskDialogState extends State<NewTaskDialog> {
   void _showMembersEditDialog() {
     showDialog<List<AppUser>>(
       context: context,
-      builder: (context) => AddUserDialog(
+      builder: (context) => EditUserDialog(
         initialUserList: _assignees,
         searchData: widget.members,
         title: 'Assign to',

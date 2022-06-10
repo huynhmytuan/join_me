@@ -9,6 +9,7 @@ import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/utilities/extensions/extensions.dart';
 import 'package:join_me/widgets/bottom_sheet/selection_bottom_sheet.dart';
+import 'package:join_me/widgets/handlers/empty_handler_widget.dart';
 import 'package:join_me/widgets/rounded_container.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -305,8 +306,17 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
   ) {
     final dayTasks = _loadDayTask(tasks);
     return Expanded(
-      child: tasks.isEmpty
-          ? const Text('No task in this day.')
+      child: dayTasks.isEmpty
+          ? Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).size.width * .2,
+              ),
+              child: EmptyHandlerWidget(
+                size: MediaQuery.of(context).size.width * .3,
+                imageHandlerDir: kNoDayTaskPicDir,
+                textHandler: 'No task in this day.',
+              ),
+            )
           : Scrollbar(
               child: ListView.builder(
                 physics: const BouncingScrollPhysics(),

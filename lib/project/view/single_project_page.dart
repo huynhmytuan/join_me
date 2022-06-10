@@ -110,22 +110,7 @@ class ProjectView extends StatefulWidget {
 }
 
 class _ProjectViewState extends State<ProjectView> {
-  late List<PageRouteInfo> _routes;
-
-  void _getRoute() {
-    _routes = [
-      ProjectDashboardRoute(projectId: widget.project.id),
-      ProjectTaskListRoute(projectId: widget.project.id),
-      ProjectCalendarRoute(projectId: widget.project.id),
-    ];
-    final route = _routes.removeAt(
-      _routes.indexWhere(
-        (routeInfo) =>
-            routeInfo.routeName == widget.project.viewType.toRouteName(),
-      ),
-    );
-    _routes.insert(0, route);
-  }
+  var _currentViewType = ProjectViewType.dashBoard;
 
   void _showNewTaskDialog() {
     showDialog<Task?>(
@@ -136,7 +121,12 @@ class _ProjectViewState extends State<ProjectView> {
       ),
     ).then((task) {
       if (task != null) {
-        context.read<TasksOverviewBloc>().add(AddNewTask(task));
+        context.read<TasksOverviewBloc>().add(
+              AddNewTask(
+                task,
+                context.read<AppBloc>().state.user.id,
+              ),
+            );
       }
     });
   }
@@ -314,7 +304,6 @@ class _ProjectViewState extends State<ProjectView> {
 
   @override
   void initState() {
-    _getRoute();
     super.initState();
   }
 
@@ -322,9 +311,12 @@ class _ProjectViewState extends State<ProjectView> {
   Widget build(BuildContext context) {
     return AutoTabsScaffold(
       resizeToAvoidBottomInset: false,
-      routes: _routes,
+      routes: [
+        ProjectDashboardRoute(projectId: widget.project.id),
+        ProjectTaskListRoute(projectId: widget.project.id),
+        ProjectCalendarRoute(projectId: widget.project.id),
+      ],
       appBarBuilder: (context, tabsRouter) {
-        final projectBloc = context.read<ProjectBloc>();
         return AppBar(
           leading: GestureDetector(
             onTap: () => AutoRouter.of(context).pop(),
@@ -345,27 +337,34 @@ class _ProjectViewState extends State<ProjectView> {
             ),
           ),
           actions: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                IconButton(
-                  onPressed: () => _showMoreMenuBottomSheet(projectBloc),
-                  icon: const Icon(Ionicons.ellipsis_horizontal_circle_outline),
-                ),
-                if (projectBloc.state.project.requests.isNotEmpty)
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: Container(
-                      width: 10,
-                      height: 10,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.red,
+            BlocBuilder<ProjectBloc, ProjectState>(
+              builder: (context, state) {
+                return Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    IconButton(
+                      onPressed: () =>
+                          _showMoreMenuBottomSheet(context.read<ProjectBloc>()),
+                      icon: const Icon(
+                        Ionicons.ellipsis_horizontal_circle_outline,
                       ),
                     ),
-                  ),
-              ],
+                    if (state.project.requests.isNotEmpty)
+                      Positioned(
+                        top: 12,
+                        right: 12,
+                        child: Container(
+                          width: 10,
+                          height: 10,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
             ),
           ],
           elevation: 0,
@@ -377,21 +376,29 @@ class _ProjectViewState extends State<ProjectView> {
                   if (viewType == null) {
                     return;
                   }
-                  if (viewType == widget.project.viewType) {
-                    return;
+                  var pageIndex = 0;
+                  switch (viewType) {
+                    case ProjectViewType.dashBoard:
+                      pageIndex = 0;
+                      break;
+                    case ProjectViewType.listView:
+                      pageIndex = 1;
+                      break;
+                    case ProjectViewType.calendarView:
+                      pageIndex = 2;
+                      break;
+                    case ProjectViewType.unknown:
+                      break;
                   }
-                  final routeNames = _routes.map((e) => e.routeName).toList();
-                  final pageIndex = routeNames.indexOf(viewType.toRouteName());
+                  setState(() {
+                    _currentViewType = viewType;
+                  });
                   context.tabsRouter.setActiveIndex(pageIndex);
-                  projectBloc.add(
-                    EditProject(
-                      widget.project.copyWith(viewType: viewType),
-                    ),
-                  );
                 },
               );
             },
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   widget.project.name,
@@ -406,7 +413,7 @@ class _ProjectViewState extends State<ProjectView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      widget.project.viewType.toTitle(),
+                      _currentViewType.toTitle(),
                       style: CustomTextStyle.heading4(context)
                           .copyWith(color: kTextColorGrey),
                     ),
@@ -423,7 +430,7 @@ class _ProjectViewState extends State<ProjectView> {
           centerTitle: true,
         );
       },
-      floatingActionButton: widget.project.viewType != ProjectViewType.dashBoard
+      floatingActionButton: _currentViewType != ProjectViewType.dashBoard
           ? BlocBuilder<TasksOverviewBloc, TasksOverviewState>(
               builder: (context, state) {
                 return Padding(

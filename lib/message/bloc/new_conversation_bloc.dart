@@ -118,7 +118,7 @@ class NewConversationBloc
         conversationId: '',
         createdAt: now,
         authorId: event.senderId,
-        content: event.firstMessageContent,
+        content: event.firstMessageContent.trim(),
         seenBy: const [],
       );
       final newConversation = await _messageRepository.addConversation(
@@ -147,7 +147,7 @@ class NewConversationBloc
         conversationId: state.conversation!.id,
         createdAt: now,
         authorId: state.sender.id,
-        content: event.messageContent,
+        content: event.messageContent.trim(),
         seenBy: const [],
       );
       await _messageRepository.sendMessage(message: message);

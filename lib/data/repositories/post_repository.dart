@@ -160,6 +160,7 @@ class PostRepository {
               actorId: userId,
               targetId: post.id,
               notifierId: post.authorId,
+              isRead: false,
             ),
           ),
         );

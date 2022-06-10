@@ -1,12 +1,23 @@
+import 'dart:async';
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:join_me/data/models/notification.dart';
 import 'package:join_me/data/models/task.dart';
+import 'package:join_me/data/repositories/notification_repository.dart';
 import 'package:join_me/utilities/keys/task_keys.dart';
 
 class TaskRepository {
-  TaskRepository({FirebaseFirestore? firebaseFirestore})
-      : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance;
+  TaskRepository({
+    FirebaseFirestore? firebaseFirestore,
+    NotificationRepository? notificationRepository,
+  })  : _firebaseFirestore = firebaseFirestore ?? FirebaseFirestore.instance,
+        _notificationRepository =
+            notificationRepository ?? NotificationRepository();
 
   final FirebaseFirestore _firebaseFirestore;
+
+  final NotificationRepository _notificationRepository;
 
   Stream<Task?> getTaskById(String taskId) {
     try {
@@ -47,7 +58,7 @@ class TaskRepository {
     });
   }
 
-  Future<void> addTask(Task task) async {
+  Future<void> addTask(Task task, String currentUser) async {
     final ref = await _firebaseFirestore
         .collection(TaskKeys.collection)
         .add(task.toJson());
@@ -59,6 +70,23 @@ class TaskRepository {
         merge: true,
       ),
     );
+    log(ref.id, name: 'TASK_ID');
+    //Check Assignee and notification
+    for (final userId in task.assignee) {
+      final notification = NotificationModel(
+        id: '',
+        createdAt: DateTime.now(),
+        notificationType: NotificationType.assign,
+        actorId: currentUser,
+        targetId: ref.id,
+        notifierId: userId,
+        isRead: false,
+      );
+      log(notification.toString());
+      await _notificationRepository.addNotification(
+        notification: notification,
+      );
+    }
   }
 
   ///Delete Task
@@ -68,14 +96,35 @@ class TaskRepository {
   }
 
   ///Update Task
-  Future<void> updateTask({required Task task}) async {
+  Future<void> updateTask({
+    required Task task,
+    required String currentUser,
+  }) async {
     final ref = _firebaseFirestore.collection(TaskKeys.collection).doc(task.id);
+    final previousData = Task.fromJson((await ref.get()).data()!);
     await ref.set(
       task.toJson(),
       SetOptions(
         merge: true,
       ),
     );
+    //Check Assignee and notification
+    for (final userId in task.assignee) {
+      if (!previousData.assignee.contains(userId)) {
+        final notification = NotificationModel(
+          id: '',
+          createdAt: DateTime.now(),
+          notificationType: NotificationType.assign,
+          actorId: currentUser,
+          targetId: task.id,
+          notifierId: userId,
+          isRead: false,
+        );
+        unawaited(
+          _notificationRepository.addNotification(notification: notification),
+        );
+      }
+    }
   }
 
   ///Add Sub-task

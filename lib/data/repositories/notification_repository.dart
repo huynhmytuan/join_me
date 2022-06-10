@@ -88,6 +88,32 @@ class NotificationRepository {
         .doc(notification.id)
         .delete();
   }
+
+  Future<void> markAsRead({
+    required String notificationId,
+    required String notifierId,
+  }) async {
+    final ref = _firebaseFirestore
+        .collection(NotificationKeys.collection)
+        .doc(notifierId)
+        .collection(NotificationKeys.collection)
+        .doc(notificationId);
+    await ref.update({NotificationKeys.isRead: true});
+  }
+
+  Future<void> markAllAsRead({
+    required String notifierId,
+  }) async {
+    final ref = await _firebaseFirestore
+        .collection(NotificationKeys.collection)
+        .doc(notifierId)
+        .collection(NotificationKeys.collection)
+        .where(NotificationKeys.isRead, isEqualTo: false)
+        .get();
+    for (final doc in ref.docs) {
+      await doc.reference.update({NotificationKeys.isRead: true});
+    }
+  }
 }
 
 const _$NotificationTypeEnumMap = {

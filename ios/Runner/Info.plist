@@ -15,7 +15,7 @@
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
-		<string>es</string>
+		<string>vi</string>
 	</array>
 	<key>CFBundleName</key>
 	<string>Join Me</string>
@@ -25,16 +25,48 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb1427457667691645</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.114164703660-j1tna7ilngm2mta7v77eajn5vahr34md</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
+	<key>FacebookAppID</key>
+	<string>1427457667691645</string>
+	<key>FacebookClientToken</key>
+	<string>9dd495e37ddd24b51d2ff9064320a213</string>
+	<key>FacebookDisplayName</key>
+	<string>APP-NAME</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSBonjourServices</key>
+	<array>
+		<string>_dartobservatory._tcp</string>
+	</array>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>In order to access your photo library</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>In order to access your photo library</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

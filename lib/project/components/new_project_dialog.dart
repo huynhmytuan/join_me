@@ -35,7 +35,7 @@ class NewProjectDialogState extends State<NewProjectDialog> {
   void _showMembersEditDialog() {
     showDialog<List<AppUser>>(
       context: context,
-      builder: (context) => AddUserDialog(
+      builder: (context) => EditUserDialog(
         title: 'Add Members',
         initialUserList: _members,
         withoutUsers: [context.read<AppBloc>().state.user],

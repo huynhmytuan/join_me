@@ -15,9 +15,9 @@ exports.deleteTask = functions.firestore.document('tasks/{docId}').onDelete(
     }
 )
 
-exports.deletePostComment = functions.firestore.document('post/{postId}').onDelete(
+exports.deleteAllTaskWhenProjectDeleted = functions.firestore.document('projects/{postId}').onDelete(
   async (snap, context) => {
-      db.collection('comments').where('postId','==',snap.id).get().then(
+      db.collection('tasks').where('projectId','==',snap.id).get().then(
         snapshot => {
           for(let i = 0; i <snapshot.docs.length; i++){
             snapshot.docs[i].delete();
@@ -27,59 +27,30 @@ exports.deletePostComment = functions.firestore.document('post/{postId}').onDele
   }
 )
 
-exports.newCommentNotification = functions.firestore.document('comments/{postId}/comments/{commentId}').onCreate(
-  async (snapshot, context)=>{
-    const commentData= snapshot.data();
-    const post = (await db.collection('posts').doc(commentData.postId).get()).data();
-    
+exports.deletePostComment = functions.firestore.document('post/{postId}').onDelete(
+  async (snap, context) => {
+      db.collection('comments').where('postId','==',snap.id).get().then(
+        snapshot => {
+          for(let i = 0; i <snapshot.docs.length; i++){
+            snapshot.docs[i].ref.delete();
+          }
+        }
+      );
+  }
+)
+
+exports.deleteMessageWhenConversationDeleted = functions.firestore.document('conversations/{conversationId}').onDelete(
+  async (snapshot, ctx) => {
+    db.collection('messages').doc(snapshot.id).collection('messages').where('conversationId', '==', snapshot.id).get().then(
+      snap => {
+        const snapDocs = snap.docs;
+        for(let i = 0; i <snapshot.docs.length; i++){
+          snapshot.docs[i].ref.delete();
+        }
+      }
+    )
   }
 );
-
-// exports.postLikeNotification = functions.firestore.document('posts/{postId}').onUpdate(
-//     (change, context) => {
-//         const likeData = change.after.get('likes');
-//         console.log(likeData);
-//         const previousLike = change.before.get('likes');
-//         console.log(previousLike);
-//         const postId = change.after.id;
-//         const authorId = change.after.get('authorId');
-//         console.log(postId);
-//         //Check if have new user like post
-//         for(let i = 0; i< likeData.length; i++){
-//             var notInPrevious = true;
-//             for(let j = 0; j < previousLike.length; j++){
-//                 if(likeData[i] == previousLike[j]){
-//                     notInPrevious = false;
-//                     break;
-//                 }   
-//             }
-//             if(notInPrevious){
-//                 //Check notification list
-//                 var newData = {};
-//                 db.collection('notifications').doc(authorId).collection('notifications').where('targetId','==',postId).where('notificationType','==','like').limit(1).get().then( query =>{
-//                     if(query.docs.length != 0){
-//                         console.log('No bat dau vao day ne');
-//                         const notification = query[0];
-//                         newData.actorId = likeData[i];
-//                         newData.lastChange = Date.;
-//                         notification.update(newData);
-//                     }
-//                     else{
-//                         console.log('Hmm no tao moi ne');
-//                         newData.id = '';
-//                         newData.actorId = likeData[i];
-//                         newData.lastChange = Date.now();
-//                         newData.targetId = postId;
-//                         newData.notificationType = 'like';
-//                         db.collection('notifications').doc(authorId).collection('notifications').add(newData).then(docRef => {
-//                             docRef.update({'id': docRef.id});
-//                         });
-//                     }
-//                 });
-//             }
-//         }        
-//     }
-// );
 
 exports.notifyNewMessage = functions.firestore.document('messages/{conversationId}/messages/{messageId}')
 .onCreate(
@@ -88,7 +59,6 @@ exports.notifyNewMessage = functions.firestore.document('messages/{conversationI
     //Get conversation and members
     const conversation = (await db.collection('conversations').doc(message.conversationId).get()).data();
     const members =  conversation.members;
-    
     //Get Author data
     const author = (await db.collection('users').doc(message.authorId).get()).data();
     for(var index in members){
@@ -98,13 +68,69 @@ exports.notifyNewMessage = functions.firestore.document('messages/{conversationI
         if(!!user.token){
             const payload = {
                 notification : {
-                  title: `JoinMe | ${author.name}`,
+                  title: `${author.name}`,
                   body: message.content,
-                  clickAction: 'FLUTTER_NOTIFICATION_CLICK',
+                  notification_count: '1',
+                },
+                data: {
+                  type : "message",
+                  targetId : message.conversationId
                 }
               }
+            console.log(payload);
             fcm.sendToDevice(user.token,payload);
         }
       }
    }
 });
+
+exports.sendNotification = functions.firestore.document('notifications/{userId}/notifications/{notificationId}').onCreate(
+  async (snapshot, context) => {
+    const notification = snapshot.data();
+    const notifierToken = (await db.collection('users').doc(notification.notifierId).get()).data().token;
+    if(!!notifierToken){
+        const notificationMessage = await getNotificationMessage(notification);
+        const payload = {
+            notification : {
+              title: `JoinMe`,
+              body: notificationMessage,
+              notification_count: '1',
+            },
+            data: {
+              "type" : notification.notificationType,
+              "notifierId": notification.notifierId,
+              "notificationId": notification.id,
+              "targetId": notification.targetId
+            }
+          }
+        fcm.sendToDevice(notifierToken,payload);
+    }
+  }
+)
+
+async function getNotificationMessage (notification) {
+  const notifyType = notification.notificationType;
+  const actorName = (await db.collection('users').doc(notification.actorId).get()).data().name;
+  switch (notifyType) {
+    case 'like':
+      return `${actorName} like your post.`
+    case 'likeComment':
+      var postId = notification.targetId.split('/')[0];
+      var commentId = notification.targetId.split('/')[1];
+      var commentContent = (await db.collection('comments').doc(postId).collection('comments').doc(commentId).get()).data().content;
+      return `${actorName} like your comment "\n${commentContent}"`;
+    case 'comment':
+      postId = notification.targetId.split('/')[0];
+      commentId = notification.targetId.split('/')[1];
+      commentContent = (await db.collection('comments').doc(postId).collection('comments').doc(commentId).get()).data().content;
+      return `${actorName} comment your post\n"${commentContent}"`;
+    case 'invite':
+      const projectName = (await db.collection('projects').doc(notification.targetId).get()).data().name;
+      return `${actorName} invite you to project "${projectName}"`;
+    case 'assign':
+      const taskName = (await db.collection('tasks').doc(notification.targetId).get()).data().name;
+      return `${actorName} assign you a task "${taskName}"`;
+    default:
+      break;
+  }
+}

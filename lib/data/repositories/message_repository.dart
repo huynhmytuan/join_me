@@ -1,7 +1,8 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:join_me/data/models/app_user.dart';
+
 import 'package:join_me/data/models/conversation.dart';
 import 'package:join_me/data/models/message.dart';
 import 'package:join_me/utilities/keys/conversation_keys.dart';
@@ -195,6 +196,46 @@ class MessageRepository {
       SetOptions(
         merge: true,
       ),
+    );
+  }
+
+  Future<void> deleteMessage({
+    required Message message,
+  }) async {
+    await _firebaseFirestore
+        .collection(MessageKeys.collection)
+        .doc(message.conversationId)
+        .collection(MessageKeys.collection)
+        .doc(message.id)
+        .delete();
+  }
+
+  Future<void> deleteConversation({required Conversation conversation}) async {
+    await _firebaseFirestore
+        .collection(ConversationKeys.collection)
+        .doc(conversation.id)
+        .delete();
+  }
+
+  Future<void> addMember(AppUser user, Conversation conversation) async {
+    await _firebaseFirestore
+        .collection(ConversationKeys.collection)
+        .doc(conversation.id)
+        .update(
+      <String, dynamic>{
+        ConversationKeys.members: FieldValue.arrayUnion(<String>[user.id]),
+      },
+    );
+  }
+
+  Future<void> removeMember(AppUser user, Conversation conversation) async {
+    await _firebaseFirestore
+        .collection(ConversationKeys.collection)
+        .doc(conversation.id)
+        .update(
+      <String, dynamic>{
+        ConversationKeys.members: FieldValue.arrayRemove(<String>[user.id]),
+      },
     );
   }
 }

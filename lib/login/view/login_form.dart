@@ -1,7 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:formz/formz.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/router/app_router.dart';
@@ -77,7 +76,11 @@ class LoginForm extends StatelessWidget {
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [_FacebookSignInButton(), _GoogleSignInButton()],
+              children: const [
+                _FacebookSignInButton(),
+                SizedBox(width: kDefaultPadding),
+                _GoogleSignInButton()
+              ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -196,11 +199,16 @@ class _FacebookSignInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return IconButton(
-      onPressed: () {},
-      icon: Image.asset(
-        '$kIconDir/facebook_icon.png',
-      ),
+    return BlocBuilder<LoginCubit, LoginState>(
+      builder: (context, state) {
+        return IconButton(
+          iconSize: 40,
+          onPressed: () => context.read<LoginCubit>().loginWithFacebook(),
+          icon: Image.asset(
+            '$kIconDir/facebook_icon.png',
+          ),
+        );
+      },
     );
   }
 }
@@ -215,9 +223,11 @@ class _GoogleSignInButton extends StatelessWidget {
     return BlocBuilder<LoginCubit, LoginState>(
       builder: (context, state) {
         return IconButton(
+          iconSize: 40,
           onPressed: () => context.read<LoginCubit>().loginWithGoogle(),
           icon: Image.asset(
             '$kIconDir/google_icon.png',
+            scale: 2,
           ),
         );
       },

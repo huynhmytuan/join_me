@@ -18,7 +18,7 @@ class PostState extends Equatable {
   final PostStatus status;
 
   @override
-  List<Object> get props => [postViewModel];
+  List<Object> get props => [postViewModel, status];
   PostState copyWith({
     PostViewModel? postViewModel,
     PostStatus? status,

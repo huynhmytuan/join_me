@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
 
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/project/bloc/project_bloc.dart';
@@ -158,6 +159,7 @@ class _TaskListViewState extends State<TaskListView> {
                     item.expandedValue[index].task.copyWith(
                       isComplete: value,
                     ),
+                    context.read<AppBloc>().state.user.id,
                   ),
                 ),
           );

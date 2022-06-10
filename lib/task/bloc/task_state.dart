@@ -31,7 +31,14 @@ class TaskState extends Equatable {
   final String? errorMessage;
 
   @override
-  List<Object> get props => [task, status, assignee, subTasks];
+  List<Object?> get props => [
+        task,
+        status,
+        assignee,
+        subTasks,
+        project,
+        createdBy,
+      ];
   TaskState copyWith({
     Task? task,
     TaskStateStatus? status,

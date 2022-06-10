@@ -6,6 +6,8 @@ import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/project/bloc/project_overview_bloc.dart';
 
 import 'package:join_me/project/components/components.dart';
+import 'package:join_me/utilities/constant.dart';
+import 'package:join_me/widgets/handlers/empty_handler_widget.dart';
 
 class ProjectsPage extends StatelessWidget {
   const ProjectsPage({Key? key}) : super(key: key);
@@ -27,6 +29,9 @@ class ProjectsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).brightness == Brightness.light
+          ? kBackgroundPostLight
+          : null,
       body: NestedScrollView(
         headerSliverBuilder: (context, value) {
           return [
@@ -82,6 +87,7 @@ class _ProjectListView extends StatelessWidget {
         if (state is ProjectsLoaded) {
           return state.projects.isNotEmpty
               ? ListView.builder(
+                  padding: EdgeInsets.zero,
                   physics: const BouncingScrollPhysics(),
                   itemCount: state.projects.length,
                   itemBuilder: (context, index) {
@@ -92,8 +98,12 @@ class _ProjectListView extends StatelessWidget {
                     );
                   },
                 )
-              : const Center(
-                  child: Text('No project.'),
+              : EmptyHandlerWidget(
+                  size: MediaQuery.of(context).size.width * .5,
+                  imageHandlerDir: kNoProjectPicDir,
+                  titleHandler: 'No Project Yet',
+                  textHandler:
+                      "It's time to create your first project. Do right thing and find right people.",
                 );
         }
         return const Center(

@@ -17,8 +17,8 @@ class CustomAlertDialog extends StatelessWidget {
   final String content;
   final String submitLabel;
   final String cancelLabel;
-  final VoidCallback onCancel;
-  final VoidCallback onSubmit;
+  final Function() onCancel;
+  final Function() onSubmit;
   final Color? submitButtonColor;
   @override
   Widget build(BuildContext context) {

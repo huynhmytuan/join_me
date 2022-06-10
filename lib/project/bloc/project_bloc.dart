@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -30,6 +31,8 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     on<EditProject>(_onEditProject);
     on<DeleteProject>(_onDeleteProject);
     on<AddJoinRequest>(_onAddJoinRequest);
+    on<AddUserToProject>(_onAddUserToProject);
+    on<RemoveUserFromProject>(_onRemoveUserFromProject);
   }
   final ProjectRepository _projectRepository;
   final UserRepository _userRepository;
@@ -47,6 +50,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         add(UpdateProject(project));
       });
     } catch (e) {
+      log(e.toString(), name: 'POST/ON_LOAD');
       emit(
         state.copyWith(
           status: ProjectStatus.failure,
@@ -61,12 +65,25 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     Emitter<ProjectState> emit,
   ) async {
     try {
+      //Check conflict on member an requests
+      if (event.project != null) {
+        for (final requester in event.project!.requests) {
+          if (event.project!.members.contains(requester)) {
+            await _projectRepository.deleteJoinRequest(
+              projectId: event.project!.id,
+              requesterId: requester,
+            );
+          }
+        }
+      }
+      log('Project: ${event.project}', name: 'POST/PRO');
       final members = event.project != null
           ? await _userRepository.getUsers(userIds: event.project!.members)
           : null;
       final leader = event.project != null
           ? members!.firstWhere((user) => user.id == event.project!.owner)
           : null;
+
       emit(
         state.copyWith(
           project: event.project,
@@ -76,6 +93,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         ),
       );
     } catch (e) {
+      log(e.toString(), name: 'POST/ON_UPDATE');
       emit(
         state.copyWith(
           status: ProjectStatus.failure,
@@ -92,6 +110,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
     try {
       await _projectRepository.updateProject(project: event.project);
     } catch (e) {
+      log(e.toString(), name: 'POST/ON_EDIT');
       emit(
         state.copyWith(
           status: ProjectStatus.failure,
@@ -113,6 +132,7 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
         ),
       );
     } catch (e) {
+      log(e.toString(), name: 'POST/ON_DELETE');
       emit(
         state.copyWith(
           status: ProjectStatus.failure,
@@ -131,5 +151,33 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       requester: event.userId,
     );
     _appMessageCubit.showInfoSnackbar(message: 'Your request has been sent');
+  }
+
+  Future<void> _onAddUserToProject(
+    AddUserToProject event,
+    Emitter<ProjectState> emit,
+  ) async {
+    try {
+      await _projectRepository.addUserToProject(
+        project: state.project,
+        userId: event.userId,
+      );
+    } catch (e) {
+      log(e.toString(), name: 'PROJECT_BLOC/ADD_USER');
+    }
+  }
+
+  Future<void> _onRemoveUserFromProject(
+    RemoveUserFromProject event,
+    Emitter<ProjectState> emit,
+  ) async {
+    try {
+      await _projectRepository.removeUserToProject(
+        project: state.project,
+        userId: event.userId,
+      );
+    } catch (e) {
+      log(e.toString(), name: 'PROJECT_BLOC/ADD_USER');
+    }
   }
 }

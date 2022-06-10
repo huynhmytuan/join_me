@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:join_me/app/cubit/app_message_cubit.dart';
 import 'package:join_me/data/models/app_user.dart';
 
 import 'package:join_me/data/models/conversation.dart';
@@ -18,16 +19,24 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatBloc({
     required MessageRepository messageRepository,
     required UserRepository userRepository,
+    required AppMessageCubit appMessageCubit,
   })  : _messageRepository = messageRepository,
         _userRepository = userRepository,
+        _appMessageCubit = appMessageCubit,
         super(ChatState.initial()) {
     on<LoadChat>(_onLoadChat);
+    on<ConversationNotFound>(_onConversationNotFound);
     on<UpdateConversation>(_onUpdateConversation);
     on<UpdateMessages>(_onUpdateMessages);
     on<SendMessage>(_onSendMessage);
+    on<DeletedMessage>(_onDeletedMessage);
+    on<DeleteConversation>(_onDeleteConversation);
+    on<AddMember>(_onAddMember);
+    on<RemoveMember>(_onRemoveMember);
   }
   final MessageRepository _messageRepository;
   final UserRepository _userRepository;
+  final AppMessageCubit _appMessageCubit;
   StreamSubscription? _conversationSubscription;
   StreamSubscription? _messagesSubscription;
 
@@ -42,7 +51,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       _conversationSubscription = _messageRepository
           .getConversationById(event.conversationId)
           .listen((conversation) {
-        add(UpdateConversation(conversation: conversation!));
+        if (conversation != null) {
+          add(UpdateConversation(conversation: conversation));
+        } else {
+          add(ConversationNotFound());
+        }
       });
       _messagesSubscription = _messageRepository
           .loadAllConversationMessages(
@@ -58,11 +71,20 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
+  void _onConversationNotFound(
+    ConversationNotFound event,
+    Emitter<ChatState> emit,
+  ) {
+    emit(state.copyWith(status: ChatViewStatus.notFound));
+    _conversationSubscription?.cancel();
+    _messagesSubscription?.cancel();
+  }
+
   Future<void> _onUpdateConversation(
     UpdateConversation event,
     Emitter<ChatState> emit,
   ) async {
-    final receivers = await _userRepository.getUsers(
+    final members = await _userRepository.getUsers(
       userIds: event.conversation.members,
     );
     final lastMessage = await _messageRepository.getConversationLastMessage(
@@ -70,7 +92,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     );
     final conversationViewModel = ConversationViewModel(
       conversation: event.conversation,
-      members: receivers,
+      members: members,
       lastMessage: lastMessage,
     );
     emit(
@@ -103,10 +125,67 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         conversationId: state.conversationViewModel.conversation.id,
         createdAt: DateTime.now(),
         authorId: event.author.id,
-        content: event.content,
+        content: event.content.trim(),
         seenBy: const [],
       );
       await _messageRepository.sendMessage(message: newMessage);
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  Future<void> _onDeletedMessage(
+    DeletedMessage event,
+    Emitter<ChatState> emit,
+  ) async {
+    await _messageRepository.deleteMessage(message: event.message);
+    _appMessageCubit.showSuccessfulSnackBar(message: 'Message deleted');
+  }
+
+  Future<void> _onDeleteConversation(
+    DeleteConversation event,
+    Emitter<ChatState> emit,
+  ) async {
+    try {
+      await _messageRepository.deleteConversation(
+        conversation: state.conversationViewModel.conversation,
+      );
+      emit(state.copyWith(status: ChatViewStatus.deleted));
+      _appMessageCubit.showSuccessfulSnackBar(message: 'Conversation deleted');
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  Future<void> _onAddMember(
+    AddMember event,
+    Emitter<ChatState> emit,
+  ) async {
+    try {
+      await _messageRepository.addMember(
+        event.user,
+        state.conversationViewModel.conversation,
+      );
+      _appMessageCubit.showSuccessfulSnackBar(
+        message: 'A new member has been added',
+      );
+    } catch (e) {
+      log(e.toString());
+    }
+  }
+
+  Future<void> _onRemoveMember(
+    RemoveMember event,
+    Emitter<ChatState> emit,
+  ) async {
+    try {
+      await _messageRepository.removeMember(
+        event.user,
+        state.conversationViewModel.conversation,
+      );
+      _appMessageCubit.showSuccessfulSnackBar(
+        message: 'A member has been removed',
+      );
     } catch (e) {
       log(e.toString());
     }

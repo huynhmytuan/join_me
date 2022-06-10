@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:join_me/config/theme.dart';
@@ -39,6 +41,7 @@ class _TextEditingPageState extends State<TextEditingPage> {
           leading: Align(
             child: GestureDetector(
               onTap: () {
+                log('Tap called');
                 if (text.compareTo(widget.initialText) == 0) {
                   AutoRouter.of(context).pop();
                   return;
@@ -48,16 +51,17 @@ class _TextEditingPageState extends State<TextEditingPage> {
                   barrierDismissible: true,
                   context: context,
                   builder: (ctx) {
+                    log('BUILD DIALOG');
                     return CustomAlertDialog(
                       title: 'Discard all changes?',
                       content: 'Everything which edited will be discard.',
                       submitLabel: 'Discard Changes',
                       submitButtonColor: kSecondaryRed,
                       onCancel: () {
-                        AutoRouter.of(context).pop(false);
+                        AutoRouter.of(ctx).pop(false);
                       },
                       onSubmit: () {
-                        AutoRouter.of(context).pop(true);
+                        AutoRouter.of(ctx).pop(true);
                       },
                     );
                   },

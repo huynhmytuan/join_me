@@ -133,6 +133,7 @@ class App extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => ChatBloc(
+              appMessageCubit: context.read<AppMessageCubit>(),
               messageRepository: context.read<MessageRepository>(),
               userRepository: context.read<UserRepository>(),
             ),
@@ -143,22 +144,35 @@ class App extends StatelessWidget {
             ),
           ),
         ],
-        child: MaterialApp.router(
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.lightTheme,
-          darkTheme: AppTheme.darkTheme,
-          scrollBehavior: const ScrollBehavior(
-            androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
-          ),
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-          ],
-          supportedLocales: AppLocalizations.supportedLocales,
-          routerDelegate: appRouter.delegate(),
-          routeInformationParser: appRouter.defaultRouteParser(),
-        ),
+        child: MyApp(appRouter: appRouter),
       ),
+    );
+  }
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({
+    Key? key,
+    required this.appRouter,
+  }) : super(key: key);
+
+  final AppRouter appRouter;
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp.router(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      scrollBehavior: const ScrollBehavior(
+        androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
+      ),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      routerDelegate: appRouter.delegate(),
+      routeInformationParser: appRouter.defaultRouteParser(),
     );
   }
 }

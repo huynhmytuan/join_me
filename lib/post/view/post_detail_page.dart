@@ -12,6 +12,7 @@ import 'package:join_me/data/repositories/comment_repository.dart';
 import 'package:join_me/data/repositories/repositories.dart';
 import 'package:join_me/post/bloc/comment_bloc.dart';
 import 'package:join_me/post/bloc/post_bloc.dart';
+import 'package:join_me/post/bloc/posts_bloc.dart';
 import 'package:join_me/post/components/components.dart';
 import 'package:join_me/post/cubit/like_cubit.dart';
 import 'package:join_me/post/view_model/post_view_model.dart';
@@ -52,6 +53,66 @@ class _PostView extends StatefulWidget {
 class _PostViewState extends State<_PostView> {
   late FocusNode commentFocusNode;
   late TextEditingController commentTextInputController;
+  void _showMoreDialog(
+    BuildContext context,
+    PostsBloc postsBloc,
+    PostViewModel postViewModel,
+  ) {
+    showModalBottomSheet<void>(
+      useRootNavigator: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      isScrollControlled: true,
+      context: context,
+      shape: const RoundedRectangleBorder(
+        // <-- for border radius
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(kDefaultRadius),
+          topRight: Radius.circular(kDefaultRadius),
+        ),
+      ),
+      builder: (_context) {
+        final _currentUser = _context.read<AppBloc>().state.user;
+        final isOwner = _currentUser.id == postViewModel.post.authorId;
+        return SelectionBottomSheet(
+          title: 'More',
+          listSelections: [
+            if (isOwner)
+              SelectionRow(
+                onTap: () {
+                  AutoRouter.of(_context).pop().then(
+                        (value) => showDialog<bool>(
+                          context: _context,
+                          builder: (context) => CustomAlertDialog(
+                            title: 'Are you sure?',
+                            content:
+                                '''Once you delete this post, this cannot be undone.''',
+                            submitButtonColor: Theme.of(context).errorColor,
+                            submitLabel: 'Delete',
+                            onCancel: () => AutoRouter.of(context).pop(false),
+                            onSubmit: () => AutoRouter.of(context).pop(true),
+                          ),
+                        ).then((choice) {
+                          if (choice != null && choice) {
+                            postsBloc.add(
+                              DeletePost(
+                                postId: postViewModel.post.id,
+                              ),
+                            );
+                            AutoRouter.of(context).pop();
+                          }
+                        }),
+                      );
+                },
+                color: Theme.of(_context).errorColor,
+                title: 'Delete Post',
+                iconData: Ionicons.trash_bin_outline,
+              )
+          ],
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     commentFocusNode = FocusNode();
@@ -62,8 +123,18 @@ class _PostViewState extends State<_PostView> {
   @override
   Widget build(BuildContext context) {
     final appLocale = Localizations.localeOf(context);
-    return BlocBuilder<PostBloc, PostState>(
+    final currentUser = context.read<AppBloc>().state.user;
+    return BlocConsumer<PostBloc, PostState>(
+      listener: (context, state) {
+        if (state.status == PostStatus.notFound &&
+            state.postViewModel.author.id != currentUser.id) {
+          AutoRouter.of(context).popAndPush(const NotFoundRoute());
+        }
+      },
       builder: (context, state) {
+        if (state.status == PostStatus.notFound) {
+          const SizedBox();
+        }
         if (state.status == PostStatus.loading ||
             state.status == PostStatus.initial) {
           return const Scaffold(
@@ -121,6 +192,7 @@ class _PostViewState extends State<_PostView> {
     Locale appLocale,
     PostViewModel postVM,
   ) {
+    final currentUser = context.read<AppBloc>().state.user;
     return AppBar(
       elevation: 0,
       leading: IconButton(
@@ -158,13 +230,18 @@ class _PostViewState extends State<_PostView> {
         ],
       ),
       actions: [
-        IconButton(
-          splashRadius: 20,
-          onPressed: () {},
-          icon: const Icon(
-            Ionicons.ellipsis_horizontal,
-          ),
-        )
+        if (currentUser.id == postVM.author.id)
+          IconButton(
+            splashRadius: 20,
+            onPressed: () => _showMoreDialog(
+              context,
+              context.read<PostsBloc>(),
+              postVM,
+            ),
+            icon: const Icon(
+              Ionicons.ellipsis_horizontal,
+            ),
+          )
       ],
     );
   }
@@ -188,19 +265,15 @@ class _PostContent extends StatelessWidget {
     final _currentUser = context.read<AppBloc>().state.user;
     return BlocBuilder<PostBloc, PostState>(
       builder: (context, state) {
-        if (state.status == PostStatus.notFound) {
-          return const Center(
-            child: Text('Not Found'),
-          );
-        }
         final appLocale = Localizations.localeOf(context);
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: ExpandedText(text: state.postViewModel.post.content),
-            ),
+            if (state.postViewModel.post.content.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: ExpandedText(text: state.postViewModel.post.content),
+              ),
             const Divider(
               indent: kDefaultPadding,
               endIndent: kDefaultPadding,

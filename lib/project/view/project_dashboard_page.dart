@@ -13,22 +13,12 @@ import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
 
-class ProjectDashboardPage extends StatefulWidget {
+class ProjectDashboardPage extends StatelessWidget {
   const ProjectDashboardPage({
     required this.projectId,
     Key? key,
   }) : super(key: key);
   final String projectId;
-
-  @override
-  State<ProjectDashboardPage> createState() => _ProjectDashboardPageState();
-}
-
-class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,13 +32,14 @@ class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
           );
         }
         if (state.status == ProjectStatus.success) {
-          return CustomScrollView(
+          return SingleChildScrollView(
+            clipBehavior: Clip.none,
             physics: const BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            slivers: [
-              SliverToBoxAdapter(
-                child: Padding(
+            child: Column(
+              children: [
+                Padding(
                   padding: const EdgeInsets.all(kDefaultPadding),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,9 +170,9 @@ class _ProjectDashboardPageState extends State<ProjectDashboardPage> {
                     ],
                   ),
                 ),
-              ),
-              const _ListInfoCards()
-            ],
+                const _ListInfoCards()
+              ],
+            ),
           );
         }
         return const Text('Something went wrong');
@@ -230,37 +221,36 @@ class _ListInfoCards extends StatelessWidget {
           return const CircularProgressIndicator();
         }
         if (state is TasksOverviewLoadSuccess) {
-          return SliverPadding(
+          return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 10),
-            sliver: SliverList(
-              delegate: SliverChildListDelegate.fixed(
-                [
-                  _DataBadge(
-                    badgeTitle: 'Pending Task',
-                    iconColor: kSecondaryYellow,
-                    iconData: Ionicons.document_text,
-                    valueCount: state.tasks
-                        .where((task) => !task.task.isComplete)
-                        .toList()
-                        .length,
-                  ),
-                  _DataBadge(
-                    badgeTitle: 'Complete',
-                    iconColor: kSecondaryGreen,
-                    iconData: Ionicons.checkbox_outline,
-                    valueCount: state.tasks
-                        .where((task) => task.task.isComplete)
-                        .toList()
-                        .length,
-                  ),
-                  _DataBadge(
-                    badgeTitle: 'All',
-                    iconColor: kSecondaryBlue,
-                    iconData: Ionicons.bag_handle_outline,
-                    valueCount: state.tasks.length,
-                  ),
-                ],
-              ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DataBadge(
+                  badgeTitle: 'Pending Task',
+                  iconColor: kSecondaryYellow,
+                  iconData: Ionicons.document_text,
+                  valueCount: state.tasks
+                      .where((task) => !task.task.isComplete)
+                      .toList()
+                      .length,
+                ),
+                _DataBadge(
+                  badgeTitle: 'Complete',
+                  iconColor: kSecondaryGreen,
+                  iconData: Ionicons.checkbox_outline,
+                  valueCount: state.tasks
+                      .where((task) => task.task.isComplete)
+                      .toList()
+                      .length,
+                ),
+                _DataBadge(
+                  badgeTitle: 'All',
+                  iconColor: kSecondaryBlue,
+                  iconData: Ionicons.bag_handle_outline,
+                  valueCount: state.tasks.length,
+                ),
+              ],
             ),
           );
         }
@@ -287,7 +277,6 @@ class _DataBadge extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(kDefaultPadding),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
         // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           CircleAvatar(

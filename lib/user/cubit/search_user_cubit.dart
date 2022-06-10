@@ -8,11 +8,17 @@ part 'search_user_state.dart';
 class SearchUserCubit extends Cubit<SearchUserState> {
   SearchUserCubit({required UserRepository userRepository})
       : _userRepository = userRepository,
-        super(SearchUserInitial());
+        super(SearchUserState.initial());
 
   final UserRepository _userRepository;
 
-  Future<Iterable<AppUser?>> searchUsers(String searchString) {
-    return _userRepository.searchUsers(searchString);
+  void clearResults() {
+    emit(state.copyWith(results: []));
+  }
+
+  Future<Iterable<AppUser?>> searchUsers(String searchString) async {
+    final results = await _userRepository.searchUsers(searchString);
+    emit(state.copyWith(results: results));
+    return results;
   }
 }

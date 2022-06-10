@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
@@ -101,7 +102,7 @@ class _TaskViewState extends State<TaskView> {
     });
   }
 
-  void _showDatePicker(TaskBloc taskBloc) {
+  void _showDatePicker(TaskBloc taskBloc, AppUser currentUser) {
     final task = taskBloc.state.task;
     showDialog<dynamic>(
       context: context,
@@ -118,12 +119,13 @@ class _TaskViewState extends State<TaskView> {
           task.copyWith(
             dueDate: dueDate,
           ),
+          currentUser.id,
         ),
       );
     });
   }
 
-  void _showCategoryPickerSheet(TaskBloc taskBloc) {
+  void _showCategoryPickerSheet(TaskBloc taskBloc, AppUser currentUser) {
     final task = taskBloc.state.task;
     final project = taskBloc.state.project;
     _showBottomSheet(
@@ -135,6 +137,7 @@ class _TaskViewState extends State<TaskView> {
                 task.copyWith(
                   category: taskBloc.state.project.categories[index],
                 ),
+                currentUser.id,
               ),
             );
           },
@@ -157,14 +160,14 @@ class _TaskViewState extends State<TaskView> {
     );
   }
 
-  void _showAssigneeEditDialog(TaskBloc taskBloc) {
+  void _showAssigneeEditDialog(TaskBloc taskBloc, AppUser currentUser) {
     final task = taskBloc.state.task;
     final assignee = taskBloc.state.assignee;
     final members = context.read<ProjectBloc>().state.members;
     showDialog<List<AppUser>>(
       context: context,
       useRootNavigator: true,
-      builder: (context) => AddUserDialog(
+      builder: (context) => EditUserDialog(
         initialUserList: assignee,
         searchData: members,
       ),
@@ -173,11 +176,16 @@ class _TaskViewState extends State<TaskView> {
         return;
       }
       final userIds = selectedUser.map((user) => user.id).toList();
-      taskBloc.add(EditTask(task.copyWith(assignee: userIds)));
+      taskBloc.add(
+        EditTask(
+          task.copyWith(assignee: userIds),
+          currentUser.id,
+        ),
+      );
     });
   }
 
-  void _showPriorityPickerSheet(TaskBloc taskBloc) {
+  void _showPriorityPickerSheet(TaskBloc taskBloc, AppUser currentUser) {
     final task = taskBloc.state.task;
     _showBottomSheet(
       builder: (context) {
@@ -186,8 +194,12 @@ class _TaskViewState extends State<TaskView> {
             .toList();
         return CupertinoPickerBottomSheet(
           onSubmit: (index) {
-            taskBloc
-                .add(EditTask(task.copyWith(priority: priorityList[index])));
+            taskBloc.add(
+              EditTask(
+                task.copyWith(priority: priorityList[index]),
+                currentUser.id,
+              ),
+            );
           },
           itemExtent: CustomTextStyle.heading4(context).fontSize! + 20,
           childCount: priorityList.length,
@@ -234,10 +246,15 @@ class _TaskViewState extends State<TaskView> {
   @override
   Widget build(BuildContext context) {
     final appLocale = Localizations.localeOf(context);
+    final currentUser = context.read<AppBloc>().state.user;
     return BlocBuilder<TaskBloc, TaskState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: _buildAppBar(context, context.read<TaskBloc>()),
+          appBar: _buildAppBar(
+            context,
+            context.read<TaskBloc>(),
+            currentUser,
+          ),
           body: Column(
             children: [
               if (state.task.isComplete)
@@ -332,8 +349,10 @@ class _TaskViewState extends State<TaskView> {
                               iconData: Ionicons.time_outline,
                               rowTitle: 'Due date',
                               rowData: GestureDetector(
-                                onTap: () =>
-                                    _showDatePicker(context.read<TaskBloc>()),
+                                onTap: () => _showDatePicker(
+                                  context.read<TaskBloc>(),
+                                  currentUser,
+                                ),
                                 child: Text(
                                   state.task.dueDate == null
                                       ? 'No due date'
@@ -349,6 +368,7 @@ class _TaskViewState extends State<TaskView> {
                             GestureDetector(
                               onTap: () => _showAssigneeEditDialog(
                                 context.read<TaskBloc>(),
+                                currentUser,
                               ),
                               child: _buildDataRow(
                                 context: context,
@@ -366,6 +386,7 @@ class _TaskViewState extends State<TaskView> {
                             GestureDetector(
                               onTap: () => _showPriorityPickerSheet(
                                 context.read<TaskBloc>(),
+                                currentUser,
                               ),
                               child: _buildDataRow(
                                 context: context,
@@ -386,6 +407,7 @@ class _TaskViewState extends State<TaskView> {
                             GestureDetector(
                               onTap: () => _showCategoryPickerSheet(
                                 context.read<TaskBloc>(),
+                                currentUser,
                               ),
                               child: _buildDataRow(
                                 context: context,
@@ -439,6 +461,7 @@ class _TaskViewState extends State<TaskView> {
                                             state.task.copyWith(
                                               description: textEdited as String,
                                             ),
+                                            currentUser.id,
                                           ),
                                         );
                                   }
@@ -478,36 +501,47 @@ class _TaskViewState extends State<TaskView> {
                               height: 10,
                             ),
                             if (state.task.subTasks.isNotEmpty)
-                              ListView.separated(
-                                physics: const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                separatorBuilder: (_, __) => const SizedBox(
-                                  height: 5,
-                                ),
-                                itemCount: state.subTasks.length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(
-                                        kDefaultRadius,
+                              Builder(builder: (context) {
+                                final subTasksOrderByCreatedAt =
+                                    List.of(state.subTasks)
+                                      ..sort(
+                                        (a, b) =>
+                                            a.createdAt.compareTo(b.createdAt),
+                                      );
+                                return ListView.separated(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  separatorBuilder: (_, __) => const SizedBox(
+                                    height: 5,
+                                  ),
+                                  itemCount: state.subTasks.length,
+                                  itemBuilder: (context, index) {
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          kDefaultRadius,
+                                        ),
+                                        border:
+                                            Border.all(color: kIconColorGrey),
                                       ),
-                                      border: Border.all(color: kIconColorGrey),
-                                    ),
-                                    child: TaskListRow(
-                                      task: state.subTasks[index],
-                                      onChange: (value) => context
-                                          .read<TaskBloc>()
-                                          .add(
-                                            EditTask(
-                                              state.subTasks[index].copyWith(
-                                                isComplete: value,
+                                      child: TaskListRow(
+                                        task: subTasksOrderByCreatedAt[index],
+                                        onChange: (value) => context
+                                            .read<TaskBloc>()
+                                            .add(
+                                              EditTask(
+                                                subTasksOrderByCreatedAt[index]
+                                                    .copyWith(
+                                                  isComplete: value,
+                                                ),
+                                                currentUser.id,
                                               ),
                                             ),
-                                          ),
-                                    ),
-                                  );
-                                },
-                              ),
+                                      ),
+                                    );
+                                  },
+                                );
+                              }),
                             GestureDetector(
                               onTap: () =>
                                   _showNewTaskDialog(context.read<TaskBloc>()),
@@ -550,7 +584,11 @@ class _TaskViewState extends State<TaskView> {
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context, TaskBloc taskBloc) {
+  PreferredSizeWidget _buildAppBar(
+    BuildContext context,
+    TaskBloc taskBloc,
+    AppUser currentUser,
+  ) {
     return PreferredSize(
       preferredSize: const Size.fromHeight(100),
       child: SafeArea(
@@ -581,6 +619,7 @@ class _TaskViewState extends State<TaskView> {
                       taskBloc.add(
                         EditTask(
                           taskBloc.state.task.copyWith(isComplete: value),
+                          currentUser.id,
                         ),
                       );
                     },

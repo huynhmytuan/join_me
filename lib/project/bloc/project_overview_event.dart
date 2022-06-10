@@ -32,3 +32,13 @@ class AddProject extends ProjectEvent {
   @override
   List<Object> get props => [project];
 }
+
+class AddUserToProject extends ProjectEvent {
+  const AddUserToProject(this.project, this.userId);
+
+  final Project project;
+  final String userId;
+
+  @override
+  List<Object> get props => [project, userId];
+}

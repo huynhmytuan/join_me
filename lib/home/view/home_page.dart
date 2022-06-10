@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
@@ -7,11 +10,12 @@ import 'package:join_me/app/cubit/app_message_cubit.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/message/bloc/conversations_bloc.dart';
-import 'package:join_me/message/bloc/messages_bloc.dart';
+
 import 'package:join_me/notification/bloc/notification_bloc.dart';
-import 'package:join_me/post/bloc/posts_bloc.dart';
+
 import 'package:join_me/project/bloc/project_overview_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
+import 'package:join_me/widgets/widgets.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -27,6 +31,42 @@ class _HomePageState extends State<HomePage> {
     context.read<ConversationsBloc>().add(FetchConversations(currentUser.id));
     context.read<ProjectOverviewBloc>().add(LoadProjects(currentUser.id));
     context.read<NotificationBloc>().add(LoadNotifications(currentUser.id));
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      final messageData = event.data;
+      final targetId = messageData['targetId'] as String;
+      if (messageData['type'] as String != 'message') {
+        context.read<NotificationBloc>().add(
+              MarkAsRead(
+                messageData['notificationId'] as String,
+                messageData['notifierId'] as String,
+              ),
+            );
+      }
+      switch (messageData['type'] as String) {
+        case 'message':
+          AutoRouter.of(context).push(ChatRoute(conversationId: targetId));
+          break;
+        case 'likeComment':
+          AutoRouter.of(context)
+              .push(PostDetailRoute(postId: targetId.split('/')[0]));
+          break;
+        case 'comment':
+          AutoRouter.of(context)
+              .push(PostDetailRoute(postId: targetId.split('/')[0]));
+          break;
+        case 'likePost':
+          AutoRouter.of(context).push(PostDetailRoute(postId: targetId));
+          break;
+        case 'invite':
+          AutoRouter.of(context).push(SingleProjectRoute(projectId: targetId));
+          break;
+        case 'assign':
+          AutoRouter.of(context).push(SingleTaskRoute(taskId: targetId));
+          break;
+        default:
+      }
+    });
+
     super.initState();
   }
 
@@ -65,6 +105,7 @@ class _HomePageState extends State<HomePage> {
                     style: CustomTextStyle.heading4(context).copyWith(
                       color: Colors.white,
                     ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -74,23 +115,30 @@ class _HomePageState extends State<HomePage> {
       },
       child: Container(
         color: Theme.of(context).scaffoldBackgroundColor,
-        child: SafeArea(
-          child: AutoTabsScaffold(
-            routes: const [
-              PostsRoute(),
-              MessagesRouter(),
-              ProjectsRoute(),
-              NotificationRoute(),
-              MenuRoute(),
-            ],
-            bottomNavigationBuilder: _buildBottomBar,
+        child: AutoTabsScaffold(
+          routes: const [
+            PostsRoute(),
+            MessagesRouter(),
+            ProjectsRoute(),
+            NotificationRoute(),
+            MenuRoute(),
+          ],
+          bottomNavigationBuilder:
+              (BuildContext context, TabsRouter tabsRouter) => _BottomBar(
+            tabsRouter: tabsRouter,
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildBottomBar(BuildContext context, TabsRouter tabsRouter) {
+class _BottomBar extends StatelessWidget {
+  const _BottomBar({required this.tabsRouter, Key? key}) : super(key: key);
+  final TabsRouter tabsRouter;
+
+  @override
+  Widget build(BuildContext context) {
     return BottomNavigationBar(
       backgroundColor: Theme.of(context).cardColor,
       type: BottomNavigationBarType.fixed,
@@ -100,28 +148,116 @@ class _HomePageState extends State<HomePage> {
       unselectedItemColor: kTextColorGrey,
       currentIndex: tabsRouter.activeIndex,
       onTap: tabsRouter.setActiveIndex,
-      items: const [
-        BottomNavigationBarItem(
+      items: [
+        const BottomNavigationBarItem(
           icon: Icon(Ionicons.home_outline),
+          activeIcon: Icon(Ionicons.home),
           label: 'Home',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Ionicons.paper_plane_outline),
-          label: 'Message',
-        ),
-        BottomNavigationBarItem(
+        _buildMessageTabIcon(),
+        const BottomNavigationBarItem(
           icon: Icon(Ionicons.folder_outline),
+          activeIcon: Icon(Ionicons.folder),
           label: 'Project',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Ionicons.notifications_outline),
-          label: 'Notification',
-        ),
-        BottomNavigationBarItem(
+        _buildNotificationTabIcon(),
+        const BottomNavigationBarItem(
           icon: Icon(Ionicons.menu_outline),
+          activeIcon: Icon(Ionicons.menu),
           label: 'Menu',
         )
       ],
+    );
+  }
+
+  BottomNavigationBarItem _buildMessageTabIcon() {
+    final countBadge = Positioned(
+      top: -5,
+      right: -10,
+      child: BlocBuilder<ConversationsBloc, ConversationsState>(
+        builder: (context, state) {
+          final currentUser = context.read<AppBloc>().state.user;
+          if (state.conversations.isNotEmpty) {
+            final unseenMessageCount = state.conversations
+                .where(
+                  (e) =>
+                      e.lastMessage != null &&
+                      !e.lastMessage!.seenBy.contains(currentUser.id),
+                )
+                .length;
+            if (unseenMessageCount == 0) {
+              return const SizedBox.shrink();
+            }
+            return CountBadge(
+              count: unseenMessageCount,
+              size: 18,
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      ),
+    );
+    return BottomNavigationBarItem(
+      icon: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          const Icon(Ionicons.chatbubbles_outline),
+          countBadge,
+        ],
+      ),
+      activeIcon: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          const Icon(Ionicons.chatbubbles),
+          countBadge,
+        ],
+      ),
+      label: 'Message',
+    );
+  }
+
+  BottomNavigationBarItem _buildNotificationTabIcon() {
+    final countBadge = Positioned(
+      top: -5,
+      right: -10,
+      child: BlocBuilder<NotificationBloc, NotificationState>(
+        builder: (context, state) {
+          if (state.notifications.isNotEmpty) {
+            final unseenNotificationsCount = state.notifications
+                .where(
+                  (e) => !e.notificationData.isRead,
+                )
+                .length;
+            if (unseenNotificationsCount == 0) {
+              return const SizedBox.shrink();
+            }
+            return CountBadge(
+              count: unseenNotificationsCount,
+              size: 18,
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+      ),
+    );
+    return BottomNavigationBarItem(
+      icon: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          const Icon(Ionicons.notifications_outline),
+          countBadge,
+        ],
+      ),
+      activeIcon: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          const Icon(Ionicons.notifications),
+          countBadge,
+        ],
+      ),
+      label: 'Notification',
     );
   }
 }

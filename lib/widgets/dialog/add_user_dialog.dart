@@ -1,197 +1,123 @@
-// ignore_for_file: avoid_dynamic_calls
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-
-import 'package:join_me/config/theme.dart';
+import 'package:ionicons/ionicons.dart';
+import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/user/cubit/search_user_cubit.dart';
 import 'package:join_me/utilities/constant.dart';
-import 'package:join_me/widgets/avatar_circle_widget.dart';
-import 'package:keyboard_dismisser/keyboard_dismisser.dart';
+import 'package:join_me/widgets/widgets.dart';
 
-class AddUserDialog extends StatefulWidget {
-  const AddUserDialog({
-    this.initialUserList = const [],
-    this.onSubmit,
-    this.onCancel,
-    this.title,
-    this.withoutUsers = const [],
-    this.searchData,
-    Key? key,
-  }) : super(key: key);
-  final List<AppUser> initialUserList;
-  final Function? onCancel;
-  final Function? onSubmit;
-  final String? title;
-  final List<AppUser> withoutUsers;
-  final List<AppUser>? searchData;
-
-  @override
-  State<AddUserDialog> createState() => _AddUserDialogState();
-}
-
-class _AddUserDialogState extends State<AddUserDialog> {
-  List<AppUser> selectedUser = [];
-  final searchTextController = TextEditingController();
-
-  @override
-  void initState() {
-    selectedUser.addAll(widget.initialUserList);
-    super.initState();
-  }
+class AddUserDialog extends StatelessWidget {
+  const AddUserDialog({this.withoutUsers, Key? key}) : super(key: key);
+  final List<AppUser>? withoutUsers;
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       shape: kBorderRadiusShape,
-      child: KeyboardDismisser(
-        // ignore: avoid_redundant_argument_values
-        gestures: const [GestureType.onTap],
-        child: SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        widget.onCancel?.call();
-                        AutoRouter.of(context).pop();
-                      },
-                      child: Text(
-                        'Cancel',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ),
-                    Text(
-                      widget.title ?? 'Edit Members',
-                      style: CustomTextStyle.heading3(context),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        widget.onSubmit?.call();
-                        AutoRouter.of(context).pop(selectedUser);
-                      },
-                      child: const Text('Save'),
-                    ),
-                  ],
-                ),
-                _buildSearchField(),
-                SizedBox(
-                  height: 250,
-                  child: _buildSelectionView(selectedUser),
-                ),
-              ],
-            ),
-          ),
+      child: RoundedContainer(
+        padding: const EdgeInsets.all(kDefaultPadding),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            _SearchInput(),
+            _SearchResults(),
+          ],
         ),
       ),
     );
   }
+}
 
-  Container _buildSearchField() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
-      decoration: BoxDecoration(
-        color: Theme.of(context).brightness == Brightness.light
-            ? kTextFieldLightColor
-            : kTextFieldDarkColor,
-        borderRadius: BorderRadius.circular(kDefaultRadius),
-      ),
-      child: BlocBuilder<SearchUserCubit, SearchUserState>(
-        builder: (context, state) {
-          return TypeAheadFormField<AppUser?>(
-            textFieldConfiguration: const TextFieldConfiguration(
-              autofocus: true,
-              decoration: InputDecoration(
-                border: InputBorder.none,
+class _SearchInput extends StatelessWidget {
+  const _SearchInput({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<SearchUserCubit, SearchUserState>(
+      builder: (context, state) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            color: Theme.of(context).brightness == Brightness.light
+                ? kTextFieldLightColor
+                : kTextFieldDarkColor,
+            borderRadius: BorderRadius.circular(kDefaultRadius),
+          ),
+          child: Row(
+            children: [
+              const Icon(
+                Ionicons.search,
+                color: kTextColorGrey,
               ),
-            ),
-            itemBuilder: (BuildContext context, user) {
-              if (widget.withoutUsers.contains(user)) {
-                return const SizedBox();
-              }
-              return ListTile(
-                leading: CircleAvatarWidget(imageUrl: user!.photoUrl),
-                title: Text(user.name),
-              );
-            },
-            suggestionsBoxDecoration: SuggestionsBoxDecoration(
-              color: Theme.of(context).cardColor,
-              shape: kBorderRadiusShape,
-            ),
-            hideOnError: true,
-            hideOnLoading: true,
-            onSuggestionSelected: (AppUser? user) {
-              setState(() {
-                selectedUser.add(user!);
-              });
-            },
-            suggestionsCallback: (String pattern) {
-              if (widget.searchData != null) {
-                return widget.searchData!.where(
-                  (element) => element.name.toLowerCase().contains(
-                        pattern.toLowerCase(),
-                      ),
-                );
-              }
-              return context.read<SearchUserCubit>().searchUsers(pattern);
-            },
-          );
-        },
-      ),
+              const SizedBox(width: 5),
+              Expanded(
+                child: TextField(
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    border: InputBorder.none,
+                    hintText: 'Search for username...',
+                  ),
+                  onChanged: (value) {
+                    if (value.isNotEmpty) {
+                      context.read<SearchUserCubit>().searchUsers(value);
+                    }
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _SearchResults extends StatelessWidget {
+  const _SearchResults({this.withoutUsers, Key? key}) : super(key: key);
+  final List<AppUser>? withoutUsers;
+
+  @override
+  Widget build(BuildContext context) {
+    final currentUser = context.read<AppBloc>().state.user;
+    return BlocBuilder<SearchUserCubit, SearchUserState>(
+      builder: (context, state) {
+        return SizedBox(
+          height: 280,
+          child: state.results.isEmpty
+              ? const SizedBox.shrink()
+              : Scrollbar(
+                  child: ListView.separated(
+                    itemBuilder: (context, index) =>
+                        isNotShowResult(state.results[index], currentUser)
+                            ? const SizedBox()
+                            : ListTile(
+                                onTap: () {
+                                  AutoRouter.of(context)
+                                      .pop(state.results[index]);
+                                },
+                                leading: CircleAvatarWidget(
+                                  imageUrl: state.results[index].photoUrl,
+                                  size: 40,
+                                ),
+                                title: Text(state.results[index].name),
+                              ),
+                    separatorBuilder: (context, index) =>
+                        isNotShowResult(state.results[index], currentUser)
+                            ? const SizedBox()
+                            : const Divider(),
+                    itemCount: state.results.length,
+                  ),
+                ),
+        );
+      },
     );
   }
 
-  Widget _buildSelectionView(List<AppUser> selectedUser) {
-    return (selectedUser.isEmpty)
-        ? const Center(
-            child: Text('No user selected.'),
-          )
-        : SingleChildScrollView(
-            child: Wrap(
-              children: selectedUser
-                  .map(
-                    (user) => Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 2,
-                      ),
-                      child: Chip(
-                        avatar: CircleAvatarWidget(
-                          imageUrl: user.photoUrl,
-                        ),
-                        label: ConstrainedBox(
-                          constraints: const BoxConstraints(
-                            maxWidth: 100,
-                          ),
-                          child: Text(
-                            user.name,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        onDeleted: () {
-                          setState(() {
-                            selectedUser.remove(user);
-                          });
-                        },
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          );
-  }
-
-  @override
-  void dispose() {
-    searchTextController.dispose();
-    super.dispose();
+  bool isNotShowResult(AppUser user, AppUser currentUser) {
+    return currentUser.id == user.id ||
+        (withoutUsers != null &&
+            withoutUsers!.map((e) => e.id).contains(user.id));
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +9,7 @@ import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/app/cubit/app_message_cubit.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
+import 'package:join_me/data/models/models.dart';
 
 import 'package:join_me/data/repositories/repositories.dart';
 
@@ -15,8 +18,12 @@ import 'package:join_me/post/components/components.dart';
 import 'package:join_me/project/bloc/project_overview_bloc.dart';
 import 'package:join_me/project/components/components.dart';
 import 'package:join_me/user/bloc/user_bloc.dart';
+import 'package:join_me/user/components/new_conversation_dialog.dart';
+import 'package:join_me/user/cubit/send_user_message_cubit.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/avatar_circle_widget.dart';
+import 'package:join_me/widgets/dialog/add_project_invitation_dialog.dart';
+import 'package:join_me/widgets/handlers/empty_handler_widget.dart';
 import 'package:join_me/widgets/persistent_header_delegate.dart';
 import 'package:join_me/widgets/rounded_button.dart';
 
@@ -98,16 +105,22 @@ class _UserInfoPageState extends State<UserInfoPage>
                 ),
               ];
             },
-            body: TabBarView(
-              controller: _tabController,
-              children: [
-                _UserPostView(
-                  postsBloc: postsBloc,
-                ),
-                _UserProjectView(
-                  projectOverviewBloc: projectOverviewBloc,
-                ),
-              ],
+            body: Container(
+              color: Theme.of(context).brightness == Brightness.light
+                  ? kBackgroundPostLight
+                  : null,
+              padding: const EdgeInsets.only(top: kDefaultPadding),
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _UserPostView(
+                    postsBloc: postsBloc,
+                  ),
+                  _UserProjectView(
+                    projectOverviewBloc: projectOverviewBloc,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -157,85 +170,161 @@ class _UserInfoSection extends StatelessWidget {
   const _UserInfoSection({required this.userBloc, Key? key}) : super(key: key);
   final UserBloc userBloc;
 
+  void _showAddInvitationDialog(BuildContext context) {
+    showDialog<Project>(
+      context: context,
+      builder: (context) => const AddProjectInviteDialog(
+        isOnlyProjectOwned: true,
+      ),
+    ).then((project) {
+      if (project == null) {
+        return;
+      }
+      log(project.toJson().toString());
+      if (project.members.contains(userBloc.state.user.id)) {
+        context.read<AppMessageCubit>().showInfoSnackbar(
+              message: 'User already in this project!',
+            );
+      } else {
+        userBloc.add(SendInvitation(userBloc.state.user, project));
+        context.read<AppMessageCubit>().showSuccessfulSnackBar(
+              message: 'The invitation has been sent!',
+            );
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<UserBloc, UserState>(
-      bloc: userBloc,
-      builder: (context, state) {
-        return Container(
-          color: Theme.of(context).scaffoldBackgroundColor,
-          margin: const EdgeInsets.only(
-            top: kDefaultPadding,
-            left: kDefaultPadding,
-            right: kDefaultPadding,
-          ),
-          child: Column(
-            children: [
-              CircleAvatarWidget(
-                imageUrl: state.user.photoUrl,
-                size: 100,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
-                state.user.name,
-                style: CustomTextStyle.heading3(context),
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              if (state.user.personalBio.isNotEmpty)
-                Text(state.user.personalBio),
-              const SizedBox(
-                height: 8,
-              ),
-              const Divider(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  RoundedButton(
-                    height: 30,
-                    minWidth: 120,
-                    child: Row(
-                      children: const [
-                        Icon(
-                          Ionicons.paper_plane_outline,
-                          size: 20,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text('Send Message'),
-                      ],
+    final currentUser = context.read<AppBloc>().state.user;
+    return BlocProvider(
+      create: (context) => SendUserMessageCubit(
+        messageRepository: context.read<MessageRepository>(),
+      ),
+      child: BlocBuilder<UserBloc, UserState>(
+        bloc: userBloc,
+        builder: (context, state) {
+          return Container(
+            color: Theme.of(context).scaffoldBackgroundColor,
+            margin: const EdgeInsets.only(
+              top: kDefaultPadding,
+              left: kDefaultPadding,
+              right: kDefaultPadding,
+            ),
+            child: Column(
+              children: [
+                CircleAvatarWidget(
+                  imageUrl: state.user.photoUrl,
+                  size: 100,
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  state.user.name,
+                  style: CustomTextStyle.heading2(context),
+                ),
+                const SizedBox(
+                  height: 8,
+                ),
+                if (state.user.personalBio.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 40),
+                    child: Text(
+                      state.user.personalBio,
                     ),
-                    onPressed: () {},
                   ),
-                  RoundedButton(
-                    height: 30,
-                    minWidth: 120,
-                    color: kSecondaryBlue,
-                    child: Row(
-                      children: const [
-                        Icon(
-                          Ionicons.add_circle_outline,
-                          size: 20,
-                        ),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Text('Invite To Project'),
-                      ],
-                    ),
-                    onPressed: () {},
+                if (currentUser.id != state.user.id)
+                  const SizedBox(
+                    height: 8,
                   ),
-                ],
-              ),
-              const Divider(),
-            ],
-          ),
-        );
-      },
+                if (currentUser.id != state.user.id) const Divider(),
+                if (currentUser.id != state.user.id)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      BlocListener<SendUserMessageCubit, SendUserMessageState>(
+                        listener: (context, newConversationState) {
+                          if (newConversationState.status ==
+                              SendUserMessageStatus.conversationCreated) {
+                            AutoRouter.of(context).push(
+                              ChatRoute(
+                                conversationId:
+                                    newConversationState.conversation!.id,
+                              ),
+                            );
+                          }
+                          if (newConversationState.status ==
+                              SendUserMessageStatus.noConversation) {
+                            final sendUserMessageCubit =
+                                context.read<SendUserMessageCubit>();
+                            showDialog<void>(
+                              context: context,
+                              builder: (ctx) => NewConversationDialog(
+                                receiver: state.user,
+                                sendUserMessageCubit: sendUserMessageCubit,
+                                onSend: (content) {
+                                  sendUserMessageCubit.createUserConversation(
+                                    currentUser,
+                                    state.user,
+                                    content,
+                                  );
+                                },
+                              ),
+                            );
+                          }
+                        },
+                        child: RoundedButton(
+                          height: 30,
+                          minWidth: 120,
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Ionicons.paper_plane_outline,
+                                size: 20,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text('Send Message'),
+                            ],
+                          ),
+                          onPressed: () {
+                            final currentUser =
+                                context.read<AppBloc>().state.user;
+
+                            context
+                                .read<SendUserMessageCubit>()
+                                .requestSendMessage(currentUser, state.user);
+                          },
+                        ),
+                      ),
+                      RoundedButton(
+                        height: 30,
+                        minWidth: 120,
+                        color: kSecondaryBlue,
+                        child: Row(
+                          children: const [
+                            Icon(
+                              Ionicons.add_circle_outline,
+                              size: 20,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text('Invite To Project'),
+                          ],
+                        ),
+                        onPressed: () => _showAddInvitationDialog(context),
+                      ),
+                    ],
+                  ),
+                const Divider(),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }
@@ -249,6 +338,13 @@ class _UserPostView extends StatelessWidget {
     return BlocBuilder<PostsBloc, PostsState>(
       bloc: postsBloc,
       builder: (context, state) {
+        if (state.posts.isEmpty) {
+          return EmptyHandlerWidget(
+            size: MediaQuery.of(context).size.width * .3,
+            imageHandlerDir: kNoPostPicDir,
+            textHandler: 'No Posts',
+          );
+        }
         if (state.status == PostsStatus.initial ||
             state.status == PostsStatus.loading) {
           return const SizedBox();
@@ -289,7 +385,15 @@ class _UserProjectView extends StatelessWidget {
         if (state is ProjectsLoading || state is ProjectsInitial) {
           return const SizedBox();
         }
+
         if (state is ProjectsLoaded) {
+          if (state.projects.isEmpty) {
+            return EmptyHandlerWidget(
+              size: MediaQuery.of(context).size.width * .3,
+              imageHandlerDir: kNoProjectPicDir,
+              textHandler: 'No Projects',
+            );
+          }
           return CustomScrollView(
             key: const PageStorageKey('projects-view'),
             physics: const NeverScrollableScrollPhysics(),

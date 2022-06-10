@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,7 +38,10 @@ class PostCard extends StatelessWidget {
         AutoRouter.of(context).push(PostDetailRoute(postId: post.id));
       },
       child: RoundedContainer(
-        margin: const EdgeInsets.all(kDefaultPadding / 2),
+        margin: const EdgeInsets.symmetric(
+          horizontal: kDefaultPadding / 2,
+          vertical: 5,
+        ),
         color: Theme.of(context).cardColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

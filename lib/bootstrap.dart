@@ -41,8 +41,8 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
           await Firebase.initializeApp(
             options: DefaultFirebaseOptions.currentPlatform,
           );
-          final firebaseInstance = PushNotificationService();
-          await firebaseInstance.initialize();
+          final firebaseFCMInstance = PushNotificationService();
+          await firebaseFCMInstance.initialize();
           runApp(await builder());
         },
         blocObserver: AppBlocObserver(),

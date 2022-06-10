@@ -12,7 +12,9 @@ class MessageBubble extends StatelessWidget {
     required this.isNotLastMessage,
     required this.isSender,
     required this.isGroupChat,
+    required this.isSelected,
     this.onTap,
+    this.onLongPress,
     Key? key,
   }) : super(key: key);
   final Message message;
@@ -22,6 +24,8 @@ class MessageBubble extends StatelessWidget {
   final bool isSender;
   final bool isGroupChat;
   final Function()? onTap;
+  final Function()? onLongPress;
+  final bool isSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -66,20 +70,19 @@ class MessageBubble extends StatelessWidget {
                           ? Theme.of(context).primaryColor
                           : Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(kDefaultRadius),
-                      boxShadow: [kDefaultBoxShadow],
                     ),
                     child: GestureDetector(
                       onTap: onTap,
+                      onLongPress: onLongPress,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: kDefaultPadding / 2,
-                          vertical: 5,
+                          horizontal: 15,
+                          vertical: 8,
                         ),
                         child: Text(
                           message.content,
-                          style: TextStyle(
-                            color: isSender ? Colors.white : null,
-                          ),
+                          style: CustomTextStyle.bodyMedium(context)
+                              .copyWith(color: isSender ? Colors.white : null),
                         ),
                       ),
                     ),

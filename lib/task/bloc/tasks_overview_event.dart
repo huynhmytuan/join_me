@@ -24,17 +24,20 @@ class UpdateTasksList extends TasksOverviewEvent {
 }
 
 class AddNewTask extends TasksOverviewEvent {
-  const AddNewTask(this.newTask);
+  const AddNewTask(this.newTask, this.currentUserId);
 
   final Task newTask;
+  final String currentUserId;
   @override
-  List<Object> get props => [newTask];
+  List<Object> get props => [newTask, currentUserId];
 }
 
 class ToggleTaskStatus extends TasksOverviewEvent {
-  const ToggleTaskStatus(this.task);
+  const ToggleTaskStatus(this.task, this.currentUserId);
 
   final Task task;
+  final String currentUserId;
+
   @override
-  List<Object> get props => [task];
+  List<Object> get props => [task, currentUserId];
 }

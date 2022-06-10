@@ -267,13 +267,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.1"
-  drag_and_drop_lists:
-    dependency: "direct main"
-    description:
-      name: drag_and_drop_lists
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.3.2+2"
   equatable:
     dependency: "direct main"
     description:
@@ -445,13 +438,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_svg:
+  flutter_login_facebook:
     dependency: "direct main"
     description:
-      name: flutter_svg
+      name: flutter_login_facebook
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.0.3"
+    version: "1.5.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -609,6 +602,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  list_ext:
+    dependency: transitive
+    description:
+      name: list_ext
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   logging:
     dependency: transitive
     description:
@@ -686,20 +686,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.0"
-  path_drawing:
-    dependency: transitive
-    description:
-      name: path_drawing
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
-  path_parsing:
-    dependency: transitive
-    description:
-      name: path_parsing
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.0"
   path_provider:
     dependency: transitive
     description:
@@ -756,13 +742,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.11.1"
-  petitparser:
-    dependency: transitive
-    description:
-      name: petitparser
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "4.4.0"
   photo_manager:
     dependency: "direct main"
     description:
@@ -1097,13 +1076,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.2.0+1"
-  xml:
-    dependency: transitive
-    description:
-      name: xml
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "5.3.1"
   yaml:
     dependency: transitive
     description:

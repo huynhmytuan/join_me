@@ -1,6 +1,6 @@
 part of 'chat_bloc.dart';
 
-enum ChatViewStatus { initial, loading, success, failure }
+enum ChatViewStatus { initial, loading, success, failure, deleted, notFound }
 
 class ChatState extends Equatable {
   const ChatState({

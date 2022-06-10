@@ -88,10 +88,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         builder: (context, state) {
           return RoundedIconButton(
             onTap: () {
-              if (state.avatarPicture != null || state.bio.isNotEmpty) {
-              } else {
-                AutoRouter.of(context).pop();
-              }
+              AutoRouter.of(context).pop();
             },
             backgroundColor: Theme.of(context).brightness == Brightness.light
                 ? kIconColorGrey

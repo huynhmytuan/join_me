@@ -6,6 +6,7 @@ class AppTheme {
     brightness: Brightness.light,
     fontFamily: kFontFamily,
     primaryColor: kPrimaryLightColor,
+    backgroundColor: kBackgroundPostLight,
     scaffoldBackgroundColor: Colors.white,
     colorScheme: ThemeData().colorScheme.copyWith(
           brightness: Brightness.light,
@@ -14,9 +15,9 @@ class AppTheme {
     highlightColor: kSecondaryGreen.withOpacity(.2),
     appBarTheme: const AppBarTheme(
       backgroundColor: Colors.white,
-      elevation: 0,
       foregroundColor: kTextColorPrimaryLight,
       centerTitle: false,
+      elevation: 0,
       titleTextStyle: TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w700,
@@ -52,8 +53,7 @@ class AppTheme {
         ),
     scaffoldBackgroundColor: kBackgroundDarkColor,
     appBarTheme: const AppBarTheme(
-      backgroundColor: kBackgroundDarkColor,
-      elevation: 0,
+      backgroundColor: kCardDarkColor,
       foregroundColor: kTextColorPrimaryDark,
       centerTitle: false,
       titleTextStyle: TextStyle(
@@ -91,7 +91,7 @@ class AppTheme {
 
 class CustomTextStyle {
   static TextStyle heading1(BuildContext context) {
-    return Theme.of(context).textTheme.headline1!.copyWith(
+    return Theme.of(context).textTheme.bodyText1!.copyWith(
           fontSize: 32,
           fontWeight: FontWeight.w700,
           // color: Theme.of(context).textTheme. kTextColorPrimaryLight,
@@ -99,7 +99,7 @@ class CustomTextStyle {
   }
 
   static TextStyle heading2(BuildContext context) {
-    return Theme.of(context).textTheme.headline2!.copyWith(
+    return Theme.of(context).textTheme.bodyText1!.copyWith(
           fontSize: 20,
           fontWeight: FontWeight.w700,
           // color: kTextColorPrimaryLight,
@@ -107,7 +107,7 @@ class CustomTextStyle {
   }
 
   static TextStyle heading3(BuildContext context) {
-    return Theme.of(context).textTheme.headline3!.copyWith(
+    return Theme.of(context).textTheme.bodyText1!.copyWith(
           fontSize: 16,
           fontWeight: FontWeight.w700,
           // color: kTextColorPrimaryLight,
@@ -115,15 +115,15 @@ class CustomTextStyle {
   }
 
   static TextStyle heading4(BuildContext context) {
-    return Theme.of(context).textTheme.headline4!.copyWith(
+    return Theme.of(context).textTheme.bodyText1!.copyWith(
           fontSize: 14,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.bold,
           // color: kTextColorPrimaryLight,
         );
   }
 
   static TextStyle bodyLarge(BuildContext context) {
-    return Theme.of(context).textTheme.bodyLarge!.copyWith(
+    return Theme.of(context).textTheme.bodyText1!.copyWith(
           fontSize: 16,
           fontWeight: FontWeight.normal,
           // color: kTextColorPrimaryLight,
@@ -131,7 +131,7 @@ class CustomTextStyle {
   }
 
   static TextStyle bodyMedium(BuildContext context) {
-    return Theme.of(context).textTheme.bodyMedium!.copyWith(
+    return Theme.of(context).textTheme.bodyText1!.copyWith(
           fontSize: 14,
           fontWeight: FontWeight.normal,
           // color: kTextColorPrimaryLight,
@@ -139,7 +139,7 @@ class CustomTextStyle {
   }
 
   static TextStyle bodySmall(BuildContext context) {
-    return Theme.of(context).textTheme.bodySmall!.copyWith(
+    return Theme.of(context).textTheme.bodyText1!.copyWith(
           fontSize: 12,
           fontWeight: FontWeight.normal,
           // color: kTextColorPrimaryLight,

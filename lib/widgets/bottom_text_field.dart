@@ -37,69 +37,70 @@ class _BottomTextFieldState extends State<BottomTextField> {
           topLeft: Radius.circular(kDefaultRadius),
           topRight: Radius.circular(kDefaultRadius),
         ),
-        boxShadow: [kDefaultBoxShadow],
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          if (widget.leading != null && widget.leading!.isNotEmpty)
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: widget.leading!,
-            ),
-          Expanded(
-            child: Container(
-              constraints: const BoxConstraints(
-                maxHeight: 150,
+      child: SafeArea(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (widget.leading != null && widget.leading!.isNotEmpty)
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: widget.leading!,
               ),
-              decoration: BoxDecoration(
-                color: Theme.of(context).brightness == Brightness.light
-                    ? kTextFieldLightColor
-                    : kTextFieldDarkColor,
-                borderRadius: BorderRadius.circular(30),
-              ),
-              margin: const EdgeInsets.all(3),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: TextField(
-                style: CustomTextStyle.bodyMedium(context),
-                controller: widget.textEditingController,
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: widget.hintText,
-                  isDense: true,
-                  counterText: '',
+            Expanded(
+              child: Container(
+                constraints: const BoxConstraints(
+                  maxHeight: 150,
                 ),
-                focusNode: widget.focusNode,
-                textInputAction: TextInputAction.newline,
-                keyboardType: TextInputType.multiline,
-                maxLines: null,
-                maxLength: 1000,
-                onChanged: (value) {
-                  widget.onChange?.call(value);
-                  setState(() {});
-                },
+                decoration: BoxDecoration(
+                  color: Theme.of(context).brightness == Brightness.light
+                      ? kTextFieldLightColor
+                      : kTextFieldDarkColor,
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                margin: const EdgeInsets.all(3),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: TextField(
+                  style: CustomTextStyle.bodyMedium(context),
+                  controller: widget.textEditingController,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    hintText: widget.hintText,
+                    isDense: true,
+                    counterText: '',
+                  ),
+                  focusNode: widget.focusNode,
+                  textInputAction: TextInputAction.newline,
+                  keyboardType: TextInputType.multiline,
+                  maxLines: null,
+                  maxLength: 1000,
+                  onChanged: (value) {
+                    widget.onChange?.call(value);
+                    setState(() {});
+                  },
+                ),
               ),
             ),
-          ),
-          if (widget.textEditingController.text.trim().isNotEmpty)
-            Material(
-              color: Colors.transparent,
-              borderRadius: BorderRadius.circular(20),
-              child: IconButton(
-                visualDensity: VisualDensity.compact,
-                color: Theme.of(context).primaryColor,
-                splashRadius: 20,
-                icon: widget.submitIcon ??
-                    const Icon(
-                      Ionicons.paper_plane,
-                    ),
-                onPressed: () {
-                  widget.onSubmit.call();
-                },
+            if (widget.textEditingController.text.trim().isNotEmpty)
+              Material(
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(20),
+                child: IconButton(
+                  visualDensity: VisualDensity.compact,
+                  color: Theme.of(context).primaryColor,
+                  splashRadius: 20,
+                  icon: widget.submitIcon ??
+                      const Icon(
+                        Ionicons.paper_plane,
+                      ),
+                  onPressed: () {
+                    widget.onSubmit.call();
+                  },
+                ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

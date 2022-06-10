@@ -80,6 +80,7 @@ class CommentRepository {
             actorId: comment.authorId,
             targetId: '${post.id}/${ref.id}'.trim(),
             notifierId: post.authorId,
+            isRead: false,
           ),
         ),
       );
@@ -140,6 +141,7 @@ class CommentRepository {
               actorId: userId,
               targetId: '${comment.postId}/${comment.id}'.trim(),
               notifierId: comment.authorId,
+              isRead: false,
             ),
           ),
         );

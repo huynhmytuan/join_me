@@ -21,3 +21,26 @@ class UpdateNotifications extends NotificationEvent {
   @override
   List<Object> get props => [notifications];
 }
+
+class MarkAsRead extends NotificationEvent {
+  const MarkAsRead(this.notificationId, this.notifierId);
+
+  final String notificationId;
+  final String notifierId;
+  @override
+  List<Object> get props => [notificationId, notifierId];
+}
+
+class MarkAllAsRead extends NotificationEvent {
+  const MarkAllAsRead(this.notifierId);
+  final String notifierId;
+  @override
+  List<Object> get props => [notifierId, notifierId];
+}
+
+class DeleteNotification extends NotificationEvent {
+  const DeleteNotification(this.notification);
+  final NotificationModel notification;
+  @override
+  List<Object> get props => [notification];
+}

@@ -66,9 +66,10 @@ class _CommentWidgetState extends State<CommentWidget> {
                 horizontal: kDefaultPadding,
               ),
               decoration: BoxDecoration(
-                color: Theme.of(context).cardColor,
+                color: Theme.of(context).brightness == Brightness.light
+                    ? kCardLightColor
+                    : Theme.of(context).cardColor,
                 borderRadius: BorderRadius.circular(kDefaultRadius),
-                boxShadow: [kDefaultBoxShadow],
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,

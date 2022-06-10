@@ -3,15 +3,16 @@ import 'package:flutter/material.dart';
 //  Colors
 //Light Theme
 const kPrimaryLightColor = Color(0xFF2eb653);
-const kBackgroundPostLight = Color(0xFFF5F5F5);
+const kBackgroundPostLight = Color(0xFFf4f4f4);
 const kDividerColor = Color(0xFFF4F6FA);
 const kTextFieldLightColor = Color(0xFFeff3f4);
+const kCardLightColor = Color(0xFFf5f8fe);
 
 //Dark Theme
 const kPrimaryDarkColor = Color(0xFF38b0a2);
-const kBackgroundDarkColor = Color(0xFF122333);
-const kCardDarkColor = Color(0xFF182b3c);
-const kTextFieldDarkColor = Color(0xFF21374a);
+const kBackgroundDarkColor = Color(0xFF131720);
+const kCardDarkColor = Color(0xFF171e28);
+const kTextFieldDarkColor = Color(0xFF161a23);
 
 //Secondary Colors
 const kSecondaryRed = Color(0xFFFF4F4F);
@@ -38,17 +39,32 @@ const kFontFamily = 'Nunito';
 
 //Asset Constant
 const _kAssetImageDir = 'assets/images';
+const kIconDir = 'assets/icons';
+
 const kLogoLightDir = '$_kAssetImageDir/logo_light.png';
 const kLogoDarkDir = '$_kAssetImageDir/logo_dark.png';
 const kLogoBackgroundDir = '$_kAssetImageDir/logo_background.png';
-const kIconDir = 'assets/icons';
+const kNotFoundPicDir = '$_kAssetImageDir/no_data.png';
+const kNoPostPicDir = '$_kAssetImageDir/no_post.png';
+const kNoMessagePicDir = '$_kAssetImageDir/no_message.png';
+const kNoProjectPicDir = '$_kAssetImageDir/no_project.png';
+const kNoNotificationPicDir = '$_kAssetImageDir/no_notification.png';
+const kNoDayTaskPicDir = '$_kAssetImageDir/no_day_task.png';
 
 //Design
-final kDefaultBoxShadow = BoxShadow(
-  color: kShadowColor.withOpacity(.1),
-  blurRadius: 20,
-  offset: const Offset(0, 10),
-);
+const kDefaultBoxShadow = [
+  BoxShadow(
+    color: Color(0xFFB6C6D4),
+    spreadRadius: -8,
+    blurRadius: 21.0,
+    offset: Offset(10, 10),
+  ),
+  BoxShadow(
+    color: Color.fromRGBO(255, 255, 255, 0.5),
+    blurRadius: 6,
+    offset: Offset(-3, -4),
+  ),
+];
 
 const kTopBorderRadiusShape = RoundedRectangleBorder(
   borderRadius: BorderRadius.only(

@@ -4,11 +4,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/app_router.dart';
-import 'package:join_me/config/theme.dart';
 
 import 'package:join_me/message/bloc/conversations_bloc.dart';
 import 'package:join_me/message/components/components.dart';
 import 'package:join_me/utilities/constant.dart';
+import 'package:join_me/widgets/handlers/empty_handler_widget.dart';
 
 class ConversationsPage extends StatefulWidget {
   const ConversationsPage({Key? key}) : super(key: key);
@@ -26,64 +26,10 @@ class _ConversationsPageState extends State<ConversationsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: NestedScrollView(
-        headerSliverBuilder: (context, value) {
-          return [
-            SliverAppBar(
-              // pinned: true,
-              floating: true,
-              snap: true,
-              title: const Text('Messages'),
-              expandedHeight: 100,
-              flexibleSpace: FlexibleSpaceBar(
-                background: Container(
-                  height: 30,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: kDefaultPadding,
-                    vertical: kDefaultPadding / 2,
-                  ),
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(kDefaultRadius),
-                      radius: kDefaultRadius,
-                      onTap: () {},
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: kDefaultPadding,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.withOpacity(.2),
-                          borderRadius: BorderRadius.circular(kDefaultRadius),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Ionicons.search_outline,
-                              size: 20,
-                              color: kTextColorGrey,
-                            ),
-                            const SizedBox(
-                              width: kDefaultPadding / 2,
-                            ),
-                            Text(
-                              'Search Something',
-                              style: CustomTextStyle.bodyMedium(context)
-                                  .copyWith(color: kTextColorGrey),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ];
-        },
-        body: const _ConversationsListView(),
+      appBar: AppBar(
+        title: Text('Messages'),
       ),
+      body: const _ConversationsListView(),
       floatingActionButton: FloatingActionButton(
         heroTag: 'new_message',
         shape: RoundedRectangleBorder(
@@ -112,6 +58,15 @@ class _ConversationsListView extends StatelessWidget {
       bloc: context.read<ConversationsBloc>()
         ..add(FetchConversations(_currentUser.id)),
       builder: (context, state) {
+        if (state.conversations.isEmpty) {
+          return EmptyHandlerWidget(
+            size: MediaQuery.of(context).size.width * .5,
+            imageHandlerDir: kNoMessagePicDir,
+            titleHandler: 'No Messages Yet.',
+            textHandler:
+                'Connect with your friends and your participant to keep everything up!',
+          );
+        }
         return ListView.builder(
           physics: const AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),

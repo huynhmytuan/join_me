@@ -309,6 +309,8 @@ class _ConversationViewerState extends State<_ConversationViewer> {
                     author: members.firstWhere(
                       (element) => state.messages[index].authorId == element.id,
                     ),
+                    isSelected:
+                        messageIdShowingTime == state.messages[index].id,
                     isNotFirstMessage: isNotFirstMessage,
                     isNotLastMessage: isNotLastMessage,
                     isSender: isSender,

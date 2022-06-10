@@ -7,9 +7,16 @@ class PushNotificationService {
   final FirebaseMessaging _firebaseMessaging;
   Future<void> initialize() async {
     await _firebaseMessaging.requestPermission();
+    notificationHandler();
   }
 
   Future<String?> getToken() {
     return _firebaseMessaging.getToken();
+  }
+
+  void notificationHandler() {
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      final messageData = event.data;
+    });
   }
 }

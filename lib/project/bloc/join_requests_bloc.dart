@@ -59,7 +59,7 @@ class JoinRequestsBloc extends Bloc<JoinRequestsEvent, JoinRequestsState> {
     RejectRequest event,
     Emitter<JoinRequestsState> emit,
   ) async {
-    await _projectRepository.rejectJoinRequest(
+    await _projectRepository.deleteJoinRequest(
       projectId: state.project.id,
       requesterId: event.requestId,
     );

@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
+import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:join_me/data/models/app_user.dart';
 import 'package:join_me/data/repositories/user_repository.dart';
@@ -138,10 +139,12 @@ class AuthenticationRepository {
     CacheClient? cache,
     firebase_auth.FirebaseAuth? firebaseAuth,
     GoogleSignIn? googleSignIn,
+    FacebookLogin? facebookLogin,
     UserRepository? userRepository,
   })  : _cache = cache ?? CacheClient(),
         _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
         _googleSignIn = googleSignIn ?? GoogleSignIn.standard(),
+        _facebookLogin = facebookLogin ?? FacebookLogin(),
         _userRepository = userRepository ?? UserRepository() {
     _userStream = _userStreamController.stream;
   }
@@ -149,6 +152,7 @@ class AuthenticationRepository {
   final CacheClient _cache;
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
+  final FacebookLogin _facebookLogin;
   final UserRepository _userRepository;
   final StreamController<AppUser> _userStreamController =
       StreamController.broadcast();
@@ -236,13 +240,44 @@ class AuthenticationRepository {
           await _firebaseAuth.signInWithCredential(credential);
       final firebaseUser = userCredential.user;
       if (firebaseUser != null) {
-        var user = firebaseUser.toUser;
-        user = await _userRepository.createNewUserDetail(user: user);
-        onAuthenticated(user);
+        final user = firebaseUser.toUser;
+        final createdUser =
+            await _userRepository.createNewUserDetail(user: user);
+        onAuthenticated(createdUser);
       }
     } on firebase_auth.FirebaseAuthException catch (e) {
+      log(e.toString());
       throw LogInWithGoogleFailure.fromCode(e.code);
     } catch (_) {
+      log(_.toString());
+      throw const LogInWithGoogleFailure();
+    }
+  }
+
+  /// Starts the Sign In with Facebook Flow.
+  ///
+  Future<void> loginWithFacebook() async {
+    try {
+      late final firebase_auth.OAuthCredential credential;
+      final facebookUser = await _facebookLogin.logIn();
+      credential = firebase_auth.FacebookAuthProvider.credential(
+        facebookUser.accessToken!.token,
+      );
+      await _firebaseAuth.signInWithCredential(credential);
+      final userCredential =
+          await _firebaseAuth.signInWithCredential(credential);
+      final firebaseUser = userCredential.user;
+      if (firebaseUser != null) {
+        final user = firebaseUser.toUser;
+        final createdUser =
+            await _userRepository.createNewUserDetail(user: user);
+        onAuthenticated(createdUser);
+      }
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      log(e.toString());
+      throw LogInWithGoogleFailure.fromCode(e.code);
+    } catch (_) {
+      log(_.toString());
       throw const LogInWithGoogleFailure();
     }
   }

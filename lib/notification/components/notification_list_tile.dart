@@ -1,12 +1,16 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
+
 import 'package:join_me/data/models/notification.dart';
 import 'package:join_me/notification/bloc/notification_bloc.dart';
+
+import 'package:join_me/project/bloc/project_overview_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
-import 'package:join_me/widgets/avatar_circle_widget.dart';
+import 'package:join_me/widgets/widgets.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationListTile extends StatelessWidget {
@@ -18,6 +22,14 @@ class NotificationListTile extends StatelessWidget {
     NotificationViewModel notificationViewModel,
     BuildContext context,
   ) {
+    if (!notificationViewModel.notificationData.isRead) {
+      context.read<NotificationBloc>().add(
+            MarkAsRead(
+              notificationViewModel.notificationData.id,
+              notificationViewModel.notificationData.notifierId,
+            ),
+          );
+    }
     switch (notificationViewModel.notificationData.notificationType) {
       case NotificationType.likePost:
         AutoRouter.of(context).push(
@@ -62,25 +74,75 @@ class NotificationListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget notificationCard;
-    if (notificationViewModel.notificationData.notificationType ==
-        NotificationType.invite) {
-      notificationCard =
-          _InviteCard(notificationViewModel: notificationViewModel);
-    } else {
-      notificationCard = ListTile(
-        onTap: () => _onTapHandle(notificationViewModel, context),
-        leading: CircleAvatarWidget(
-          imageUrl: notificationViewModel.actor.photoUrl,
-          size: 60,
-          overlay: _buildOverLay(notificationViewModel),
+    return Container(
+      color: notificationViewModel.notificationData.isRead
+          ? null
+          : Theme.of(context).primaryColor.withOpacity(.1),
+      child: Dismissible(
+        key: Key(notificationViewModel.notificationData.id),
+        onDismissed: (direction) {
+          if (direction == DismissDirection.endToStart) {
+            context.read<NotificationBloc>().add(
+                  DeleteNotification(notificationViewModel.notificationData),
+                );
+          }
+        },
+        background: _buildSwipeActionLeft(),
+        secondaryBackground: _buildSwipeActionRight(),
+        confirmDismiss: (direction) async {
+          if (direction == DismissDirection.startToEnd) {
+            if (!notificationViewModel.notificationData.isRead) {
+              context.read<NotificationBloc>().add(
+                    MarkAsRead(
+                      notificationViewModel.notificationData.id,
+                      notificationViewModel.notificationData.notifierId,
+                    ),
+                  );
+            }
+            return false;
+          } else {
+            return true;
+          }
+        },
+        child: Column(
+          children: [
+            ListTile(
+              onTap: () => _onTapHandle(notificationViewModel, context),
+              leading: CircleAvatarWidget(
+                imageUrl: notificationViewModel.actor.photoUrl,
+                size: 60,
+                overlay: _buildOverLay(notificationViewModel),
+              ),
+              title: getTitle(notificationViewModel, context),
+              subtitle: getSubTile(notificationViewModel, context),
+            ),
+            if (notificationViewModel.notificationData.notificationType ==
+                NotificationType.invite)
+              _InvitationActions(notificationViewModel: notificationViewModel)
+          ],
         ),
-        title: getTitle(notificationViewModel, context),
-        subtitle: getSubTile(notificationViewModel, context),
-      );
-    }
-    return notificationCard;
+      ),
+    );
   }
+
+  Widget _buildSwipeActionLeft() => Container(
+        alignment: Alignment.centerLeft,
+        color: kSecondaryGreen,
+        padding: const EdgeInsets.all(20),
+        child: const Icon(
+          Ionicons.eye,
+          color: Colors.white,
+        ),
+      );
+  Widget _buildSwipeActionRight() => Container(
+        alignment: Alignment.centerRight,
+        color: kSecondaryRed,
+        padding: const EdgeInsets.all(20),
+        child: const Icon(
+          Ionicons.close_circle,
+          color: Colors.white,
+        ),
+      );
 
   Widget _buildOverLay(
     NotificationViewModel notificationViewModel,
@@ -208,12 +270,56 @@ class NotificationListTile extends StatelessWidget {
   }
 }
 
-class _InviteCard extends StatelessWidget {
-  const _InviteCard({required this.notificationViewModel, Key? key})
-      : super(key: key);
+class _InvitationActions extends StatelessWidget {
+  const _InvitationActions({
+    required this.notificationViewModel,
+    Key? key,
+  }) : super(key: key);
+
   final NotificationViewModel notificationViewModel;
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        RoundedButton(
+          minWidth: 150,
+          onPressed: () {
+            context.read<NotificationBloc>().add(
+                  DeleteNotification(notificationViewModel.notificationData),
+                );
+          },
+          color: kIconColorGrey,
+          elevation: 0,
+          height: 30,
+          child: const Text(
+            'Reject',
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        RoundedButton(
+          minWidth: 150,
+          onPressed: () {
+            //Check if user already join the project
+            if (!notificationViewModel.project!.members.contains(
+              notificationViewModel.notificationData.notifierId,
+            )) {
+              context.read<ProjectOverviewBloc>().add(
+                    AddUserToProject(
+                      notificationViewModel.project!,
+                      notificationViewModel.notificationData.notifierId,
+                    ),
+                  );
+            }
+            context.read<NotificationBloc>().add(
+                  DeleteNotification(notificationViewModel.notificationData),
+                );
+          },
+          elevation: 0,
+          height: 30,
+          child: const Text('Accept'),
+        ),
+      ],
+    );
   }
 }

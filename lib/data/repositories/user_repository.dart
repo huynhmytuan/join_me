@@ -1,5 +1,4 @@
 import 'dart:developer' as dev;
-import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -57,14 +56,15 @@ class UserRepository {
 
   Future<AppUser> createNewUserDetail({required AppUser user}) async {
     try {
-      final ref = _firestore.collection(UserKeys.collection).doc(user.id);
-      final userNotExists = await ref.snapshots().isEmpty;
+      final refData =
+          await _firestore.collection(UserKeys.collection).doc(user.id).get();
+      final isExists = refData.exists;
       //Check if user data created? Then create new.
-      if (userNotExists) {
-        await ref.set(user.toJson());
+      if (!isExists) {
+        await refData.reference.set(user.toJson());
       }
-      final userData = await ref.get();
-      return AppUser.fromJson(userData.data()!);
+      final doc = await refData.reference.get();
+      return AppUser.fromJson(doc.data()!);
     } catch (e) {
       rethrow;
     }

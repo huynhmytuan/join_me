@@ -125,6 +125,8 @@ class _ProjectInformationList extends StatelessWidget {
                     height: kDefaultPadding / 2,
                   ),
                   ListTile(
+                    onTap: () => AutoRouter.of(context)
+                        .push(UserInfoRoute(userId: state.owner.id)),
                     contentPadding: EdgeInsets.zero,
                     visualDensity: VisualDensity.comfortable,
                     leading: CircleAvatarWidget(

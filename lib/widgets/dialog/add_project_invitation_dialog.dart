@@ -10,7 +10,11 @@ import 'package:join_me/data/repositories/project_repository.dart';
 import 'package:join_me/utilities/constant.dart';
 
 class AddProjectInviteDialog extends StatefulWidget {
-  const AddProjectInviteDialog({Key? key}) : super(key: key);
+  const AddProjectInviteDialog({
+    this.isOnlyProjectOwned,
+    Key? key,
+  }) : super(key: key);
+  final bool? isOnlyProjectOwned;
 
   @override
   State<AddProjectInviteDialog> createState() => _AddProjectInviteDialogState();
@@ -42,6 +46,10 @@ class _AddProjectInviteDialogState extends State<AddProjectInviteDialog> {
       _currentUser = context.read<AppBloc>().state.user;
       _userProjects =
           await _projectRepository.getUserProjects(_currentUser.id).first;
+      if (widget.isOnlyProjectOwned != null && widget.isOnlyProjectOwned!) {
+        _userProjects
+            .removeWhere((project) => project.owner != _currentUser.id);
+      }
       _projects = List<Project>.from(_userProjects);
       setState(() {
         isLoading = false;

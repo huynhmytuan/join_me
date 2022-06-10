@@ -23,8 +23,6 @@ class ProjectState extends Equatable {
   final ProjectStatus status;
   final String? errorMessage;
 
-  @override
-  List<Object> get props => [project, members, owner, status];
   ProjectState copyWith({
     Project? project,
     List<AppUser>? members,
@@ -40,4 +38,7 @@ class ProjectState extends Equatable {
       errorMessage: errorMessage ?? this.errorMessage,
     );
   }
+
+  @override
+  List<Object?> get props => [project, members, owner, status];
 }

@@ -19,6 +19,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         super(NotificationState.initial()) {
     on<LoadNotifications>(_onLoadNotifications);
     on<UpdateNotifications>(_onUpdateNotifications);
+    on<MarkAsRead>(_onMarkAsRead);
+    on<MarkAllAsRead>(_onMarkAllAsRead);
+    on<DeleteNotification>(_onDeleteNotification);
   }
 
   final NotificationRepository _notificationRepository;
@@ -45,7 +48,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     UpdateNotifications event,
     Emitter<NotificationState> emit,
   ) async {
-    var list = <NotificationViewModel>[];
+    final list = <NotificationViewModel>[];
     for (final notification in event.notifications) {
       final notificationViewModel =
           await getNotificationViewModel(notification);
@@ -135,5 +138,33 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
           task: task,
         );
     }
+  }
+
+  Future<void> _onMarkAsRead(
+    MarkAsRead event,
+    Emitter<NotificationState> emit,
+  ) async {
+    await _notificationRepository.markAsRead(
+      notificationId: event.notificationId,
+      notifierId: event.notifierId,
+    );
+  }
+
+  Future<void> _onMarkAllAsRead(
+    MarkAllAsRead event,
+    Emitter<NotificationState> emit,
+  ) async {
+    await _notificationRepository.markAllAsRead(
+      notifierId: event.notifierId,
+    );
+  }
+
+  Future<void> _onDeleteNotification(
+    DeleteNotification event,
+    Emitter<NotificationState> emit,
+  ) async {
+    await _notificationRepository.deleteNotification(
+      notification: event.notification,
+    );
   }
 }

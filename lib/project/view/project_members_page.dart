@@ -7,7 +7,9 @@ import 'package:join_me/config/router/app_router.dart';
 
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/project/bloc/project_bloc.dart';
+import 'package:join_me/user/cubit/search_user_cubit.dart';
 import 'package:join_me/utilities/constant.dart';
+import 'package:join_me/widgets/bottom_sheet/selection_bottom_sheet.dart';
 
 import 'package:join_me/widgets/widgets.dart';
 
@@ -16,6 +18,79 @@ class ProjectMembersPage extends StatelessWidget {
       : super(key: key);
 
   final ProjectBloc projectBloc;
+  void _onUserTap(BuildContext context, AppUser user, AppUser currentUser) {
+    showModalBottomSheet<void>(
+      context: context,
+      builder: (context) => SelectionBottomSheet(
+        title: user.name,
+        listSelections: [
+          SelectionRow(
+            onTap: () {
+              AutoRouter.of(context).pop();
+              AutoRouter.of(context).push(UserInfoRoute(userId: user.id));
+            },
+            title: 'Go To Personal Page',
+            iconData: Icons.person_outline,
+          ),
+          if (currentUser.id == projectBloc.state.owner.id &&
+              currentUser.id != user.id)
+            SelectionRow(
+              onTap: () {
+                AutoRouter.of(context).pop();
+                showDialog<bool>(
+                  context: context,
+                  builder: (context) => CustomAlertDialog(
+                    title: 'Remove Member?',
+                    content:
+                        "Once you remove this member, he/she can see this project until someone add them again.",
+                    submitButtonColor: Colors.red,
+                    submitLabel: 'Remove',
+                    onCancel: () => AutoRouter.of(context).pop(false),
+                    onSubmit: () => AutoRouter.of(context).pop(true),
+                  ),
+                ).then((value) {
+                  if (value != null && value) {
+                    projectBloc.add(RemoveUserFromProject(userId: user.id));
+                  }
+                });
+              },
+              color: Colors.red,
+              title: 'Remove Member',
+              iconData: Icons.remove,
+            )
+          else if (currentUser.id == user.id &&
+              projectBloc.state.project.owner != user.id)
+            SelectionRow(
+              onTap: () {
+                showDialog<bool>(
+                  context: context,
+                  builder: (context) => CustomAlertDialog(
+                    title: 'Leave Project?',
+                    content:
+                        "Once you leave this Project, you can see it until someone add you again.",
+                    submitButtonColor: Colors.red,
+                    submitLabel: 'Leave',
+                    onCancel: () => AutoRouter.of(context).pop(false),
+                    onSubmit: () => AutoRouter.of(context).pop(true),
+                  ),
+                ).then((value) {
+                  if (value != null && value) {
+                    projectBloc
+                        .add(RemoveUserFromProject(userId: currentUser.id));
+                    //Pop and send value to tell
+                    //that member was leave.
+                    AutoRouter.of(context).pop(true);
+                  }
+                });
+              },
+              color: Colors.red,
+              title: 'Leave Project',
+              iconData: Ionicons.log_out_outline,
+            ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,29 +116,19 @@ class ProjectMembersPage extends StatelessWidget {
                   ? [
                       IconButton(
                         onPressed: () {
-                          showDialog<List<AppUser>>(
+                          showDialog<AppUser>(
                             context: context,
                             builder: (context) => AddUserDialog(
-                              //Remove owner from member list
-                              initialUserList: state.members
-                                ..remove(state.owner),
                               //Remove owner from search
                               withoutUsers: [state.owner],
                             ),
                           ).then((selectedUser) {
+                            context.read<SearchUserCubit>().clearResults();
                             if (selectedUser == null) {
                               return;
                             }
-                            //Map id and Re-add ownerId from new list User.
-                            final userIds = selectedUser
-                                .map((user) => user.id)
-                                .toList()
-                              ..add(state.owner.id);
-                            //Edit project with new member list
                             projectBloc.add(
-                              EditProject(
-                                state.project.copyWith(members: userIds),
-                              ),
+                              AddUserToProject(userId: selectedUser.id),
                             );
                           });
                         },
@@ -102,8 +167,10 @@ class ProjectMembersPage extends StatelessWidget {
                   );
                 }
                 return ListTile(
-                  onTap: () => AutoRouter.of(context).push(
-                    UserInfoRoute(userId: state.members[index - 1].id),
+                  onTap: () => _onUserTap(
+                    context,
+                    state.members[index - 1],
+                    currentUser,
                   ),
                   leading: CircleAvatarWidget(
                     imageUrl: state.members[index - 1].photoUrl,

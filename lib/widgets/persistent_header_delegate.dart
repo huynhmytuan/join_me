@@ -14,8 +14,11 @@ class PersistentHeaderDelegate extends SliverPersistentHeaderDelegate {
   ) {
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        boxShadow: overlapsContent ? [kDefaultBoxShadow] : null,
+        color: overlapsContent ? Theme.of(context).cardColor : null,
+        boxShadow: (overlapsContent &&
+                Theme.of(context).brightness == Brightness.light)
+            ? kDefaultBoxShadow
+            : null,
       ),
       height: 50,
       child: child,

@@ -6,4 +6,5 @@ class NotificationKeys {
   static const String createdAt = 'createdAt';
   static const String actorId = 'actorId';
   static const String notifierId = 'notifierId';
+  static const String isRead = 'isRead';
 }

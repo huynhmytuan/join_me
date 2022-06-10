@@ -1,11 +1,15 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:join_me/config/router/root_wrapper_page.dart';
+import 'package:join_me/config/router/route_guard/post_check_exist.dart';
 import 'package:join_me/config/router/route_guard/project_check_member.dart';
 import 'package:join_me/home/view/view.dart';
 import 'package:join_me/images_picker/view/view.dart';
 import 'package:join_me/login/view/view.dart';
 import 'package:join_me/menu/view/view.dart';
+import 'package:join_me/message/bloc/chat_bloc.dart';
+import 'package:join_me/message/view/conversation_info_page.dart';
+import 'package:join_me/message/view/conversation_members_page.dart';
 import 'package:join_me/message/view/new_chat_page.dart';
 import 'package:join_me/message/view/view.dart';
 import 'package:join_me/notification/view/view.dart';
@@ -114,6 +118,10 @@ part 'app_router.gr.dart';
               ],
             ),
             AutoRoute<dynamic>(
+              path: 'page-not-found',
+              page: NotFoundPage,
+            ),
+            AutoRoute<dynamic>(
               path: ':projectId/guest-view',
               page: SingleProjectGuestViewPage,
             ),
@@ -122,11 +130,12 @@ part 'app_router.gr.dart';
               page: RequestsPage,
             ),
             AutoRoute<dynamic>(
-              path: 'members',
+              path: 'project-members',
               page: ProjectMembersPage,
             ),
             AutoRoute<dynamic>(
               path: ':postId',
+              guards: [CheckIfPostExists],
               page: PostDetailPage,
             ),
             AutoRoute<dynamic>(
@@ -144,6 +153,14 @@ part 'app_router.gr.dart';
             AutoRoute<dynamic>(
               path: ':conversationId',
               page: ChatPage,
+            ),
+            AutoRoute<dynamic>(
+              path: 'conversation-info',
+              page: ConversationInfoPage,
+            ),
+            AutoRoute<dynamic>(
+              path: 'conversation-members',
+              page: ConversationMembersPage,
             ),
             AutoRoute<dynamic>(
               path: 'new-chat',

@@ -24,11 +24,12 @@ class UpdateTask extends TaskEvent {
 }
 
 class EditTask extends TaskEvent {
-  const EditTask(this.task);
+  const EditTask(this.task, this.currentUserId);
 
   final Task task;
+  final String currentUserId;
   @override
-  List<Object> get props => [task];
+  List<Object> get props => [task, currentUserId];
 }
 
 class UpdateSubtask extends TaskEvent {

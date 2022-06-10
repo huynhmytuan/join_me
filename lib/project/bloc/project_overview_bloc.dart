@@ -22,6 +22,7 @@ class ProjectOverviewBloc extends Bloc<ProjectEvent, ProjectOverviewState> {
     on<LoadProjects>(_onLoadProjects);
     on<UpdateProjects>(_onUpdateProjects);
     on<AddProject>(_onAddProject);
+    on<AddUserToProject>(_onAddUserToProject);
   }
   final ProjectRepository _projectRepository;
   final TaskRepository _taskRepository;
@@ -67,5 +68,16 @@ class ProjectOverviewBloc extends Bloc<ProjectEvent, ProjectOverviewState> {
     final newProject =
         await _projectRepository.addProject(project: event.project);
     emit(NewProjectCreated(project: newProject));
+    emit(const ProjectsLoaded());
+  }
+
+  Future<void> _onAddUserToProject(
+    AddUserToProject event,
+    Emitter<ProjectOverviewState> emit,
+  ) async {
+    await _projectRepository.addUserToProject(
+      project: event.project,
+      userId: event.userId,
+    );
   }
 }

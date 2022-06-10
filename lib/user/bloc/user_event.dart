@@ -24,3 +24,13 @@ class UpdateUser extends UserEvent {
   @override
   List<Object?> get props => [user];
 }
+
+class SendInvitation extends UserEvent {
+  const SendInvitation(this.user, this.project);
+
+  final AppUser user;
+  final Project project;
+
+  @override
+  List<Object?> get props => [user, project];
+}

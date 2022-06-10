@@ -39,6 +39,20 @@ class DeleteProject extends ProjectEvent {
   List<Object> get props => [project];
 }
 
+class AddUserToProject extends ProjectEvent {
+  const AddUserToProject({required this.userId});
+  final String userId;
+  @override
+  List<Object> get props => [userId];
+}
+
+class RemoveUserFromProject extends ProjectEvent {
+  const RemoveUserFromProject({required this.userId});
+  final String userId;
+  @override
+  List<Object> get props => [userId];
+}
+
 class AddJoinRequest extends ProjectEvent {
   const AddJoinRequest({required this.project, required this.userId});
   final Project project;

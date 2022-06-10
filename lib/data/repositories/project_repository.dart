@@ -98,6 +98,40 @@ class ProjectRepository {
     }
   }
 
+  Future<void> addUserToProject({
+    required Project project,
+    required String userId,
+  }) async {
+    try {
+      //Get Project request reference
+      final ref =
+          _firebaseFirestore.collection(ProjectKeys.collection).doc(project.id);
+      //Update request Id
+      await ref.update(<String, dynamic>{
+        ProjectKeys.members: FieldValue.arrayUnion(<String>[userId])
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> removeUserToProject({
+    required Project project,
+    required String userId,
+  }) async {
+    try {
+      //Get Project request reference
+      final ref =
+          _firebaseFirestore.collection(ProjectKeys.collection).doc(project.id);
+      //Update request Id
+      await ref.update(<String, dynamic>{
+        ProjectKeys.members: FieldValue.arrayRemove(<String>[userId])
+      });
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   ///Add a new request
   Future<void> addJoinRequest({
     required Project project,
@@ -140,7 +174,7 @@ class ProjectRepository {
     }
   }
 
-  Future<void> rejectJoinRequest({
+  Future<void> deleteJoinRequest({
     required String projectId,
     required String requesterId,
   }) async {

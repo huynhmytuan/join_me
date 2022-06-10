@@ -17,6 +17,8 @@ class LoadChat extends ChatEvent {
   List<Object> get props => [conversationId, userId];
 }
 
+class ConversationNotFound extends ChatEvent {}
+
 class UpdateConversation extends ChatEvent {
   const UpdateConversation({required this.conversation});
 
@@ -45,4 +47,32 @@ class SendMessage extends ChatEvent {
   final AppUser author;
   @override
   List<Object> get props => [content, author];
+}
+
+class DeletedMessage extends ChatEvent {
+  const DeletedMessage({
+    required this.message,
+  });
+
+  final Message message;
+  @override
+  List<Object> get props => [message];
+}
+
+class DeleteConversation extends ChatEvent {}
+
+class AddMember extends ChatEvent {
+  const AddMember(this.user);
+
+  final AppUser user;
+  @override
+  List<Object> get props => [user];
+}
+
+class RemoveMember extends ChatEvent {
+  const RemoveMember(this.user);
+
+  final AppUser user;
+  @override
+  List<Object> get props => [user];
 }
