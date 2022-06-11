@@ -6,7 +6,6 @@ import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/data/models/models.dart';
-import 'package:join_me/utilities/extensions/string_ext.dart';
 import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/message/bloc/chat_bloc.dart';
 import 'package:join_me/user/cubit/search_user_cubit.dart';
@@ -109,7 +108,8 @@ class ConversationMembersPage extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
           title: Text(LocaleKeys.general_members.tr()),
           leading: RoundedIconButton(
             icon: const Icon(Ionicons.chevron_back),

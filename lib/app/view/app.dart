@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/app/cubit/app_message_cubit.dart';
+import 'package:join_me/config/cubit/theme_cubit.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/repositories/comment_repository.dart';
@@ -34,9 +35,10 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return EasyLocalization(
-      supportedLocales: const [Locale('en', 'US'), Locale('vi', 'VI')],
+      useOnlyLangCode: true,
+      supportedLocales: const [Locale('en', 'US'), Locale('vi', 'VN')],
       path: 'assets/translations',
-      fallbackLocale: const Locale('vi', 'VI'),
+      fallbackLocale: const Locale('vi', 'VN'),
       child: MultiRepositoryProvider(
         providers: [
           RepositoryProvider.value(
@@ -69,6 +71,9 @@ class App extends StatelessWidget {
         ],
         child: MultiBlocProvider(
           providers: [
+            BlocProvider(
+              create: (context) => ThemeCubit()..initialThemeSetting(),
+            ),
             BlocProvider(
               create: (context) => AppBloc(
                 authenticationRepository: _authenticationRepository,
@@ -164,18 +169,23 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     timeago.setLocaleMessages('vi', timeago.ViMessages());
     timeago.setLocaleMessages('en', timeago.EnMessages());
-    return MaterialApp.router(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      scrollBehavior: const ScrollBehavior(
-        androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
-      ),
-      localizationsDelegates: context.localizationDelegates,
-      supportedLocales: context.supportedLocales,
-      locale: context.locale,
-      routerDelegate: appRouter.delegate(),
-      routeInformationParser: appRouter.defaultRouteParser(),
+    return BlocBuilder<ThemeCubit, ThemeState>(
+      builder: (context, state) {
+        return MaterialApp.router(
+          debugShowCheckedModeBanner: false,
+          themeMode: state.themeMode,
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          scrollBehavior: const ScrollBehavior(
+            androidOverscrollIndicator: AndroidOverscrollIndicator.stretch,
+          ),
+          localizationsDelegates: context.localizationDelegates,
+          supportedLocales: context.supportedLocales,
+          locale: context.locale,
+          routerDelegate: appRouter.delegate(),
+          routeInformationParser: appRouter.defaultRouteParser(),
+        );
+      },
     );
   }
 }

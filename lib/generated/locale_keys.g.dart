@@ -98,6 +98,10 @@ abstract class  LocaleKeys {
   static const notice_deleteSuccess = 'notice.deleteSuccess';
   static const notice_removeSuccess = 'notice.removeSuccess';
   static const notice_haveBeenRemove = 'notice.haveBeenRemove';
+  static const notice_userAdded = 'notice.userAdded';
+  static const notice_alreadyInProject = 'notice.alreadyInProject';
+  static const notice_sentInvitation = 'notice.sentInvitation';
+  static const notice_sentRequest = 'notice.sentRequest';
   static const notice = 'notice';
   static const errorMessage_wrong = 'errorMessage.wrong';
   static const errorMessage_empty = 'errorMessage.empty';
@@ -189,6 +193,7 @@ abstract class  LocaleKeys {
   static const emptyHandler = 'emptyHandler';
   static const language_vi = 'language.vi';
   static const language_en = 'language.en';
+  static const language_system = 'language.system';
   static const language = 'language';
   static const theme_light = 'theme.light';
   static const theme_dark = 'theme.dark';

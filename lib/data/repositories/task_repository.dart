@@ -73,6 +73,9 @@ class TaskRepository {
     log(ref.id, name: 'TASK_ID');
     //Check Assignee and notification
     for (final userId in task.assignee) {
+      if (userId == currentUser) {
+        break;
+      }
       final notification = NotificationModel(
         id: '',
         createdAt: DateTime.now(),
@@ -110,6 +113,9 @@ class TaskRepository {
     );
     //Check Assignee and notification
     for (final userId in task.assignee) {
+      if (userId == currentUser) {
+        break;
+      }
       if (!previousData.assignee.contains(userId)) {
         final notification = NotificationModel(
           id: '',
@@ -153,5 +159,23 @@ class TaskRepository {
         merge: true,
       ),
     );
+    //Check Assignee and notification
+    for (final userId in subTask.assignee) {
+      if (userId == subTask.createdBy) {
+        break;
+      }
+      final notification = NotificationModel(
+        id: '',
+        createdAt: DateTime.now(),
+        notificationType: NotificationType.assign,
+        actorId: subTask.createdBy,
+        targetId: refSubtask.id,
+        notifierId: userId,
+        isRead: false,
+      );
+      unawaited(
+        _notificationRepository.addNotification(notification: notification),
+      );
+    }
   }
 }

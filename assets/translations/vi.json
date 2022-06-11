@@ -126,7 +126,11 @@
         "addSuccess" : "Thêm Thành Công",
         "deleteSuccess" :  "Đã Xoá Thành Công",
         "removeSuccess" : "Đã Xoá Thành Công",
-        "haveBeenRemove" : "Bạn Đã Bị Xoá"
+        "haveBeenRemove" : "Bạn Đã Bị Xoá",
+        "userAdded": "Thêm người dùng thành công",
+        "alreadyInProject": "Người dùng đã là thành viên!",
+        "sentInvitation": "Đã gửi lời mời thành công!",
+        "sentRequest": "Đã gửi yêu cầu gia nhập"
     },
     "errorMessage": {
         "wrong" : "Oops! Something went wrong!",
@@ -242,7 +246,8 @@
     },
     "language" : {
         "vi" : "Tiếng Việt",
-        "en" : "Tiếng Anh"
+        "en" : "Tiếng Anh",
+        "system": "Hệ Thống"
     },
     "theme": {
         "light": "Giao Diện Sáng",

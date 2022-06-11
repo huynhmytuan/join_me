@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:equatable/equatable.dart';
 import 'package:join_me/app/cubit/app_message_cubit.dart';
 import 'package:join_me/data/models/models.dart';
 
 import 'package:join_me/data/repositories/repositories.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 
 part 'project_event.dart';
 part 'project_state.dart';
@@ -150,7 +152,9 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       project: event.project,
       requester: event.userId,
     );
-    _appMessageCubit.showInfoSnackbar(message: 'Your request has been sent');
+    _appMessageCubit.showInfoSnackbar(
+      message: LocaleKeys.notice_sentRequest.tr(),
+    );
   }
 
   Future<void> _onAddUserToProject(
@@ -161,6 +165,9 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
       await _projectRepository.addUserToProject(
         project: state.project,
         userId: event.userId,
+      );
+      _appMessageCubit.showInfoSnackbar(
+        message: LocaleKeys.notice_userAdded.tr(),
       );
     } catch (e) {
       log(e.toString(), name: 'PROJECT_BLOC/ADD_USER');

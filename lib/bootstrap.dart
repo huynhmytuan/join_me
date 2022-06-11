@@ -12,6 +12,7 @@ import 'package:bloc/bloc.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/widgets.dart';
+import 'package:join_me/data/services/hive_database.dart';
 import 'package:join_me/data/services/push_notification_service.dart';
 import 'package:join_me/firebase_options.dart';
 
@@ -39,8 +40,8 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
       await BlocOverrides.runZoned(
         () async {
           WidgetsFlutterBinding.ensureInitialized();
+          await HiveDatabase.checkIfDatabaseInitialized();
           await EasyLocalization.ensureInitialized();
-          WidgetsFlutterBinding.ensureInitialized();
           await Firebase.initializeApp(
             options: DefaultFirebaseOptions.currentPlatform,
           );

@@ -46,9 +46,12 @@ class _TaskListRowState extends State<TaskListRow> {
         AutoRouter.of(context).push(SingleTaskRoute(taskId: widget.task.id));
       },
       child: Container(
-        color: widget.isShowPriorityColor
-            ? widget.task.priority.getColor().withOpacity(.7)
-            : null,
+        decoration: BoxDecoration(
+          color: widget.isShowPriorityColor
+              ? widget.task.priority.getColor().withOpacity(.7)
+              : null,
+          borderRadius: BorderRadius.circular(kDefaultRadius),
+        ),
         child: Row(
           children: [
             Checkbox(

@@ -19,6 +19,7 @@ class TaskState extends Equatable {
     this.createdBy = AppUser.empty,
     this.parent,
     this.errorMessage,
+    this.lastUpdate,
   });
 
   final Task task;
@@ -28,6 +29,7 @@ class TaskState extends Equatable {
   final AppUser createdBy;
   final Project project;
   final Task? parent;
+  final String? lastUpdate;
   final String? errorMessage;
 
   @override
@@ -38,6 +40,7 @@ class TaskState extends Equatable {
         subTasks,
         project,
         createdBy,
+        lastUpdate,
       ];
   TaskState copyWith({
     Task? task,
@@ -48,6 +51,7 @@ class TaskState extends Equatable {
     List<Task>? subTasks,
     Task? parent,
     String? errorMessage,
+    String? lastUpdate,
   }) {
     return TaskState(
       task: task ?? this.task,
@@ -58,6 +62,7 @@ class TaskState extends Equatable {
       assignee: assignee ?? this.assignee,
       subTasks: subTasks ?? this.subTasks,
       errorMessage: errorMessage ?? this.errorMessage,
+      lastUpdate: lastUpdate ?? this.lastUpdate,
     );
   }
 }

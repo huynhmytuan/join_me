@@ -62,10 +62,11 @@ class _ConversationsListView extends StatelessWidget {
       builder: (context, state) {
         if (state.conversations.isEmpty) {
           return EmptyHandlerWidget(
-              size: MediaQuery.of(context).size.width * .5,
-              imageHandlerDir: kNoMessagePicDir,
-              titleHandler: LocaleKeys.emptyHandler_noMessage_title.tr(),
-              textHandler: LocaleKeys.emptyHandler_noMessage_content.tr());
+            size: MediaQuery.of(context).size.width * .5,
+            imageHandlerDir: kNoMessagePicDir,
+            titleHandler: LocaleKeys.emptyHandler_noMessage_title.tr(),
+            textHandler: LocaleKeys.emptyHandler_noMessage_content.tr(),
+          );
         }
         return ListView.builder(
           physics: const AlwaysScrollableScrollPhysics(

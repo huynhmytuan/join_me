@@ -27,7 +27,6 @@ class Project extends Equatable {
     required this.description,
     required this.members,
     required this.categories,
-    required this.viewType,
     required this.requests,
   });
 
@@ -39,7 +38,6 @@ class Project extends Equatable {
     String? description,
     List<String>? members,
     List<String>? categories,
-    ProjectViewType? viewType,
     List<String>? requests,
   }) =>
       Project(
@@ -50,7 +48,6 @@ class Project extends Equatable {
         description: description ?? '',
         owner: leader ?? '',
         members: members ?? [],
-        viewType: viewType ?? ProjectViewType.dashBoard,
         requests: requests ?? [],
       );
 
@@ -75,7 +72,6 @@ class Project extends Equatable {
       name: name ?? this.name,
       createdAt: createdAt ?? this.createdAt,
       owner: owner ?? this.owner,
-      viewType: viewType ?? this.viewType,
       description: description ?? this.description,
       members: members ?? this.members,
       categories: categories ?? this.categories,
@@ -102,9 +98,6 @@ class Project extends Equatable {
   @JsonKey(name: ProjectKeys.description)
   final String description;
 
-  @JsonKey(name: ProjectKeys.viewType)
-  final ProjectViewType viewType;
-
   ///Return list of members's id (UserID)
   @JsonKey(name: ProjectKeys.members)
   final List<String> members;
@@ -124,7 +117,6 @@ class Project extends Equatable {
       name,
       createdAt,
       owner,
-      viewType,
       description,
       members,
       categories,

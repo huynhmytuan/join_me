@@ -18,7 +18,6 @@ Project _$ProjectFromJson(Map<String, dynamic> json) => Project(
       categories: (json['categories'] as List<dynamic>)
           .map((dynamic e) => e as String)
           .toList(),
-      viewType: $enumDecode(_$ProjectViewTypeEnumMap, json['viewType']),
       requests: (json['requests'] as List<dynamic>)
           .map((dynamic e) => e as String)
           .toList(),
@@ -30,15 +29,7 @@ Map<String, dynamic> _$ProjectToJson(Project instance) => <String, dynamic>{
       'createdAt': instance.createdAt.toIso8601String(),
       'owner': instance.owner,
       'description': instance.description,
-      'viewType': _$ProjectViewTypeEnumMap[instance.viewType],
       'members': instance.members,
       'categories': instance.categories,
       'requests': instance.requests,
     };
-
-const _$ProjectViewTypeEnumMap = {
-  ProjectViewType.dashBoard: 'dashboard-view',
-  ProjectViewType.listView: 'list-view',
-  ProjectViewType.calendarView: 'calendar-view',
-  ProjectViewType.unknown: 'unknown',
-};

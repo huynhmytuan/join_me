@@ -181,7 +181,6 @@ class NewProjectDialogState extends State<NewProjectDialog> {
                                   _members.map((member) => member.id).toList()
                                     ..add(_currentUser.id),
                               categories: kDefaultTaskCategories,
-                              viewType: ProjectViewType.dashBoard,
                               requests: const [],
                             );
                             context

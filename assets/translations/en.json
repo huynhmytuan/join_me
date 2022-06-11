@@ -126,7 +126,11 @@
         "addSuccess": "Add Successful",
         "deleteSuccess": "Deleted",
         "removeSuccess": "Removed",
-        "haveBeenRemove": "You have been removed"
+        "userAdded": "User has been added.",
+        "haveBeenRemove": "You have been removed",
+        "alreadyInProject": "User already in this project!",
+        "sentInvitation": "The invitation has been sent!",
+        "sentRequest": "Your request has been sent"
     },
     "errorMessage": {
         "wrong": "Oops! Something went wrong!",
@@ -242,7 +246,8 @@
     },
     "language": {
         "vi": "Vietnamese",
-        "en": "English"
+        "en": "English",
+        "system": "System"
     },
     "theme": {
         "light": " Light Theme",

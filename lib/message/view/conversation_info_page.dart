@@ -193,7 +193,7 @@ class ConversationInfoPage extends StatelessWidget {
                                   context: context,
                                   builder: (context) => CustomAlertDialog(
                                     title:
-                                        '${LocaleKeys.dialog_leave_title.tr()} ${LocaleKeys.general_conversation.tr()}?',
+                                        '${LocaleKeys.button_leave.tr()} ${LocaleKeys.general_conversation.tr()}?',
                                     content:
                                         LocaleKeys.dialog_leave_content.tr(),
                                     submitButtonColor: Colors.red,
@@ -215,7 +215,7 @@ class ConversationInfoPage extends StatelessWidget {
                               color: Colors.red,
                               iconData: Ionicons.log_out_outline,
                               label:
-                                  '${LocaleKeys.dialog_leave_title.tr()} ${LocaleKeys.general_conversation.tr()}',
+                                  '${LocaleKeys.button_leave.tr()} ${LocaleKeys.general_conversation.tr()}',
                             ),
                           ],
                         ),

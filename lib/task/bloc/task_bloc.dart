@@ -162,6 +162,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
       await _taskRepository.addSubTask(parent: state.task, subTask: event.task);
       emit(
         state.copyWith(
+          lastUpdate: DateTime.now().toIso8601String(),
           status: TaskStateStatus.success,
         ),
       );
@@ -189,7 +190,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     Emitter<TaskState> emit,
   ) {
     emit(state.copyWith(status: TaskStateStatus.notFound));
-    _subTaskSubscription?.cancel();
+    _taskSubscription?.cancel();
     _subTaskSubscription?.cancel();
   }
 }

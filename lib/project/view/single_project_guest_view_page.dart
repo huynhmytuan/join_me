@@ -209,7 +209,7 @@ class _JoinProjectButton extends StatelessWidget {
         }
         return Padding(
           padding: const EdgeInsets.only(
-            bottom: 20,
+            bottom: 60,
           ),
           child: RoundedButton(
             height: 45,
@@ -226,7 +226,7 @@ class _JoinProjectButton extends StatelessWidget {
             color: (isMember || isRequested)
                 ? Colors.white.withOpacity(.5)
                 : Theme.of(context).primaryColor,
-            elevation: 1,
+            elevation: 10,
             child: Text(
               title,
               style: CustomTextStyle.heading3(context).copyWith(
