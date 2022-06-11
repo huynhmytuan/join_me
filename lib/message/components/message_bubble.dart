@@ -81,8 +81,9 @@ class MessageBubble extends StatelessWidget {
                         ),
                         child: Text(
                           message.content,
-                          style: CustomTextStyle.bodyMedium(context)
-                              .copyWith(color: isSender ? Colors.white : null),
+                          textScaleFactor: 1.06,
+                          style:
+                              TextStyle(color: isSender ? Colors.white : null),
                         ),
                       ),
                     ),

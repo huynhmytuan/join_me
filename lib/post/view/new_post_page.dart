@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/data/repositories/post_repository.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/post/cubit/new_post_cubit.dart';
 
 import 'package:join_me/utilities/constant.dart';
@@ -35,9 +37,9 @@ class NewPostPage extends StatelessWidget {
       await showDialog<bool>(
         context: context,
         builder: (context) => CustomAlertDialog(
-          title: 'Discard all changes?',
-          content: 'All contents which editing will be lost. Continue?',
-          submitLabel: 'Delete',
+          title: LocaleKeys.dialog_discardChanges_title.tr(),
+          content: LocaleKeys.dialog_discardChanges_content.tr(),
+          submitLabel: LocaleKeys.button_delete.tr(),
           submitButtonColor: Colors.red,
           onSubmit: () {
             AutoRouter.of(context).pop(true);
@@ -81,7 +83,7 @@ class NewPostPage extends StatelessWidget {
                 appBar: AppBar(
                   centerTitle: true,
                   leading: const _CloseButton(),
-                  title: const Text('Create new post'),
+                  title: Text(LocaleKeys.appBarTitle_createNewPost.tr()),
                   actions: const [_AddNewPostButton()],
                 ),
                 body: Container(
@@ -154,14 +156,15 @@ class _InvitationAdded extends StatelessWidget {
           return Container(
             margin: const EdgeInsets.only(top: kDefaultPadding),
             decoration: BoxDecoration(
-              color: Theme.of(context).scaffoldBackgroundColor,
-              borderRadius: BorderRadius.circular(kDefaultRadius),
-              boxShadow: kDefaultBoxShadow,
+              color: Theme.of(context).primaryColor.withOpacity(.5),
             ),
             child: ListTile(
-              title: Text('Invitation to: ${state.invitedProject.name}'),
+              title: Text(
+                LocaleKeys.post_invitationTo
+                    .tr(args: ['"${state.invitedProject.name}"']),
+              ),
               subtitle: Text(
-                '${state.invitedProject.members.length.toString()} members',
+                '${state.invitedProject.members.length.toString()} ${LocaleKeys.general_members.tr()}',
               ),
               trailing: GestureDetector(
                 onTap: () => context.read<NewPostCubit>().removeInvitation(),
@@ -298,7 +301,7 @@ class _MediaPreview extends StatelessWidget {
                 ),
               ),
               Text(
-                '${state.medias.length} Asset(s) Added',
+                LocaleKeys.post_assetSelected.plural(state.medias.length),
                 style: CustomTextStyle.heading4(context).copyWith(
                   color: Theme.of(context).primaryColor,
                 ),
@@ -379,10 +382,10 @@ class _PostContentInput extends StatelessWidget {
           keyboardType: TextInputType.multiline,
           textInputAction: TextInputAction.newline,
           maxLines: null,
-          decoration: const InputDecoration(
-            contentPadding: EdgeInsets.all(5),
+          decoration: InputDecoration(
+            contentPadding: const EdgeInsets.all(5),
             border: InputBorder.none,
-            hintText: 'What on your mind?',
+            hintText: LocaleKeys.textField_whatOnYourMind.tr(),
           ),
           onChanged: (value) =>
               context.read<NewPostCubit>().contentChange(value),
@@ -414,7 +417,7 @@ class _AddMediaButton extends StatelessWidget {
                 width: 5,
               ),
               Text(
-                'Add Media',
+                LocaleKeys.button_addAsset.tr(),
                 style: CustomTextStyle.heading4(context).copyWith(
                   color: Colors.white,
                 ),
@@ -475,8 +478,8 @@ class _AddInvitationButton extends StatelessWidget {
               ),
               Text(
                 state.invitedProject.id.isEmpty
-                    ? 'Add Invitation'
-                    : 'Change Project',
+                    ? LocaleKeys.button_addInvitation.tr()
+                    : LocaleKeys.button_changeInvitation.tr(),
                 style: CustomTextStyle.heading4(context).copyWith(
                   color: Colors.white,
                 ),

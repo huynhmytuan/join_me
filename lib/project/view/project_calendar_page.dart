@@ -1,9 +1,11 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/project/components/task_card.dart';
 import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
@@ -85,7 +87,7 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
       ),
       builder: (context) {
         return SelectionBottomSheet(
-          title: 'Filter By',
+          title: LocaleKeys.taskFilter_filterBy.tr(),
           listSelections: [
             SelectionRow(
               onTap: () {
@@ -94,7 +96,7 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
                 });
                 AutoRouter.of(context).pop();
               },
-              title: 'Created Day',
+              title: LocaleKeys.taskFilter_byCreatedDate_title.tr(),
               iconData: Ionicons.create_outline,
             ),
             SelectionRow(
@@ -104,7 +106,7 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
                 });
                 AutoRouter.of(context).pop();
               },
-              title: 'Due Day',
+              title: LocaleKeys.taskFilter_byDueDate_title.tr(),
               iconData: Ionicons.calendar_number_outline,
             ),
           ],
@@ -153,7 +155,7 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Day's Task",
+                              LocaleKeys.project_daysTask.tr(),
                               style: CustomTextStyle.heading2(context),
                             ),
                             GestureDetector(
@@ -196,7 +198,7 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
                       ),
                       color: Theme.of(context).primaryColor,
                       child: Text(
-                        'Today',
+                        LocaleKeys.general_today.tr(),
                         style: CustomTextStyle.heading4(context).copyWith(
                           color: Colors.white,
                         ),
@@ -208,8 +210,8 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
             ],
           );
         }
-        return const Center(
-          child: Text('Something went wrong'),
+        return Center(
+          child: Text(LocaleKeys.errorMessage_wrong.tr()),
         );
       },
     );
@@ -233,9 +235,9 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
         locale: languageCode,
         calendarFormat: _calendarFormat,
         startingDayOfWeek: StartingDayOfWeek.monday,
-        availableCalendarFormats: const {
-          CalendarFormat.month: 'Month',
-          CalendarFormat.week: 'Week',
+        availableCalendarFormats: {
+          CalendarFormat.month: LocaleKeys.general_month.tr(),
+          CalendarFormat.week: LocaleKeys.general_week.tr(),
         },
         calendarBuilders: CalendarBuilders<Task>(
           singleMarkerBuilder: (context, day, task) {
@@ -314,7 +316,6 @@ class _ProjectCalendarPageState extends State<ProjectCalendarPage> {
               child: EmptyHandlerWidget(
                 size: MediaQuery.of(context).size.width * .3,
                 imageHandlerDir: kNoDayTaskPicDir,
-                textHandler: 'No task in this day.',
               ),
             )
           : Scrollbar(

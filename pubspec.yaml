@@ -13,6 +13,7 @@ dependencies:
   cached_network_image: ^3.2.0
   carousel_slider: ^4.1.1
   cloud_firestore: ^3.1.12
+  easy_localization: null
   equatable: ^2.0.3
   firebase_auth: ^3.3.14
   firebase_core: ^1.14.1
@@ -21,12 +22,11 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^8.0.1
-  flutter_localizations:
-    sdk: flutter
   flutter_login_facebook: ^1.5.0
   flutter_typeahead: ^3.2.5
   formz: ^0.4.1
   google_sign_in: ^5.3.1
+  hive: ^2.2.2
   intl: ^0.17.0
   ionicons: ^0.1.2
   json_annotation: ^4.4.0
@@ -55,6 +55,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
+    - assets/translations/
 
   fonts:
     - family: Nunito

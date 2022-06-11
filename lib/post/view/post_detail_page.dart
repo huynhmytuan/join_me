@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,6 +11,7 @@ import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/data/repositories/comment_repository.dart';
 import 'package:join_me/data/repositories/repositories.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/post/bloc/comment_bloc.dart';
 import 'package:join_me/post/bloc/post_bloc.dart';
 import 'package:join_me/post/bloc/posts_bloc.dart';
@@ -74,7 +76,7 @@ class _PostViewState extends State<_PostView> {
         final _currentUser = _context.read<AppBloc>().state.user;
         final isOwner = _currentUser.id == postViewModel.post.authorId;
         return SelectionBottomSheet(
-          title: 'More',
+          title: LocaleKeys.general_more.tr(),
           listSelections: [
             if (isOwner)
               SelectionRow(
@@ -83,11 +85,10 @@ class _PostViewState extends State<_PostView> {
                         (value) => showDialog<bool>(
                           context: _context,
                           builder: (context) => CustomAlertDialog(
-                            title: 'Are you sure?',
-                            content:
-                                '''Once you delete this post, this cannot be undone.''',
+                            title: LocaleKeys.dialog_delete_title.tr(),
+                            content: LocaleKeys.dialog_delete_content.tr(),
                             submitButtonColor: Theme.of(context).errorColor,
-                            submitLabel: 'Delete',
+                            submitLabel: LocaleKeys.button_delete.tr(),
                             onCancel: () => AutoRouter.of(context).pop(false),
                             onSubmit: () => AutoRouter.of(context).pop(true),
                           ),
@@ -104,7 +105,10 @@ class _PostViewState extends State<_PostView> {
                       );
                 },
                 color: Theme.of(_context).errorColor,
-                title: 'Delete Post',
+                title: [
+                  LocaleKeys.button_delete.tr(),
+                  LocaleKeys.post_post.tr()
+                ].join(' '),
                 iconData: Ionicons.trash_bin_outline,
               )
           ],
@@ -144,9 +148,9 @@ class _PostViewState extends State<_PostView> {
           );
         }
         if (state.status == PostStatus.failure) {
-          return const Scaffold(
+          return Scaffold(
             body: Center(
-              child: Text('Somethings went wrong!'),
+              child: Text(LocaleKeys.errorMessage_wrong.tr()),
             ),
           );
         }
@@ -306,9 +310,11 @@ class _PostContent extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          state.postViewModel.project != null
-                              ? 'Invitation to ${state.postViewModel.project!.name}'
-                              : 'This project invitation is no longer available.',
+                          state.postViewModel.project == null
+                              ? LocaleKeys.post_inviteNotExist.tr()
+                              : LocaleKeys.post_invitationTo.tr(
+                                  args: [state.postViewModel.project!.name],
+                                ),
                           textAlign: state.postViewModel.project == null
                               ? TextAlign.center
                               : null,
@@ -323,7 +329,7 @@ class _PostContent extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              'Show More',
+                              LocaleKeys.button_showMore.tr(),
                               style: CustomTextStyle.heading4(context)
                                   .copyWith(color: Colors.white),
                             ),
@@ -345,7 +351,20 @@ class _PostContent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '''${NumberFormat.compact(locale: appLocale.languageCode).format(state.postViewModel.post.likes.length)} like, ${NumberFormat.compact(locale: appLocale.languageCode).format(state.postViewModel.post.commentCount)} comments''',
+                    [
+                      LocaleKeys.post_likeCount.plural(
+                        state.postViewModel.post.likes.length,
+                        format: NumberFormat.compact(
+                          locale: appLocale.languageCode,
+                        ),
+                      ),
+                      LocaleKeys.post_commentCount.plural(
+                        state.postViewModel.post.commentCount,
+                        format: NumberFormat.compact(
+                          locale: appLocale.languageCode,
+                        ),
+                      ),
+                    ].join(' '),
                     style: CustomTextStyle.bodySmall(context)
                         .copyWith(color: kTextColorGrey),
                   ),
@@ -361,55 +380,61 @@ class _PostContent extends StatelessWidget {
                                   likeType: LikeType.post,
                                 );
                           },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                (state.postViewModel.post.likes
-                                        .contains(_currentUser.id))
-                                    ? Ionicons.heart
-                                    : Ionicons.heart_outline,
-                                color: (state.postViewModel.post.likes
-                                        .contains(_currentUser.id))
-                                    ? kSecondaryRed
-                                    : kTextColorGrey,
-                              ),
-                              const SizedBox(
-                                width: 3,
-                              ),
-                              Text(
-                                'Like',
-                                style:
-                                    CustomTextStyle.heading4(context).copyWith(
+                          child: SizedBox(
+                            width: 200,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  (state.postViewModel.post.likes
+                                          .contains(_currentUser.id))
+                                      ? Ionicons.heart
+                                      : Ionicons.heart_outline,
                                   color: (state.postViewModel.post.likes
                                           .contains(_currentUser.id))
                                       ? kSecondaryRed
                                       : kTextColorGrey,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(
+                                  width: 3,
+                                ),
+                                Text(
+                                  LocaleKeys.post_like.tr(),
+                                  style: CustomTextStyle.heading4(context)
+                                      .copyWith(
+                                    color: (state.postViewModel.post.likes
+                                            .contains(_currentUser.id))
+                                        ? kSecondaryRed
+                                        : kTextColorGrey,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
                       Expanded(
                         child: GestureDetector(
                           onTap: commentFocusNode.requestFocus,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Ionicons.chatbox_ellipses_outline,
-                                color: kTextColorGrey,
-                              ),
-                              const SizedBox(
-                                width: 3,
-                              ),
-                              Text(
-                                'Comment',
-                                style: CustomTextStyle.heading4(context)
-                                    .copyWith(color: kTextColorGrey),
-                              ),
-                            ],
+                          child: SizedBox(
+                            width: 200,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(
+                                  Ionicons.chatbubble_ellipses_outline,
+                                  color: kTextColorGrey,
+                                ),
+                                const SizedBox(
+                                  width: 3,
+                                ),
+                                Text(
+                                  LocaleKeys.post_comment.tr(),
+                                  style: CustomTextStyle.heading4(context)
+                                      .copyWith(color: kTextColorGrey),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -460,14 +485,17 @@ class _CommentViewState extends State<_CommentView> {
       builder: (context) {
         final isOwner = _currentUser.id == comment.authorId;
         return SelectionBottomSheet(
-          title: 'More',
+          title: LocaleKeys.general_more.tr(),
           listSelections: [
             SelectionRow(
               onTap: () {
                 Clipboard.setData(ClipboardData(text: comment.content));
                 AutoRouter.of(context).pop();
               },
-              title: 'Copy Comment',
+              title: [
+                LocaleKeys.button_copy.tr(),
+                LocaleKeys.post_comment.tr(),
+              ].join(' '),
               iconData: Ionicons.copy_outline,
             ),
             if (isOwner)
@@ -477,11 +505,10 @@ class _CommentViewState extends State<_CommentView> {
                         (value) => showDialog<bool>(
                           context: context,
                           builder: (context) => CustomAlertDialog(
-                            title: 'Are you sure?',
-                            content:
-                                '''Once you delete this comment, this cannot be undone.''',
+                            title: LocaleKeys.dialog_delete_title.tr(),
+                            content: LocaleKeys.dialog_delete_content.tr(),
                             submitButtonColor: Theme.of(context).errorColor,
-                            submitLabel: 'Delete',
+                            submitLabel: LocaleKeys.button_delete.tr(),
                             onCancel: () => AutoRouter.of(context).pop(false),
                             onSubmit: () => AutoRouter.of(context).pop(true),
                           ),
@@ -493,7 +520,10 @@ class _CommentViewState extends State<_CommentView> {
                       );
                 },
                 color: Theme.of(context).errorColor,
-                title: 'Delete Comment',
+                title: [
+                  LocaleKeys.button_delete.tr(),
+                  LocaleKeys.post_comment.tr(),
+                ].join(' '),
                 iconData: Ionicons.trash_bin_outline,
               )
           ],
@@ -522,7 +552,7 @@ class _CommentViewState extends State<_CommentView> {
         }
         // in case of failure
         if (state.status == CommentStatus.failure) {
-          return const Center(child: Text('Ouch: There was an error!'));
+          return Center(child: Text(LocaleKeys.errorMessage_wrong.tr()));
         }
         // if the list is loading and the list is empty (first page)
         if (state.status == CommentStatus.loading && state.comments.isEmpty) {
@@ -530,7 +560,16 @@ class _CommentViewState extends State<_CommentView> {
         }
         // if the status is success but the list is empty (no items i)
         if (state.status == CommentStatus.success && state.comments.isEmpty) {
-          return const Center(child: Text(' No comment'));
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(40),
+              child: Icon(
+                Ionicons.chatbubble_ellipses_outline,
+                size: 60,
+                color: kIconColorGrey,
+              ),
+            ),
+          );
         }
         return ListView.builder(
           reverse: true,
@@ -577,7 +616,7 @@ class _CommentInputState extends State<_CommentInput> {
         return BottomTextField(
           textEditingController: widget.commentTextInputController,
           focusNode: widget.commentFocusNode,
-          hintText: 'Write a comment...',
+          hintText: LocaleKeys.textField_writeAComment.tr(),
           onSubmit: () {
             // print(widget.commentTextInputController.text);
             final currentUser = context.read<AppBloc>().state.user;

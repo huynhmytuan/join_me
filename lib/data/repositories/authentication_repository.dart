@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:flutter/material.dart';
 import 'package:flutter_login_facebook/flutter_login_facebook.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:intl/intl.dart';
 import 'package:join_me/data/models/app_user.dart';
 import 'package:join_me/data/repositories/user_repository.dart';
 import 'package:join_me/utilities/utils/cache.dart';

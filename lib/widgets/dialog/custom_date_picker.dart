@@ -1,8 +1,9 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/theme.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -24,11 +25,12 @@ class CustomDatePicker extends StatefulWidget {
 }
 
 class _CustomDatePickerState extends State<CustomDatePicker> {
-  DateTime _focusedDay = DateTime.now();
+  late DateTime _focusedDay;
   DateTime? _selectedDay;
   @override
   void initState() {
     _selectedDay = widget.initialDay;
+    _focusedDay = widget.initialDay ?? DateTime.now();
     super.initState();
   }
 
@@ -49,12 +51,12 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                     AutoRouter.of(context).pop(false);
                   },
                   child: Text(
-                    'Cancel',
+                    LocaleKeys.button_cancel.tr(),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
                 Text(
-                  'Due date',
+                  LocaleKeys.task_dueDate.tr(),
                   style: CustomTextStyle.heading3(context),
                 ),
                 TextButton(

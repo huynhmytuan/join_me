@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/utilities/extensions/extensions.dart';
 import 'package:join_me/widgets/widgets.dart';
@@ -82,7 +84,7 @@ class TaskCard extends StatelessWidget {
                           ),
                           Text(
                             task.dueDate == null
-                                ? 'No due date'
+                                ? ''
                                 : DateFormat.yMMMMEEEEd(languageCode)
                                     .format(task.dueDate!),
                             style: CustomTextStyle.heading4(context).copyWith(
@@ -97,7 +99,7 @@ class TaskCard extends StatelessWidget {
                         imageSize: 24,
                         totalCount: assignedTo.length,
                         emptyHandler: Text(
-                          'Unassigned',
+                          LocaleKeys.task_unAssigned.tr(),
                           style: CustomTextStyle.heading4(context).copyWith(
                             color: kTextColorGrey,
                           ),

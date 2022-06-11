@@ -1,9 +1,11 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import 'package:flutter/material.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/app_user.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/message/bloc/conversations_bloc.dart';
 import 'package:join_me/message/components/conversation_avatar.dart';
 import 'package:join_me/utilities/constant.dart';
@@ -49,7 +51,7 @@ class ConversationCard extends StatelessWidget {
           children: [
             ConversationAvatar(
               receivers: receivers,
-              size: 50,
+              size: 60,
             ),
             const SizedBox(width: kDefaultPadding),
             Expanded(
@@ -58,13 +60,15 @@ class ConversationCard extends StatelessWidget {
                 children: [
                   Text(
                     name,
-                    style: CustomTextStyle.bodyLarge(context),
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
                   if (conversationViewModel.lastMessage != null)
                     Text(
-                      '${conversationViewModel.lastMessage!.authorId == currentUser.id ? 'You:' : ''} ${conversationViewModel.lastMessage!.content}',
+                      '${conversationViewModel.lastMessage!.authorId == currentUser.id ? LocaleKeys.general_you.tr() : ''} ${conversationViewModel.lastMessage!.content}',
                       style: conversationViewModel.lastMessage!.seenBy
                               .contains(currentUser.id)
                           ? CustomTextStyle.bodySmall(context)
@@ -75,7 +79,7 @@ class ConversationCard extends StatelessWidget {
                     )
                   else
                     Text(
-                      'No message.',
+                      LocaleKeys.emptyHandler_noMessage_title.tr(),
                       style: CustomTextStyle.bodySmall(context)
                           .copyWith(color: kTextColorGrey),
                       overflow: TextOverflow.ellipsis,

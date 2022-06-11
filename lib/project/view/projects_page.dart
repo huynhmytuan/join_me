@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/app_router.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/project/bloc/project_overview_bloc.dart';
 
 import 'package:join_me/project/components/components.dart';
@@ -29,24 +31,17 @@ class ProjectsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text(LocaleKeys.appBarTitle_myProjects.tr()),
+      ),
       backgroundColor: Theme.of(context).brightness == Brightness.light
           ? kBackgroundPostLight
           : null,
-      body: NestedScrollView(
-        headerSliverBuilder: (context, value) {
-          return [
-            const SliverAppBar(
-              elevation: 0,
-              title: Text('My Projects'),
-            ),
-          ];
+      body: RefreshIndicator(
+        onRefresh: () async {
+          _loadData(context);
         },
-        body: RefreshIndicator(
-          onRefresh: () async {
-            _loadData(context);
-          },
-          child: const _ProjectListView(),
-        ),
+        child: const _ProjectListView(),
       ),
       floatingActionButton: FloatingActionButton(
         heroTag: 'new_project',
@@ -85,29 +80,32 @@ class _ProjectListView extends StatelessWidget {
           );
         }
         if (state is ProjectsLoaded) {
-          return state.projects.isNotEmpty
-              ? ListView.builder(
-                  padding: EdgeInsets.zero,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: state.projects.length,
-                  itemBuilder: (context, index) {
-                    return ProjectCard(
-                      project: state.projects[index].project,
-                      users: state.projects[index].members,
-                      tasks: state.projects[index].tasks,
-                    );
-                  },
-                )
-              : EmptyHandlerWidget(
-                  size: MediaQuery.of(context).size.width * .5,
-                  imageHandlerDir: kNoProjectPicDir,
-                  titleHandler: 'No Project Yet',
-                  textHandler:
-                      "It's time to create your first project. Do right thing and find right people.",
+          if (state.projects.isNotEmpty) {
+            return ListView.builder(
+              padding: const EdgeInsets.only(top: 5),
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              itemCount: state.projects.length,
+              itemBuilder: (context, index) {
+                return ProjectCard(
+                  project: state.projects[index].project,
+                  users: state.projects[index].members,
+                  tasks: state.projects[index].tasks,
                 );
+              },
+            );
+          } else {
+            return EmptyHandlerWidget(
+              size: MediaQuery.of(context).size.width * .5,
+              imageHandlerDir: kNoProjectPicDir,
+              titleHandler: LocaleKeys.emptyHandler_noProject_title.tr(),
+              textHandler: LocaleKeys.emptyHandler_noProject_content.tr(),
+            );
+          }
         }
-        return const Center(
-          child: Text('Something went wrong.'),
+        return Center(
+          child: Text(LocaleKeys.errorMessage_wrong.tr()),
         );
       },
     );

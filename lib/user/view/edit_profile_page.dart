@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
@@ -8,6 +9,7 @@ import 'package:join_me/app/cubit/app_message_cubit.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/repositories/repositories.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/user/bloc/user_bloc.dart';
 import 'package:join_me/user/cubit/edit_profile_cubit.dart';
 import 'package:join_me/utilities/constant.dart';
@@ -82,7 +84,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
-      title: const Text('Edit Profile'),
+      title: Text(LocaleKeys.appBarTitle_editProfile.tr()),
       centerTitle: true,
       leading: BlocBuilder<EditProfileCubit, EditProfileState>(
         builder: (context, state) {
@@ -171,7 +173,7 @@ class _UserPhoto extends StatelessWidget {
                   }
                 });
               },
-              child: const Text('Change Avatar'),
+              child: Text(LocaleKeys.button_changeAvatar.tr()),
             )
           ],
         );
@@ -209,7 +211,7 @@ class _UserEmail extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Email',
+              LocaleKeys.general_email.tr(),
               style: CustomTextStyle.heading4(context),
             ),
             TextField(
@@ -239,7 +241,7 @@ class _UserBiography extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Biography',
+              LocaleKeys.general_biography.tr(),
               style: CustomTextStyle.heading4(context),
             ),
             TextField(
@@ -248,11 +250,10 @@ class _UserBiography extends StatelessWidget {
               onChanged: (value) =>
                   context.read<EditProfileCubit>().onBioChange(value),
               maxLength: 101,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintMaxLines: 3,
                 border: InputBorder.none,
-                hintText:
-                    "Tell something about yourself, it's can be every thing you want.",
+                hintText: LocaleKeys.textField_biographyHint.tr(),
               ),
             ),
           ],
@@ -279,7 +280,7 @@ class _SaveChangeButton extends StatelessWidget {
               : () {
                   context.read<EditProfileCubit>().saveChanges();
                 },
-          child: const Text('Save Changes'),
+          child: Text(LocaleKeys.button_saveChanges.tr()),
         );
       },
     );

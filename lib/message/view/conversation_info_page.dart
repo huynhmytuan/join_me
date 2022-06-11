@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -10,6 +9,7 @@ import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/message/bloc/chat_bloc.dart';
 import 'package:join_me/message/components/conversation_avatar.dart';
 import 'package:join_me/utilities/constant.dart';
@@ -98,7 +98,7 @@ class ConversationInfoPage extends StatelessWidget {
                     horizontal: MediaQuery.of(context).size.width * .2,
                   ),
                   child: Text(
-                    '${creator.id == currentUser.id ? 'You' : creator.name} started this chat at\n${DateFormat.yMMMMEEEEd(appLocale.languageCode).format(
+                    '${creator.id == currentUser.id ? LocaleKeys.general_you.tr() : creator.name} ${LocaleKeys.general_start.tr()} ${LocaleKeys.general_conversation.tr().toLowerCase()} ${LocaleKeys.general_from.tr()} \n${DateFormat.yMMMMEEEEd(appLocale.languageCode).format(
                       state.conversationViewModel.conversation.createdAt,
                     )}',
                     textAlign: TextAlign.center,
@@ -123,7 +123,7 @@ class ConversationInfoPage extends StatelessWidget {
                             );
                           },
                           iconData: Icons.person,
-                          label: 'View User Personal Page',
+                          label: LocaleKeys.button_viewUserPage.tr(),
                         ),
                       if (state.conversationViewModel.conversation.type ==
                           ConversationType.group)
@@ -139,7 +139,7 @@ class ConversationInfoPage extends StatelessWidget {
                               }
                             });
                           },
-                          label: 'Conversation Members',
+                          label: LocaleKeys.general_members.tr(),
                           iconData: Ionicons.people_outline,
                         ),
                       if (state.conversationViewModel.conversation.type ==
@@ -155,11 +155,11 @@ class ConversationInfoPage extends StatelessWidget {
                                 showDialog<bool>(
                                   context: context,
                                   builder: (context) => CustomAlertDialog(
-                                    title: 'Delete Conversation?',
+                                    title: LocaleKeys.dialog_delete_title.tr(),
                                     content:
-                                        "Once you delete this conversation every thing will be lost, including  conversation and also it's messages.",
+                                        LocaleKeys.dialog_delete_content.tr(),
                                     submitButtonColor: Colors.red,
-                                    submitLabel: 'Delete',
+                                    submitLabel: LocaleKeys.button_delete.tr(),
                                     onCancel: () =>
                                         AutoRouter.of(context).pop(false),
                                     onSubmit: () =>
@@ -174,7 +174,8 @@ class ConversationInfoPage extends StatelessWidget {
                               },
                               color: Colors.red,
                               iconData: Icons.delete_outline,
-                              label: 'Delete Conversation',
+                              label:
+                                  '${LocaleKeys.button_delete.tr()} ${LocaleKeys.general_conversation.tr()}',
                             ),
                           ],
                         ),
@@ -191,11 +192,12 @@ class ConversationInfoPage extends StatelessWidget {
                                 showDialog<bool>(
                                   context: context,
                                   builder: (context) => CustomAlertDialog(
-                                    title: 'Leave Conversation?',
+                                    title:
+                                        '${LocaleKeys.dialog_leave_title.tr()} ${LocaleKeys.general_conversation.tr()}?',
                                     content:
-                                        "Once you leave this conversation, you can see it until someone add you again.",
+                                        LocaleKeys.dialog_leave_content.tr(),
                                     submitButtonColor: Colors.red,
-                                    submitLabel: 'Leave',
+                                    submitLabel: LocaleKeys.button_leave.tr(),
                                     onCancel: () =>
                                         AutoRouter.of(context).pop(false),
                                     onSubmit: () =>
@@ -212,7 +214,8 @@ class ConversationInfoPage extends StatelessWidget {
                               },
                               color: Colors.red,
                               iconData: Ionicons.log_out_outline,
-                              label: 'Leave Conversation',
+                              label:
+                                  '${LocaleKeys.dialog_leave_title.tr()} ${LocaleKeys.general_conversation.tr()}',
                             ),
                           ],
                         ),

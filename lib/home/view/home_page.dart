@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +8,7 @@ import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/app/cubit/app_message_cubit.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/message/bloc/conversations_bloc.dart';
 
 import 'package:join_me/notification/bloc/notification_bloc.dart';
@@ -143,28 +143,29 @@ class _BottomBar extends StatelessWidget {
       backgroundColor: Theme.of(context).cardColor,
       type: BottomNavigationBarType.fixed,
       elevation: 8,
-      selectedFontSize: 12,
+      selectedFontSize: 10,
+      unselectedFontSize: 10,
       selectedItemColor: Theme.of(context).primaryColor,
       unselectedItemColor: kTextColorGrey,
       currentIndex: tabsRouter.activeIndex,
       onTap: tabsRouter.setActiveIndex,
       items: [
-        const BottomNavigationBarItem(
-          icon: Icon(Ionicons.home_outline),
-          activeIcon: Icon(Ionicons.home),
-          label: 'Home',
+        BottomNavigationBarItem(
+          icon: const Icon(Ionicons.home_outline),
+          activeIcon: const Icon(Ionicons.home),
+          label: LocaleKeys.bottomBarLabel_home.tr(),
         ),
         _buildMessageTabIcon(),
-        const BottomNavigationBarItem(
-          icon: Icon(Ionicons.folder_outline),
-          activeIcon: Icon(Ionicons.folder),
-          label: 'Project',
+        BottomNavigationBarItem(
+          icon: const Icon(Ionicons.folder_outline),
+          activeIcon: const Icon(Ionicons.folder),
+          label: LocaleKeys.bottomBarLabel_project.tr(),
         ),
         _buildNotificationTabIcon(),
-        const BottomNavigationBarItem(
-          icon: Icon(Ionicons.menu_outline),
-          activeIcon: Icon(Ionicons.menu),
-          label: 'Menu',
+        BottomNavigationBarItem(
+          icon: const Icon(Ionicons.menu_outline),
+          activeIcon: const Icon(Ionicons.menu),
+          label: LocaleKeys.bottomBarLabel_menu.tr(),
         )
       ],
     );
@@ -213,7 +214,7 @@ class _BottomBar extends StatelessWidget {
           countBadge,
         ],
       ),
-      label: 'Message',
+      label: LocaleKeys.bottomBarLabel_message.tr(),
     );
   }
 
@@ -257,7 +258,7 @@ class _BottomBar extends StatelessWidget {
           countBadge,
         ],
       ),
-      label: 'Notification',
+      label: LocaleKeys.bottomBarLabel_notifications.tr(),
     );
   }
 }

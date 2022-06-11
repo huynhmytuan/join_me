@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/project/bloc/project_overview_bloc.dart';
 
 import 'package:join_me/utilities/constant.dart';
@@ -36,7 +38,7 @@ class NewProjectDialogState extends State<NewProjectDialog> {
     showDialog<List<AppUser>>(
       context: context,
       builder: (context) => EditUserDialog(
-        title: 'Add Members',
+        title: LocaleKeys.general_members.tr(),
         initialUserList: _members,
         withoutUsers: [context.read<AppBloc>().state.user],
       ),
@@ -67,8 +69,8 @@ class NewProjectDialogState extends State<NewProjectDialog> {
                   controller: _projectNameTextController,
                   autofocus: true,
                   style: CustomTextStyle.heading3(context),
-                  decoration: const InputDecoration(
-                    hintText: 'Project Name',
+                  decoration: InputDecoration(
+                    hintText: LocaleKeys.project_projectName.tr(),
                     border: InputBorder.none,
                   ),
                   textInputAction: TextInputAction.next,
@@ -94,8 +96,8 @@ class NewProjectDialogState extends State<NewProjectDialog> {
                 TextFormField(
                   controller: _descriptionTextController,
                   style: CustomTextStyle.bodyMedium(context),
-                  decoration: const InputDecoration(
-                    hintText: 'Description',
+                  decoration: InputDecoration(
+                    hintText: LocaleKeys.properties_description.tr(),
                     border: InputBorder.none,
                   ),
                   maxLines: null,
@@ -119,7 +121,7 @@ class NewProjectDialogState extends State<NewProjectDialog> {
                         ),
                         if (_members.isEmpty)
                           Text(
-                            'No Member Added',
+                            LocaleKeys.project_noMemberAdded.tr(),
                             style: CustomTextStyle.bodyMedium(context).copyWith(
                               color: kTextColorGrey,
                             ),
@@ -129,7 +131,7 @@ class NewProjectDialogState extends State<NewProjectDialog> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Text(
-                                'Members',
+                                LocaleKeys.general_members.tr(),
                                 style:
                                     CustomTextStyle.subText(context).copyWith(
                                   color: kTextColorGrey,
@@ -189,8 +191,8 @@ class NewProjectDialogState extends State<NewProjectDialog> {
                             // await context.
                           }
                         : null,
-                    child: const Text(
-                      'Create',
+                    child: Text(
+                      LocaleKeys.button_create.tr(),
                     ),
                   ),
                 ),

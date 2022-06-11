@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
@@ -6,6 +7,7 @@ import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/project/bloc/project_bloc.dart';
 import 'package:join_me/project/components/components.dart';
 import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
@@ -27,6 +29,8 @@ class SingleProjectPage extends StatelessWidget {
     context.read<ProjectBloc>().add(LoadProject(projectId));
     context.read<TasksOverviewBloc>().add(LoadTasksList(projectId));
     return BlocConsumer<ProjectBloc, ProjectState>(
+      buildWhen: (previous, current) =>
+          previous.status == ProjectStatus.loading,
       listener: (context, state) {
         if (state.status == ProjectStatus.deleted) {
           AutoRouter.of(context).pop();
@@ -87,8 +91,8 @@ class SingleProjectPage extends StatelessWidget {
               ),
             ),
           ),
-          body: const Center(
-            child: Text('Something went wrong'),
+          body: Center(
+            child: Text(LocaleKeys.errorMessage_wrong.tr()),
           ),
         );
       },
@@ -148,27 +152,27 @@ class _ProjectViewState extends State<ProjectView> {
       ),
       builder: (context) {
         return SelectionBottomSheet(
-          title: 'View Type',
+          title: LocaleKeys.projectViewType_title.tr(),
           listSelections: [
             SelectionRow(
               onTap: () {
                 AutoRouter.of(context).pop(ProjectViewType.dashBoard);
               },
-              title: 'Dashboard',
+              title: LocaleKeys.projectViewType_dashboard.tr(),
               iconData: Ionicons.pie_chart_outline,
             ),
             SelectionRow(
               onTap: () {
                 AutoRouter.of(context).pop(ProjectViewType.listView);
               },
-              title: 'List View',
+              title: LocaleKeys.projectViewType_listView.tr(),
               iconData: Ionicons.list_outline,
             ),
             SelectionRow(
               onTap: () {
                 AutoRouter.of(context).pop(ProjectViewType.calendarView);
               },
-              title: 'Calendar View',
+              title: LocaleKeys.projectViewType_calendarView.tr(),
               iconData: Ionicons.calendar_outline,
             ),
           ],
@@ -194,7 +198,7 @@ class _ProjectViewState extends State<ProjectView> {
         final currentUser = context.read<AppBloc>().state.user;
         final isOwner = currentUser.id == widget.project.owner;
         return SelectionBottomSheet(
-          title: 'More',
+          title: LocaleKeys.general_more.tr(),
           listSelections: [
             if (isOwner)
               SelectionRow(
@@ -204,7 +208,7 @@ class _ProjectViewState extends State<ProjectView> {
                       .push(
                     TextEditingRoute(
                       initialText: widget.project.name,
-                      hintText: 'Edit Project Name',
+                      hintText: LocaleKeys.project_projectName.tr(),
                     ),
                   )
                       .then((textEdited) {
@@ -220,7 +224,7 @@ class _ProjectViewState extends State<ProjectView> {
                     }
                   });
                 },
-                title: 'Edit Project Name',
+                title: LocaleKeys.project_projectName.tr(),
                 iconData: Ionicons.pencil_outline,
               ),
             SelectionRow(
@@ -229,7 +233,7 @@ class _ProjectViewState extends State<ProjectView> {
                 AutoRouter.of(context)
                     .push(ProjectMembersRoute(projectBloc: projectBloc));
               },
-              title: 'Members',
+              title: LocaleKeys.general_members.tr(),
               iconData: Ionicons.people_outline,
               trailing: projectBloc.state.project.requests.isNotEmpty
                   ? CountBadge(count: projectBloc.state.project.requests.length)
@@ -242,11 +246,10 @@ class _ProjectViewState extends State<ProjectView> {
                         (value) => showDialog<bool>(
                           context: context,
                           builder: (context) => CustomAlertDialog(
-                            title: 'Are you sure?',
-                            content:
-                                '''Once you delete this project, this cannot be undone.''',
+                            title: LocaleKeys.dialog_delete_title.tr(),
+                            content: LocaleKeys.dialog_delete_content.tr(),
                             submitButtonColor: Theme.of(context).errorColor,
-                            submitLabel: 'Delete',
+                            submitLabel: LocaleKeys.button_delete.tr(),
                             onCancel: () => AutoRouter.of(context).pop(false),
                             onSubmit: () => AutoRouter.of(context).pop(true),
                           ),
@@ -259,7 +262,10 @@ class _ProjectViewState extends State<ProjectView> {
                       );
                 },
                 color: Theme.of(context).errorColor,
-                title: 'Delete Project',
+                title: [
+                  LocaleKeys.button_delete.tr(),
+                  LocaleKeys.project_project.tr(),
+                ].join(' '),
                 iconData: Ionicons.trash_bin_outline,
               )
             else
@@ -269,11 +275,10 @@ class _ProjectViewState extends State<ProjectView> {
                         (value) => showDialog<bool>(
                           context: context,
                           builder: (context) => CustomAlertDialog(
-                            title: 'Are you sure?',
-                            content:
-                                '''Once you leave this project, this cannot be read or see this project until someone add you in again.''',
+                            title: LocaleKeys.dialog_leave_title.tr(),
+                            content: LocaleKeys.dialog_leave_content.tr(),
                             submitButtonColor: Theme.of(context).errorColor,
-                            submitLabel: 'Leave',
+                            submitLabel: LocaleKeys.button_leave.tr(),
                             onCancel: () => AutoRouter.of(context).pop(false),
                             onSubmit: () => AutoRouter.of(context).pop(true),
                           ),
@@ -292,7 +297,10 @@ class _ProjectViewState extends State<ProjectView> {
                         }),
                       );
                 },
-                title: 'Leave Project',
+                title: [
+                  LocaleKeys.button_leave.tr(),
+                  LocaleKeys.project_project.tr(),
+                ].join(' '),
                 color: Theme.of(context).errorColor,
                 iconData: Ionicons.log_out_outline,
               ),
@@ -397,34 +405,38 @@ class _ProjectViewState extends State<ProjectView> {
                 },
               );
             },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  widget.project.name,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context)
-                      .appBarTheme
-                      .titleTextStyle!
-                      .copyWith(fontSize: 16),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+            child: BlocBuilder<ProjectBloc, ProjectState>(
+              builder: (context, state) {
+                return Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      _currentViewType.toTitle(),
-                      style: CustomTextStyle.heading4(context)
-                          .copyWith(color: kTextColorGrey),
+                      state.project.name,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context)
+                          .appBarTheme
+                          .titleTextStyle!
+                          .copyWith(fontSize: 16),
                     ),
-                    const Icon(
-                      Ionicons.chevron_down_outline,
-                      size: 15,
-                      color: kTextColorGrey,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          _currentViewType.toTitle(),
+                          style: CustomTextStyle.heading4(context)
+                              .copyWith(color: kTextColorGrey),
+                        ),
+                        const Icon(
+                          Ionicons.chevron_down_outline,
+                          size: 15,
+                          color: kTextColorGrey,
+                        ),
+                      ],
                     ),
                   ],
-                ),
-              ],
+                );
+              },
             ),
           ),
           centerTitle: true,

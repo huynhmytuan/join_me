@@ -57,3 +57,5 @@ class DeleteTask extends TaskEvent {
 }
 
 class TaskNotFound extends TaskEvent {}
+
+class TaskDeleted extends TaskEvent {}

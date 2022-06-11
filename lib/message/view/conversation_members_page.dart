@@ -1,10 +1,13 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/utilities/extensions/string_ext.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/message/bloc/chat_bloc.dart';
 import 'package:join_me/user/cubit/search_user_cubit.dart';
 import 'package:join_me/widgets/bottom_sheet/selection_bottom_sheet.dart';
@@ -26,7 +29,7 @@ class ConversationMembersPage extends StatelessWidget {
               AutoRouter.of(context).pop();
               AutoRouter.of(context).push(UserInfoRoute(userId: user.id));
             },
-            title: 'Go To Personal Page',
+            title: LocaleKeys.button_viewUserPage.tr(),
             iconData: Icons.person_outline,
           ),
           if (currentUser.id ==
@@ -38,11 +41,10 @@ class ConversationMembersPage extends StatelessWidget {
                 showDialog<bool>(
                   context: context,
                   builder: (context) => CustomAlertDialog(
-                    title: 'Remove Member?',
-                    content:
-                        "Once you remove this conversation, he/she can see this conversation until someone add them again.",
+                    title: LocaleKeys.dialog_removeMember_title.tr(),
+                    content: LocaleKeys.dialog_removeMember_content.tr(),
                     submitButtonColor: Colors.red,
-                    submitLabel: 'Remove',
+                    submitLabel: LocaleKeys.button_remove.tr(),
                     onCancel: () => AutoRouter.of(context).pop(false),
                     onSubmit: () => AutoRouter.of(context).pop(true),
                   ),
@@ -53,7 +55,10 @@ class ConversationMembersPage extends StatelessWidget {
                 });
               },
               color: Colors.red,
-              title: 'Remove Member',
+              title: [
+                LocaleKeys.button_remove.tr(),
+                LocaleKeys.general_conversation.tr()
+              ].join(' '),
               iconData: Icons.remove,
             )
           else if (currentUser.id == user.id)
@@ -62,11 +67,10 @@ class ConversationMembersPage extends StatelessWidget {
                 showDialog<bool>(
                   context: context,
                   builder: (context) => CustomAlertDialog(
-                    title: 'Leave Conversation?',
-                    content:
-                        "Once you leave this conversation, you can see it until someone add you again.",
+                    title: LocaleKeys.dialog_leave_title.tr(),
+                    content: LocaleKeys.dialog_leave_content.tr(),
                     submitButtonColor: Colors.red,
-                    submitLabel: 'Leave',
+                    submitLabel: LocaleKeys.button_leave.tr(),
                     onCancel: () => AutoRouter.of(context).pop(false),
                     onSubmit: () => AutoRouter.of(context).pop(true),
                   ),
@@ -80,7 +84,10 @@ class ConversationMembersPage extends StatelessWidget {
                 });
               },
               color: Colors.red,
-              title: 'Leave Conversation',
+              title: [
+                LocaleKeys.button_leave.tr(),
+                LocaleKeys.general_conversation.tr()
+              ].join(' '),
               iconData: Ionicons.log_out_outline,
             ),
         ],
@@ -103,7 +110,7 @@ class ConversationMembersPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          title: const Text('Members'),
+          title: Text(LocaleKeys.general_members.tr()),
           leading: RoundedIconButton(
             icon: const Icon(Ionicons.chevron_back),
             onTap: () => AutoRouter.of(context).pop(),

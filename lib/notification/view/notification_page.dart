@@ -1,6 +1,8 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/notification/bloc/notification_bloc.dart';
 import 'package:join_me/notification/components/notification_list_tile.dart';
 import 'package:join_me/utilities/constant.dart';
@@ -19,7 +21,7 @@ class _NotificationPageState extends State<NotificationPage> {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        title: const Text('Notifications'),
+        title: Text(LocaleKeys.bottomBarLabel_notifications.tr()),
         actions: [
           IconButton(
             onPressed: () {
@@ -52,9 +54,8 @@ class _NotificationsView extends StatelessWidget {
           return EmptyHandlerWidget(
             size: MediaQuery.of(context).size.width * .4,
             imageHandlerDir: kNoNotificationPicDir,
-            titleHandler: 'No Notifications Found',
-            textHandler:
-                "You have currently no notifications. We'll notify you when something new arrives.",
+            titleHandler: LocaleKeys.emptyHandler_noNotification_title.tr(),
+            textHandler: LocaleKeys.emptyHandler_noNotification_content.tr(),
           );
         }
         return RefreshIndicator(

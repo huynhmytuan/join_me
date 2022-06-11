@@ -4,7 +4,7 @@ import 'package:join_me/utilities/constant.dart';
 class AppTheme {
   static final lightTheme = ThemeData(
     brightness: Brightness.light,
-    fontFamily: kFontFamily,
+    // fontFamily: kFontFamily,
     primaryColor: kPrimaryLightColor,
     backgroundColor: kBackgroundPostLight,
     scaffoldBackgroundColor: Colors.white,
@@ -44,7 +44,7 @@ class AppTheme {
 
   static final darkTheme = ThemeData(
     brightness: Brightness.dark,
-    fontFamily: kFontFamily,
+    // fontFamily: kFontFamily,
     primaryColor: kPrimaryDarkColor,
     highlightColor: kSecondaryGreen.withOpacity(.2),
     colorScheme: ThemeData().colorScheme.copyWith(

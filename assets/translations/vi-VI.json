@@ -1,0 +1,259 @@
+{
+    "welcomeBackTitle": "Chào Mừng trở lại!",
+    "pleaseSignIn": "Vui lòng đăng nhập để tiếp tục",
+    "orSignInWith": "hoặc đăng nhập bằng",
+    "dontHaveAnAccount": "Chưa có tải khoản?",
+    "register": "Đăng Ký",
+    "pleaseFill": "Vui lòng điền các thông tin bên dưới",
+    "alreadyAccount": "Đã có tài khoản?",
+    "general":{
+        "more":  "Thêm",
+        "members": "Thành Viên",
+        "month": "Tháng",
+        "week" : "Tuần",
+        "noDescription": "Hiện chưa có mô tả",
+        "email": "Email",
+        "biography": "Tiểu sử",
+        "message" : "Tin Nhắn",
+        "conversation": "Cuộc Trò Chuyện",
+        "you": "Bạn",
+        "start" : "bắt đầu",
+        "from" : "từ",
+        "today": "Hôm Nay",
+        "discard": "Bỏ Thay Đổi"
+    },
+    "button": {
+        "signIn": "Đăng Nhập",
+        "signUp": "Đăng Ký",
+        "request": {
+            "join": "Tham Gia",
+            "joined": "Đã Tham Gia",
+            "requested": "Đã Yêu Cầu",
+            "accept": "Đồng Ý",
+            "decline": "Từ Chối"
+        },
+        "showMore": "Xem Thêm",
+        "backToHome": "Về Trang Chủ",
+        "addAsset": "Thêm Phương Tiện",
+        "addInvitation": "Thêm Lời Mời",
+        "changeInvitation": "Đổi Lời Mời",
+        "continue": "Tiếp Tục",
+        "save": "Lưu",
+        "done": "Xong",
+        "changeAvatar": "Đổi Ảnh Đại Diện",
+        "saveChanges": "Lưu Thay Dổi",
+        "cancel": "Huỷ",
+        "create" : "Tạo Mới",
+        "copy" : "Sao chép",
+        "delete":"Xoá",
+        "leave":"Rời Khỏi",
+        "remove":"Xoá Khỏi",
+        "viewUserPage": "Xem Trang Cá Nhân",
+        "sendMessage":"Gửi Tin Nhắn",
+        "projectInvite":"Mời Vào Dự Án",
+        "addDescription":"Thêm Mô Tả"
+    },
+    "post": {
+        "post": "Bài Viết",
+        "like": "Thích",
+        "comment": "Bình Luận",
+        "inviteNotExist" : "Lời mời này hiện không còn khả dụng.",
+        "invitationTo" : "Lời mời tham gia vào {}",
+        "readMore": "Xem Thêm",
+        "assetSelected": {
+            "zero": "Chưa có phương tiện",
+            "one": "{} phương tiện được chọn",
+            "two": "{} phương tiện được chọn",
+            "many": "{} phương tiện được chọn",
+            "other": "{} phương tiện được chọn"
+        },
+        "likeCount": {
+            "zero": "",
+            "one": "{} lượt thích",
+            "two": "{} lượt thích",
+            "many": "{} lượt thích",
+            "other": "{} lượt thích"
+        },
+        "commentCount": {
+            "zero": "",
+            "one": "{} bình luận",
+            "two": "{} bình luận",
+            "many": "{} bình luận",
+            "other": "{} bình luận"
+        }
+    },
+    "textField": {
+        "email": "Email",
+        "password": "Mật khẩu",
+        "fullName": "Họ và tên",
+        "biographyHint" : "Nói cho mọi người biết về bản thân bạn. Nó có thể là bất cứ thứ gì bạn muốn.",
+        "confirmPassword": "Xác nhận mật khẩu",
+        "writeAComment": "Thêm bình luận...",
+        "sendTo": "Gửi tới",
+        "sendMessage": "Gửi tin nhắn...",
+        "whatOnYourMind": "Bạn đang nghĩ gì?",
+        "searchForUser": "Tìm kiếm người dùng..."
+    },
+    "dialog":{
+        "addMember" : "Thêm Thành Viên",
+        "editMember" : "Cập Nhật Thành Viên",
+        "discardChanges": {
+            "title":  "Huỷ Các Thay Đổi?",
+            "content": "Những gì bạn đang chỉnh sửa sẽ mất.\nTiếp tục?"
+        },
+        "delete": {
+            "title":  "Xác Nhận Xoá?",
+            "content": "Sau khi xoá, không thể hoàn tác. Vẫn xoá?"
+        },
+        "removeMember":{
+            "title": "Xác Nhận Xoá?",
+            "content": "Bạn có chắc muốn xoá người dùng này khỏi dự án?"
+        },
+        "leave":{
+            "title": "Xác Nhận Thoát?",
+            "content": "Sau khi thoát bạn sẽ không xem được bất kì nội dung liên quan nào cho dến khi được thêm lại."
+        },
+        "logOut": {
+            "title": "Đăng Xuất",
+            "content": "Bạn có chắc là muốn đăng xuất ứng dụng?"
+        },
+        "addTask":{
+            "title": "Thêm Task"
+        }
+    },
+    "notice": {
+        "createSuccess" : "Đã Tạo Thành Công",
+        "addSuccess" : "Thêm Thành Công",
+        "deleteSuccess" :  "Đã Xoá Thành Công",
+        "removeSuccess" : "Đã Xoá Thành Công",
+        "haveBeenRemove" : "Bạn Đã Bị Xoá"
+    },
+    "errorMessage": {
+        "wrong" : "Oops! Something went wrong!",
+        "empty": "Vui lòng không để trống nội dung này",
+        "invalidEmail": "Email không hợp lệ",
+        "invalidPassword": "Mật khẩu không hợp lệ",
+        "invalidConfirmPassword": "Mật khẩu không trùng khớp",
+        "authenticationFailure": "Đăng nhập không thành công",
+        "userDisabled": "Người dùng bị huỷ kích hoạt, vui lòng liên hệ quản lý."
+    },
+    "appBarTitle": {
+        "homePage": "Trang Chủ",
+        "createNewPost": "Thêm Bài Viết",
+        "messages": "Tin Nhắn",
+        "myProjects": "Dự Án",
+        "editProfile": "Cập Nhật Thông Tin"
+    },
+    "bottomBarLabel": {
+        "home": "Trang Chủ",
+        "message": "Tin Nhắn",
+        "project": "Dự Án",
+        "notifications": "Thông Báo",
+        "menu": "Menu"
+    },
+    "projectViewType": {
+        "title": "Xem Theo",
+        "dashboard": "Trang Chính",
+        "listView": "Danh Sách",
+        "calendarView": "Xem Theo Lịch"
+    },
+    "properties": {
+        "ownerBy": "Chủ Sở Hữu",
+        "createdAt": "Ngày Tạo",
+        "description": "Mô Tả",
+        "name": "Tên {}"
+    },
+    "project": {
+        "project": "Dự Án",
+        "projectName": "Tên Dự Án",
+        "pendingTask": "Đang Thực Hiện",
+        "noMemberAdded": "Chưa Thêm Thành Viên",
+        "completed": "Completed",
+        "about": {
+            "about": "Giới thiệu về dự án",
+            "startFrom": "Dự án bắt đầu từ",
+            "members": {
+                "zero": "Cùng nhau tham gia và làm việc.",
+                "one": "Cùng nhau tham gia và làm việc.",
+                "two": "Hiện đã có 2 thành viên trong dự án.",
+                "many": "Hiện đã có {} thành viên tham gia dự án.",
+                "other": "Hiện đã có {} thành viên tham gia dự án."
+            }
+        },
+        "all": "Tất Cả",
+        "daysTask": "Task Trong Ngày",
+        "joinRequest" : "Yêu Cầu Tham Gia"
+    },
+    "task":{
+        "task": "Task",
+        "name": "Tên Task",
+        "completed": " Đã Hoàn Thành",
+        "createdBy": "Tạo bởi",
+        "assignedTo": "Giao Cho",
+        "unAssigned": "Chưa Giao",
+        "dueDate": "Ngày Hết Hạn",
+        "noDueDate": "Không có",
+        "subTaskOf":"Đây là task con của ",
+        "priority" : {
+            "title" :"Độ Ưu Tiên",
+            "none": "Không",
+            "low": "Thấp",
+            "medium": "Trung Bình",
+            "high": "Cao"
+        },
+        "category": "Loại",
+        "subTasks": "Task Con",
+        "addSubTask": "Thêm Task Con"
+    },
+    "taskFilter": {
+        "filterBy": "Lọc Theo",
+        "byCreatedDate": {
+            "title": "Ngày Tạo",
+            "value": "Lọc Theo Ngày Tạo"
+        },
+        "byDueDate": {
+            "title": "Ngày Hết Hạn",
+            "value": "Lọc Theo Ngày Hết Hạn"
+        }
+    },
+    "menu": {
+        "language": "Ngôn Ngữ",
+        "theme" : "Giao Diện",
+        "aboutUs": "Về Chúng Tôi",
+        "logOut": "Đăng Xuất"
+    },
+    "emptyHandler": {
+        "noPost": {
+            "title" : "Chưa Bài Viết",
+            "content": "Hãy chia sẻ những trải nghiệm của bạn nhé!"
+        },
+        "noMessage" :{
+            "title" : "Chưa Có Tin Nhắn",
+            "content": "Kết nối với bạn bè và đối tác của bạn để giữ mọi thứ luôn được cập nhật!"
+        },
+        "noProject" :{
+            "title" : "Chưa Có Dự Án",
+            "content": "Tham gia hoặc tạo dự án để quản lý công việc của bạn!"
+        },
+        "noNotification" :{
+            "title" : "Không Có Thông Báo",
+            "content": "Không có thông báo nào lúc này. Thông báo mới sẽ được hiển thị tại đây."
+        }
+    },
+    "language" : {
+        "vi" : "Tiếng Việt",
+        "en" : "Tiếng Anh"
+    },
+    "theme": {
+        "light": "Giao Diện Sáng",
+        "dark" : "Giao Diện Tối",
+        "system": "Hệ Thống"
+    },
+    "notifications": {
+        "likePost": " đã thích bài viết của bạn.",
+        "likeComment" : " đã thích bình luận của bạn",
+        "comment" : " bình luận bài viết của bạn ",
+        "invite" : " đã mời bạn tham gia vào dự án: ",
+        "assign" : " đã giao việc cho bạn: "
+    }
+}

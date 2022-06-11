@@ -1,13 +1,15 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:join_me/config/theme.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/utilities/constant.dart';
 
 class CustomAlertDialog extends StatelessWidget {
   const CustomAlertDialog({
     required this.title,
     required this.content,
-    this.cancelLabel = 'Cancel',
-    this.submitLabel = 'Submit',
+    this.cancelLabel,
+    this.submitLabel,
     this.submitButtonColor,
     required this.onCancel,
     required this.onSubmit,
@@ -15,8 +17,8 @@ class CustomAlertDialog extends StatelessWidget {
   }) : super(key: key);
   final String title;
   final String content;
-  final String submitLabel;
-  final String cancelLabel;
+  final String? submitLabel;
+  final String? cancelLabel;
   final Function() onCancel;
   final Function() onSubmit;
   final Color? submitButtonColor;
@@ -27,6 +29,7 @@ class CustomAlertDialog extends StatelessWidget {
       title: Text(
         title,
         textAlign: TextAlign.center,
+        style: CustomTextStyle.heading2(context),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
@@ -34,8 +37,6 @@ class CustomAlertDialog extends StatelessWidget {
           const SizedBox(height: 5),
           Text(
             content,
-            textAlign: TextAlign.center,
-            style: CustomTextStyle.bodyMedium(context),
           ),
         ],
       ),
@@ -46,7 +47,7 @@ class CustomAlertDialog extends StatelessWidget {
             TextButton(
               onPressed: onCancel,
               child: Text(
-                cancelLabel,
+                cancelLabel ?? LocaleKeys.button_cancel.tr(),
                 style: const TextStyle(
                   color: kTextColorGrey,
                 ),
@@ -58,7 +59,7 @@ class CustomAlertDialog extends StatelessWidget {
             TextButton(
               onPressed: onSubmit,
               child: Text(
-                submitLabel,
+                submitLabel ?? LocaleKeys.button_done.tr(),
                 style: CustomTextStyle.heading3(context).copyWith(
                   color: submitButtonColor ?? Theme.of(context).primaryColor,
                 ),

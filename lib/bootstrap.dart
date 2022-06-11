@@ -9,6 +9,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/widgets.dart';
 import 'package:join_me/data/services/push_notification_service.dart';
@@ -37,6 +38,8 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
     () async {
       await BlocOverrides.runZoned(
         () async {
+          WidgetsFlutterBinding.ensureInitialized();
+          await EasyLocalization.ensureInitialized();
           WidgetsFlutterBinding.ensureInitialized();
           await Firebase.initializeApp(
             options: DefaultFirebaseOptions.currentPlatform,

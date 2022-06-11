@@ -1,0 +1,259 @@
+{
+    "welcomeBackTitle": "Welcome Back!",
+    "pleaseSignIn": "Please sign in to continue",
+    "orSignInWith": "or sign in with",
+    "dontHaveAnAccount": "Don't have an account",
+    "register": "Register",
+    "pleaseFill": "Please fill all inputs bellow here",
+    "alreadyAccount": "Already have an account",
+    "general": {
+        "more": "More",
+        "members": "Members",
+        "month": "Month",
+        "week": "Week",
+        "noDescription": "No description yet",
+        "email": "Email",
+        "biography": "Biography",
+        "message": "Message",
+        "conversation": "Conversation",
+        "you": "You",
+        "start": "started",
+        "from": "from",
+        "today": "Today"
+    },
+    "button": {
+        "signIn": "Sign In",
+        "signUp": "Sign Up",
+        "request": {
+            "join": "Join Now",
+            "joined": "Joined",
+            "requested": "Requested",
+            "accept": "Accept",
+            "decline": "Decline"
+        },
+        "showMore": "Show More",
+        "backToHome": "Back To Homepage",
+        "addAsset": "Add Asset",
+        "addInvitation": "Add Invitation",
+        "changeInvitation": "Change Invitation",
+        "continue": "Continue",
+        "save": "Save",
+        "done": "Done",
+        "changeAvatar": "Change Avatar",
+        "saveChanges": "Save Changes",
+        "cancel": "Cancel",
+        "copy": "Copy",
+        "create": "Create",
+        "delete": "Delete",
+        "leave": "Leave",
+        "remove": "Remove",
+        "viewUserPage": "View User Personal Page",
+        "sendMessage": "Send Message",
+        "projectInvite": "Invite To Project",
+        "addDescription": "Add Description",
+        "discard": "Discard"
+    },
+    "post": {
+        "post": "Post",
+        "like": "Like",
+        "comment": "Comment",
+        "inviteNotExist": "Oops! This project invitation is no longer available.",
+        "invitationTo": "Invitation to {}",
+        "readMore": "Read More",
+        "assetSelected": {
+            "zero": "No Assets Selected",
+            "one": "{} asset selected",
+            "two": "{} assets selected",
+            "many": "{} assets selected",
+            "other": "{} assets selected"
+        },
+        "likeCount": {
+            "zero": "",
+            "one": "{} like",
+            "two": "{} likes",
+            "many": "{} likes",
+            "other": "{} likes"
+        },
+        "commentCount": {
+            "zero": "",
+            "one": "{} comment",
+            "two": "{} comments",
+            "many": "{} comments",
+            "other": "{} comments"
+        }
+    },
+    "textField": {
+        "email": "Email",
+        "password": "Password",
+        "fullName": "Full Name",
+        "biographyHint" : "Tell something about yourself, it's can be every thing you want.",
+        "confirmPassword": "Confirm Password",
+        "writeAComment": "Write A Comment...",
+        "sendTo": "Send to",
+        "sendMessage": " Send message...",
+        "whatOnYourMind": "What's on your mind?",
+        "searchForUser": "Search for users..."
+    },
+    "dialog": {
+        "addMember" : "Add Member",
+        "editMember" : "Edit Members",
+        "discardChanges": {
+            "title": "Discard All Changes?",
+            "content": "Everything you are editing will be lost.\nContinue?"
+        },
+        "delete": {
+            "title": "Are You Sure?",
+            "content": "Once you delete, this will not be undone. Delete?"
+        },
+        "removeMember": {
+            "title": "Remove Member?",
+            "content": "Once you remove someone, they will not be able to access this until someone adds them again."
+        },
+        "leave": {
+            "title": "Leave",
+            "content": "Once you leave, you will not be able to access this until someone adds you again."
+        },
+        "logOut": {
+            "title": "Logging Out",
+            "content": "Are you sure you want to log out?"
+        },
+        "addTask": {
+            "title": "Add Task"
+        }
+    },
+    "notice": {
+        "createSuccess": "Create Successful",
+        "addSuccess": "Add Successful",
+        "deleteSuccess": "Deleted",
+        "removeSuccess": "Removed",
+        "haveBeenRemove": "You have been removed"
+    },
+    "errorMessage": {
+        "wrong": "Oops! Something went wrong!",
+        "empty": "This field can't be empty",
+        "invalidEmail": "Email is not valid or badly formatted",
+        "invalidPassword": "Invalid password",
+        "invalidConfirmPassword": "Confirmed password doesn't match",
+        "authenticationFailure": "Authentication Failure",
+        "userDisabled": "This user has been disabled. Please contact support for help."
+    },
+    "appBarTitle": {
+        "homePage": "Home Page",
+        "createNewPost": "Create New Post",
+        "messages": "Messages",
+        "myProjects": "Project",
+        "editProfile": "Edit Profile"
+    },
+    "bottomBarLabel": {
+        "home": "Home",
+        "message": "Message",
+        "project": "Project",
+        "notifications": "Notifications",
+        "menu": "Menu"
+    },
+    "projectViewType": {
+        "title": "View Type",
+        "dashboard": "Dashboard",
+        "listView": "List View",
+        "calendarView": "Calendar View"
+    },
+    "properties": {
+        "ownerBy": "Owned By",
+        "createdAt": "Created At",
+        "description": "Description",
+        "name": "{} Name"
+    },
+    "project": {
+        "project": "Project",
+        "projectName": "Project Name",
+        "pendingTask": "Pending Task",
+        "noMemberAdded": "No Member Added",
+        "completed": "Completed",
+        "about": {
+            "about": "About this project",
+            "startFrom": "About this project",
+            "members": {
+                "zero": "Let's join and make it better!",
+                "one": "Let's join and make it better!",
+                "two": "Already have two members in this project!",
+                "many": "Already have {} members joined, Let's join this project and make it better!",
+                "other": "Already have {} members joined, Let's join this project and make it better!"
+            }
+        },
+        "all": "All",
+        "daysTask": "Day's Task",
+        "joinRequest": "Join Request"
+    },
+    "task": {
+        "task": "Task",
+        "name": "Task Name",
+        "completed": "Completed",
+        "createdBy": "Created By",
+        "assignedTo": "Assigned To",
+        "unAssigned": "Unassigned",
+        "dueDate": "Due Date",
+        "noDueDate": "No Due Date",
+        "subTaskOf": "This is subtask of ",
+        "priority": {
+            "title": "Priority",
+            "none": "None",
+            "low": "Low",
+            "medium": "Medium",
+            "high": "High"
+        },
+        "category": "Category",
+        "subTasks": "Sub Tasks",
+        "addSubTask": "Add Sub Task"
+    },
+    "taskFilter": {
+        "filterBy": "Filter By",
+        "byCreatedDate": {
+            "title": "Created Day",
+            "value": "Filter By Created Date"
+        },
+        "byDueDate": {
+            "title": "Due Date",
+            "value": "Filter By Due Date"
+        }
+    },
+    "menu": {
+        "language": "Language",
+        "theme": "Theme",
+        "aboutUs": "About Us",
+        "logOut": "Log Out"
+    },
+    "emptyHandler": {
+        "noPost": {
+            "title": "No Post Created Yet",
+            "content": "Let's fill it up with your activity!"
+        },
+        "noMessage": {
+            "title": "No Message Yet",
+            "content": "Connect with your friends and your participants to keep everything up!"
+        },
+        "noProject": {
+            "title": "No Project Yet",
+            "content": "It's time to create your first project. Do right things and find right people."
+        },
+        "noNotification": {
+            "title": "No Notifications Found",
+            "content": "You currently have no notifications. We'll notify you when something new arrives."
+        }
+    },
+    "language": {
+        "vi": "Vietnamese",
+        "en": "English"
+    },
+    "theme": {
+        "light": " Light Theme",
+        "dark": "Dark Theme",
+        "system": "System"
+    },
+    "notifications": {
+        "likePost": " liked your post.",
+        "likeComment": " liked your comment",
+        "comment": " comment on your post",
+        "invite": " has invited you to project ",
+        "assign": " assign you a task: "
+    }
+}

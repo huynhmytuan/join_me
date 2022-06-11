@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
@@ -6,6 +7,7 @@ import 'package:join_me/app/bloc/app_bloc.dart';
 
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
 
@@ -20,7 +22,7 @@ class MenuPage extends StatelessWidget {
           : null,
       appBar: AppBar(
         elevation: 0,
-        title: const Text('Menu'),
+        title: Text(LocaleKeys.bottomBarLabel_menu.tr()),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(kDefaultPadding),
@@ -40,7 +42,7 @@ class MenuPage extends StatelessWidget {
                   ),
                   iconData: Ionicons.globe_outline,
                   iconColor: kSecondaryBlue,
-                  title: 'Language',
+                  title: LocaleKeys.menu_language.tr(),
                 ),
                 const SizedBox(
                   height: kDefaultPadding,
@@ -52,7 +54,7 @@ class MenuPage extends StatelessWidget {
                   ),
                   iconData: Ionicons.sunny_outline,
                   iconColor: kSecondaryYellow,
-                  title: 'Theme',
+                  title: LocaleKeys.menu_theme.tr(),
                 ),
                 const SizedBox(
                   height: kDefaultPadding,
@@ -64,7 +66,7 @@ class MenuPage extends StatelessWidget {
                   ),
                   iconData: Ionicons.information_circle_outline,
                   iconColor: kTextColorGrey,
-                  title: 'About Us',
+                  title: LocaleKeys.menu_aboutUs.tr(),
                 ),
                 const SizedBox(
                   height: kDefaultPadding,
@@ -75,10 +77,10 @@ class MenuPage extends StatelessWidget {
                     showDialog<bool>(
                       context: context,
                       builder: (context) => CustomAlertDialog(
-                        title: 'Confirm LogOut',
-                        content: 'Are you sure you want to log out?',
+                        title: LocaleKeys.dialog_logOut_title.tr(),
+                        content: LocaleKeys.dialog_logOut_content.tr(),
                         submitButtonColor: Theme.of(context).errorColor,
-                        submitLabel: 'Log Out',
+                        submitLabel: LocaleKeys.menu_logOut.tr(),
                         onCancel: () => AutoRouter.of(context).pop(false),
                         onSubmit: () => AutoRouter.of(context).pop(true),
                       ),
@@ -90,7 +92,7 @@ class MenuPage extends StatelessWidget {
                   },
                   iconData: Ionicons.log_out_outline,
                   iconColor: kSecondaryRed,
-                  title: 'Log Out',
+                  title: LocaleKeys.menu_logOut.tr(),
                 ),
               ],
             )
@@ -169,7 +171,7 @@ class _ProfileViewCard extends StatelessWidget {
                     style: CustomTextStyle.heading3(context),
                   ),
                   Text(
-                    'Show your profile page',
+                    LocaleKeys.button_viewUserPage.tr(),
                     style: CustomTextStyle.subText(context),
                   )
                 ],

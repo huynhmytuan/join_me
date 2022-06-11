@@ -62,7 +62,6 @@ class _BottomTextFieldState extends State<BottomTextField> {
                 margin: const EdgeInsets.all(3),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
-                  style: CustomTextStyle.bodyMedium(context),
                   controller: widget.textEditingController,
                   decoration: InputDecoration(
                     border: InputBorder.none,

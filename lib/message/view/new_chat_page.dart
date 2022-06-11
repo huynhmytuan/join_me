@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
@@ -10,10 +11,10 @@ import 'package:join_me/config/theme.dart';
 
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/data/repositories/message_repository.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 
 import 'package:join_me/message/bloc/new_conversation_bloc.dart';
 import 'package:join_me/message/components/components.dart';
-import 'package:join_me/message/components/no_conversation_handle.dart';
 import 'package:join_me/user/cubit/search_user_cubit.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
@@ -50,10 +51,10 @@ class NewChatPage extends StatelessWidget {
                         showDialog<bool>(
                           context: context,
                           builder: (context) => CustomAlertDialog(
-                            title: 'Discard all changes?',
+                            title: LocaleKeys.dialog_discardChanges_title.tr(),
                             content:
-                                'Everything which editing will be lost. Continue?',
-                            submitLabel: 'Continue',
+                                LocaleKeys.dialog_discardChanges_content.tr(),
+                            submitLabel: LocaleKeys.button_continue.tr(),
                             submitButtonColor: Colors.red,
                             onSubmit: () {
                               AutoRouter.of(context).pop(true);
@@ -71,7 +72,7 @@ class NewChatPage extends StatelessWidget {
                         AutoRouter.of(context).pop();
                       }
                     },
-                    child: const Text('Cancel'),
+                    child: Text(LocaleKeys.button_cancel.tr()),
                   ),
                   const _UserSearch(),
                   const _ReceiverViewer(),
@@ -114,7 +115,7 @@ class _MessageInputState extends State<_MessageInput> {
       builder: (context, state) {
         return BottomTextField(
           textEditingController: _editingController,
-          hintText: 'Say something...',
+          hintText: LocaleKeys.textField_sendMessage.tr(),
           onSubmit: () {
             if (state.receivers.isEmpty) {
               return;
@@ -200,7 +201,7 @@ class _UserSearch extends StatelessWidget {
                   : Theme.of(context).cardColor,
               child: Row(
                 children: [
-                  const Text('Send to:'),
+                  Text(LocaleKeys.textField_sendTo.tr()),
                   const SizedBox(
                     width: 10,
                   ),

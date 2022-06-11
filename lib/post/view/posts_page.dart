@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 
 import 'package:join_me/post/bloc/posts_bloc.dart';
 import 'package:join_me/post/components/components.dart';
@@ -49,7 +51,7 @@ class _PostsPageState extends State<PostsPage> {
             const SizedBox(
               width: 10,
             ),
-            const Text('Home Page'),
+            Text(LocaleKeys.appBarTitle_homePage.tr()),
           ],
         ),
       ),
@@ -109,7 +111,7 @@ class _PostsListViewState extends State<_PostsListView> {
         }
         // in case of failure
         if (state.status == PostsStatus.failure) {
-          return const Center(child: Text('Ouch: There was an error!'));
+          return Center(child: Text(LocaleKeys.errorMessage_wrong.tr()));
         }
         // if the list is loading and the list is empty (first page)
         if (state.status == PostsStatus.loading && state.posts.isEmpty) {
@@ -122,8 +124,8 @@ class _PostsListViewState extends State<_PostsListView> {
                 EdgeInsets.only(top: MediaQuery.of(context).size.width * .3),
             child: EmptyHandlerWidget(
               imageHandlerDir: kNoPostPicDir,
-              titleHandler: 'No post created yet.',
-              textHandler: "Let't fill it up with your activity!",
+              titleHandler: LocaleKeys.emptyHandler_noPost_title.tr(),
+              textHandler: LocaleKeys.emptyHandler_noPost_content.tr(),
               size: MediaQuery.of(context).size.width * .5,
             ),
           );

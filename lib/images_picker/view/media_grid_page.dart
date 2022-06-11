@@ -86,7 +86,7 @@ class _MediaThumbnail extends StatelessWidget {
         future: asset.thumbnailDataWithOption(
           (Platform.isIOS)
               ? ThumbnailOption.ios(
-                  size: const ThumbnailSize.square(150),
+                  size: const ThumbnailSize.square(500),
                   deliveryMode: DeliveryMode.fastFormat,
                 )
               : const ThumbnailOption(

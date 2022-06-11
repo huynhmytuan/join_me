@@ -1,11 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/l10n/l10n.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/login/bloc/login_cubit.dart';
 import 'package:join_me/login/bloc/login_state.dart';
 import 'package:join_me/utilities/constant.dart';
@@ -14,11 +15,9 @@ import 'package:join_me/widgets/widgets.dart';
 class LoginForm extends StatelessWidget {
   const LoginForm({
     Key? key,
-    required this.l10n,
     required this.screenSize,
   }) : super(key: key);
 
-  final AppLocalizations l10n;
   final Size screenSize;
 
   @override
@@ -32,7 +31,10 @@ class LoginForm extends StatelessWidget {
               SnackBar(
                 behavior: SnackBarBehavior.floating,
                 backgroundColor: Theme.of(context).errorColor,
-                content: Text(state.errorMessage ?? 'Authentication Failure'),
+                content: Text(
+                  state.errorMessage ??
+                      LocaleKeys.errorMessage_authenticationFailure.tr(),
+                ),
               ),
             );
         }
@@ -52,11 +54,11 @@ class LoginForm extends StatelessWidget {
               ],
             ),
             Text(
-              l10n.welcomeBackTitle,
+              LocaleKeys.welcomeBackTitle.tr(),
               style: CustomTextStyle.heading2(context),
             ),
             Text(
-              'Please sign in to continue.',
+              LocaleKeys.pleaseSignIn.tr(),
               style: CustomTextStyle.bodyMedium(context)
                   .copyWith(color: kTextColorGrey),
             ),
@@ -70,7 +72,7 @@ class LoginForm extends StatelessWidget {
             const _SignInButton(),
             const Spacer(flex: 2),
             Text(
-              'or sign in with',
+              LocaleKeys.orSignInWith.tr(),
               style: CustomTextStyle.heading4(context)
                   .copyWith(color: kTextColorGrey),
             ),
@@ -86,7 +88,7 @@ class LoginForm extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Don't have an account?",
+                  LocaleKeys.dontHaveAnAccount.tr(),
                   style: CustomTextStyle.heading4(context)
                       .copyWith(color: kTextColorGrey),
                 ),
@@ -118,13 +120,15 @@ class _EmailInput extends StatelessWidget {
           children: [
             RoundedTextField(
               screenSize: screenSize,
-              hintText: 'Email',
+              hintText: LocaleKeys.textField_email.tr(),
               prefixIcon: const Icon(Ionicons.mail_outline),
               keyboardType: TextInputType.emailAddress,
               textInputAction: TextInputAction.next,
               onChanged: (email) =>
                   context.read<LoginCubit>().emailChanged(email),
-              errorText: state.email.invalid ? 'Invalid Email' : null,
+              errorText: state.email.invalid
+                  ? LocaleKeys.errorMessage_invalidEmail.tr()
+                  : null,
             ),
           ],
         );
@@ -150,14 +154,16 @@ class _PasswordInput extends StatelessWidget {
           children: [
             RoundedTextField(
               screenSize: screenSize,
-              hintText: 'Password',
+              hintText: LocaleKeys.textField_password.tr(),
               onChanged: (password) =>
                   context.read<LoginCubit>().passwordChanged(password),
               prefixIcon: const Icon(Ionicons.lock_closed_outline),
               obscureText: true,
               keyboardType: TextInputType.visiblePassword,
               textInputAction: TextInputAction.done,
-              errorText: state.password.invalid ? 'Invalid Password' : null,
+              errorText: state.password.invalid
+                  ? LocaleKeys.errorMessage_invalidPassword.tr()
+                  : null,
             ),
           ],
         );
@@ -182,7 +188,7 @@ class _SignInButton extends StatelessWidget {
                     ? () => context.read<LoginCubit>().logInWithCredentials()
                     : null,
                 child: Text(
-                  'Sign In',
+                  LocaleKeys.button_signIn.tr(),
                   style: CustomTextStyle.heading3(context)
                       .copyWith(color: Colors.white),
                 ),
@@ -247,7 +253,7 @@ class _SignUpButton extends StatelessWidget {
         AutoRouter.of(context).push(const SignUpRoute());
       },
       child: Text(
-        'Sign Up',
+        LocaleKeys.button_signUp.tr(),
         style: CustomTextStyle.heading4(context)
             .copyWith(color: Theme.of(context).primaryColor),
       ),

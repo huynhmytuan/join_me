@@ -1,10 +1,10 @@
 import 'dart:developer';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/app/cubit/app_message_cubit.dart';
@@ -12,9 +12,9 @@ import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/data/repositories/repositories.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/message/bloc/chat_bloc.dart';
 import 'package:join_me/message/components/components.dart';
-import 'package:join_me/message/components/conversation_avatar.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/bottom_sheet/selection_bottom_sheet.dart';
 import 'package:join_me/widgets/bottom_text_field.dart';
@@ -65,7 +65,7 @@ class _ChatPageState extends State<ChatPage> {
           AutoRouter.of(context).popForced();
           log(state.conversationViewModel.conversation.members.toString());
           context.read<AppMessageCubit>().showInfoSnackbar(
-                message: 'You have been removed',
+                message: LocaleKeys.notice_haveBeenRemove.tr(),
               );
         }
       },
@@ -227,14 +227,14 @@ class _MessagesListViewState extends State<_MessagesListView> {
         final _currentUser = context.read<AppBloc>().state.user;
         final isOwner = _currentUser.id == message.authorId;
         return SelectionBottomSheet(
-          title: 'More',
+          title: LocaleKeys.general_more.tr(),
           listSelections: [
             SelectionRow(
               onTap: () {
                 Clipboard.setData(ClipboardData(text: message.content));
                 AutoRouter.of(context).pop();
               },
-              title: 'Copy Comment',
+              title: LocaleKeys.button_copy.tr(),
               iconData: Ionicons.copy_outline,
             ),
             if (isOwner)
@@ -244,11 +244,10 @@ class _MessagesListViewState extends State<_MessagesListView> {
                         (value) => showDialog<bool>(
                           context: context,
                           builder: (context) => CustomAlertDialog(
-                            title: 'Are you sure?',
-                            content:
-                                '''Once you delete this message, this cannot be undone.''',
+                            title: LocaleKeys.dialog_delete_title.tr(),
+                            content: LocaleKeys.dialog_delete_content.tr(),
                             submitButtonColor: Theme.of(context).errorColor,
-                            submitLabel: 'Delete',
+                            submitLabel: LocaleKeys.button_delete.tr(),
                             onCancel: () => AutoRouter.of(context).pop(false),
                             onSubmit: () => AutoRouter.of(context).pop(true),
                           ),
@@ -261,7 +260,7 @@ class _MessagesListViewState extends State<_MessagesListView> {
                       );
                 },
                 color: Theme.of(context).errorColor,
-                title: 'Delete Comment',
+                title: LocaleKeys.button_delete.tr(),
                 iconData: Ionicons.trash_bin_outline,
               )
           ],
@@ -272,7 +271,6 @@ class _MessagesListViewState extends State<_MessagesListView> {
 
   @override
   Widget build(BuildContext context) {
-    final appLocale = Localizations.localeOf(context);
     final currentUser = context.read<AppBloc>().state.user;
     return BlocBuilder<ChatBloc, ChatState>(
       bloc: widget.chatBloc,
@@ -344,7 +342,7 @@ class _MessagesListViewState extends State<_MessagesListView> {
                       child: Text(
                         DateFormat(
                           'HH:mm a EEEE dd/MM/yyyy',
-                          appLocale.languageCode,
+                          context.locale.languageCode,
                         ).format(state.messages[index].createdAt),
                         style: CustomTextStyle.bodySmall(context),
                       ),
@@ -384,7 +382,7 @@ class __MessageInputState extends State<_MessageInput> {
       builder: (context, state) {
         return BottomTextField(
           textEditingController: messageEditTextController,
-          hintText: 'Send a message...',
+          hintText: LocaleKeys.textField_sendMessage.tr(),
           onSubmit: () {
             widget.chatBloc.add(
               SendMessage(

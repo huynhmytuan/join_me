@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
@@ -6,6 +7,7 @@ import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 
 import 'package:join_me/data/models/notification.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/notification/bloc/notification_bloc.dart';
 
 import 'package:join_me/project/bloc/project_overview_bloc.dart';
@@ -75,6 +77,7 @@ class NotificationListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.symmetric(vertical: 5),
       color: notificationViewModel.notificationData.isRead
           ? null
           : Theme.of(context).primaryColor.withOpacity(.1),
@@ -196,16 +199,16 @@ class NotificationListTile extends StatelessWidget {
     TextSpan? targetName;
     switch (notificationViewModel.notificationData.notificationType) {
       case NotificationType.likePost:
-        text = ' liked your post.';
+        text = LocaleKeys.notifications_likePost.tr();
         break;
       case NotificationType.likeComment:
-        text = ' liked your comment:';
+        text = LocaleKeys.notifications_likeComment.tr();
         break;
       case NotificationType.comment:
-        text = '  comment your post';
+        text = LocaleKeys.notifications_comment.tr();
         break;
       case NotificationType.invite:
-        text = ' has invited you to project: ';
+        text = LocaleKeys.notifications_invite.tr();
         targetName = TextSpan(
           text: notificationViewModel.project!.name,
           style: CustomTextStyle.heading3(context),
@@ -213,7 +216,7 @@ class NotificationListTile extends StatelessWidget {
         break;
 
       case NotificationType.assign:
-        text = ' assign you a task: ';
+        text = LocaleKeys.notifications_assign.tr();
         targetName = TextSpan(
           text: notificationViewModel.task!.name,
           style: CustomTextStyle.heading3(context),
@@ -292,9 +295,9 @@ class _InvitationActions extends StatelessWidget {
           color: kIconColorGrey,
           elevation: 0,
           height: 30,
-          child: const Text(
-            'Reject',
-            style: TextStyle(color: Colors.black),
+          child: Text(
+            LocaleKeys.button_request_decline.tr(),
+            style: const TextStyle(color: Colors.black),
           ),
         ),
         RoundedButton(
@@ -317,7 +320,7 @@ class _InvitationActions extends StatelessWidget {
           },
           elevation: 0,
           height: 30,
-          child: const Text('Accept'),
+          child: Text(LocaleKeys.button_request_accept.tr()),
         ),
       ],
     );

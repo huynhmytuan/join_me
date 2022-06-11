@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -6,6 +7,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 
 import 'package:join_me/project/bloc/project_bloc.dart';
 import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
@@ -47,7 +49,7 @@ class ProjectDashboardPage extends StatelessWidget {
                       _buildDataRow(
                         context: context,
                         iconData: Ionicons.person_outline,
-                        rowTitle: 'Owned By',
+                        rowTitle: LocaleKeys.properties_ownerBy.tr(),
                         rowData: Row(
                           children: [
                             CircleAvatarWidget(
@@ -70,7 +72,7 @@ class ProjectDashboardPage extends StatelessWidget {
                       _buildDataRow(
                         context: context,
                         iconData: Ionicons.time_outline,
-                        rowTitle: 'Created At',
+                        rowTitle: LocaleKeys.properties_createdAt.tr(),
                         rowData: Text(
                           DateFormat.yMMMMEEEEd(appLocale.languageCode)
                               .format(state.project.createdAt),
@@ -90,7 +92,7 @@ class ProjectDashboardPage extends StatelessWidget {
                         child: _buildDataRow(
                           context: context,
                           iconData: Ionicons.people_outline,
-                          rowTitle: 'Members',
+                          rowTitle: LocaleKeys.general_members.tr(),
                           rowData: StackedImages(
                             imageUrlList: state.members
                                 .map((user) => user.photoUrl)
@@ -104,7 +106,7 @@ class ProjectDashboardPage extends StatelessWidget {
                         height: kDefaultPadding,
                       ),
                       Text(
-                        'Description',
+                        LocaleKeys.properties_description.tr(),
                         style: CustomTextStyle.heading4(context)
                             .copyWith(color: kTextColorGrey),
                       ),
@@ -115,7 +117,8 @@ class ProjectDashboardPage extends StatelessWidget {
                                     .push(
                                   TextEditingRoute(
                                     initialText: state.project.description,
-                                    hintText: 'Edit description',
+                                    hintText:
+                                        LocaleKeys.button_addDescription.tr(),
                                   ),
                                 )
                                     .then((textEdited) {
@@ -151,16 +154,15 @@ class ProjectDashboardPage extends StatelessWidget {
                                 );
                               }
                               if (currentUser.id != state.owner.id) {
-                                return Text(
-                                  'No description.',
-                                  style: CustomTextStyle.bodyMedium(context),
-                                );
+                                return const SizedBox();
                               }
                               return Row(
                                 mainAxisSize: MainAxisSize.min,
-                                children: const [
-                                  Icon(Ionicons.add),
-                                  Text('Add description'),
+                                children: [
+                                  const Icon(Ionicons.add),
+                                  Text(
+                                    LocaleKeys.button_addDescription.tr(),
+                                  ),
                                 ],
                               );
                             },
@@ -175,7 +177,9 @@ class ProjectDashboardPage extends StatelessWidget {
             ),
           );
         }
-        return const Text('Something went wrong');
+        return Text(
+          LocaleKeys.errorMessage_wrong.tr(),
+        );
       },
     );
   }
@@ -227,7 +231,7 @@ class _ListInfoCards extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _DataBadge(
-                  badgeTitle: 'Pending Task',
+                  badgeTitle: LocaleKeys.project_pendingTask.tr(),
                   iconColor: kSecondaryYellow,
                   iconData: Ionicons.document_text,
                   valueCount: state.tasks
@@ -236,7 +240,7 @@ class _ListInfoCards extends StatelessWidget {
                       .length,
                 ),
                 _DataBadge(
-                  badgeTitle: 'Complete',
+                  badgeTitle: LocaleKeys.project_completed.tr(),
                   iconColor: kSecondaryGreen,
                   iconData: Ionicons.checkbox_outline,
                   valueCount: state.tasks
@@ -245,7 +249,7 @@ class _ListInfoCards extends StatelessWidget {
                       .length,
                 ),
                 _DataBadge(
-                  badgeTitle: 'All',
+                  badgeTitle: LocaleKeys.project_all.tr(),
                   iconColor: kSecondaryBlue,
                   iconData: Ionicons.bag_handle_outline,
                   valueCount: state.tasks.length,

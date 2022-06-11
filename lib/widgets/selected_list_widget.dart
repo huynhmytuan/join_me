@@ -96,7 +96,7 @@ class SelectedItem extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: CustomTextStyle.heading3(context),
+                // style: CustomTextStyle.heading3(context),
               ),
               if (isSelected)
                 Icon(

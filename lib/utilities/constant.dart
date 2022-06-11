@@ -12,7 +12,7 @@ const kCardLightColor = Color(0xFFf5f8fe);
 const kPrimaryDarkColor = Color(0xFF38b0a2);
 const kBackgroundDarkColor = Color(0xFF131720);
 const kCardDarkColor = Color(0xFF171e28);
-const kTextFieldDarkColor = Color(0xFF161a23);
+const kTextFieldDarkColor = Color.fromARGB(255, 24, 28, 37);
 
 //Secondary Colors
 const kSecondaryRed = Color(0xFFFF4F4F);
@@ -44,7 +44,7 @@ const kIconDir = 'assets/icons';
 const kLogoLightDir = '$_kAssetImageDir/logo_light.png';
 const kLogoDarkDir = '$_kAssetImageDir/logo_dark.png';
 const kLogoBackgroundDir = '$_kAssetImageDir/logo_background.png';
-const kNotFoundPicDir = '$_kAssetImageDir/no_data.png';
+const kNotFoundPicDir = '$_kAssetImageDir/not_found.png';
 const kNoPostPicDir = '$_kAssetImageDir/no_post.png';
 const kNoMessagePicDir = '$_kAssetImageDir/no_message.png';
 const kNoProjectPicDir = '$_kAssetImageDir/no_project.png';

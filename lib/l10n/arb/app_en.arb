@@ -1,7 +1,0 @@
-{
-    "@@locale": "en",
-    "welcomeBackTitle": "Welcome Back!",
-    "@welcomeBackTitle" : {
-        "description": "Welcome Back Title on Login Screen"
-    }
-}

@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:join_me/config/theme.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/widgets.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
@@ -41,7 +43,6 @@ class _TextEditingPageState extends State<TextEditingPage> {
           leading: Align(
             child: GestureDetector(
               onTap: () {
-                log('Tap called');
                 if (text.compareTo(widget.initialText) == 0) {
                   AutoRouter.of(context).pop();
                   return;
@@ -51,11 +52,10 @@ class _TextEditingPageState extends State<TextEditingPage> {
                   barrierDismissible: true,
                   context: context,
                   builder: (ctx) {
-                    log('BUILD DIALOG');
                     return CustomAlertDialog(
-                      title: 'Discard all changes?',
-                      content: 'Everything which edited will be discard.',
-                      submitLabel: 'Discard Changes',
+                      title: LocaleKeys.dialog_discardChanges_title.tr(),
+                      content: LocaleKeys.dialog_discardChanges_title.tr(),
+                      submitLabel: LocaleKeys.button_delete.tr(),
                       submitButtonColor: kSecondaryRed,
                       onCancel: () {
                         AutoRouter.of(ctx).pop(false);
@@ -88,7 +88,7 @@ class _TextEditingPageState extends State<TextEditingPage> {
                   : () {
                       AutoRouter.of(context).pop(text);
                     },
-              child: const Text('Save'),
+              child: Text(LocaleKeys.button_save.tr()),
             )
           ],
         ),

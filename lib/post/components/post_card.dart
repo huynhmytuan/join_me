@@ -1,12 +1,13 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/post/bloc/posts_bloc.dart';
 
 import 'package:join_me/post/cubit/like_cubit.dart';
@@ -47,7 +48,7 @@ class PostCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.only(left: 10),
+              padding: const EdgeInsets.only(left: 10, top: 10, bottom: 10),
               child: _PostHeader(
                 author: author,
                 post: post,
@@ -101,18 +102,21 @@ class _ProjectInviteSection extends StatelessWidget {
             Expanded(
               child: Text(
                 project == null
-                    ? 'Oops! This project invitation is no longer available.'
-                    : 'Invitation to "${project!.name}"',
+                    ? LocaleKeys.post_inviteNotExist.tr()
+                    : LocaleKeys.post_invitationTo.tr(args: [project!.name]),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: CustomTextStyle.heading4(context).copyWith(
                   color: project == null ? Colors.grey : Colors.white,
                 ),
               ),
             ),
+            if (project != null) const SizedBox(width: 30),
             if (project != null)
               Row(
                 children: [
                   Text(
-                    'Show More',
+                    LocaleKeys.button_showMore.tr(),
                     style: CustomTextStyle.heading4(context)
                         .copyWith(color: Colors.white),
                   ),
@@ -154,7 +158,16 @@ class _PostReaction extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '''${NumberFormat.compact(locale: appLocale.languageCode).format(post.likes.length)} like, ${NumberFormat.compact(locale: appLocale.languageCode).format(post.commentCount)} comments''',
+            [
+              LocaleKeys.post_likeCount.plural(
+                post.likes.length,
+                format: NumberFormat.compact(locale: appLocale.languageCode),
+              ),
+              LocaleKeys.post_commentCount.plural(
+                post.commentCount,
+                format: NumberFormat.compact(locale: appLocale.languageCode),
+              ),
+            ].join(' '),
             style: CustomTextStyle.bodySmall(context)
                 .copyWith(color: kTextColorGrey),
           ),
@@ -185,7 +198,7 @@ class _PostReaction extends StatelessWidget {
                         width: 3,
                       ),
                       Text(
-                        'Like',
+                        LocaleKeys.post_like.tr(),
                         style: CustomTextStyle.heading4(context).copyWith(
                           color: (post.likes.contains(_currentUser.id))
                               ? kSecondaryRed
@@ -202,14 +215,14 @@ class _PostReaction extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       const Icon(
-                        Ionicons.chatbox_ellipses_outline,
+                        Ionicons.chatbubble_ellipses_outline,
                         color: kTextColorGrey,
                       ),
                       const SizedBox(
                         width: 3,
                       ),
                       Text(
-                        'Comment',
+                        LocaleKeys.post_comment.tr(),
                         style: CustomTextStyle.heading4(context)
                             .copyWith(color: kTextColorGrey),
                       ),
@@ -289,7 +302,7 @@ class _PostHeader extends StatelessWidget {
         final _currentUser = _context.read<AppBloc>().state.user;
         final isOwner = _currentUser.id == author.id;
         return SelectionBottomSheet(
-          title: 'More',
+          title: LocaleKeys.general_more.tr(),
           listSelections: [
             if (isOwner)
               SelectionRow(
@@ -298,11 +311,10 @@ class _PostHeader extends StatelessWidget {
                         (value) => showDialog<bool>(
                           context: _context,
                           builder: (context) => CustomAlertDialog(
-                            title: 'Are you sure?',
-                            content:
-                                '''Once you delete this post, this cannot be undone.''',
+                            title: LocaleKeys.dialog_delete_title.tr(),
+                            content: LocaleKeys.dialog_delete_content.tr(),
                             submitButtonColor: Theme.of(context).errorColor,
-                            submitLabel: 'Delete',
+                            submitLabel: LocaleKeys.button_delete.tr(),
                             onCancel: () => AutoRouter.of(context).pop(false),
                             onSubmit: () => AutoRouter.of(context).pop(true),
                           ),
@@ -318,7 +330,10 @@ class _PostHeader extends StatelessWidget {
                       );
                 },
                 color: Theme.of(_context).errorColor,
-                title: 'Delete Post',
+                title: [
+                  LocaleKeys.button_delete.tr(),
+                  LocaleKeys.post_post.tr(),
+                ].join(' '),
                 iconData: Ionicons.trash_bin_outline,
               )
           ],
@@ -329,64 +344,68 @@ class _PostHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Material(
-          child: InkWell(
-            borderRadius: BorderRadius.circular(15),
-            onTap: () {
-              AutoRouter.of(context).push(
-                UserInfoRoute(userId: author.id),
-              );
-            },
-            child: CircleAvatarWidget(
-              imageUrl: author.photoUrl,
-            ),
-          ),
-        ),
-        const SizedBox(
-          width: 10,
-        ),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            InkWell(
+    return SizedBox(
+      height: 40,
+      child: Row(
+        children: [
+          Material(
+            child: InkWell(
+              borderRadius: BorderRadius.circular(15),
               onTap: () {
                 AutoRouter.of(context).push(
                   UserInfoRoute(userId: author.id),
                 );
               },
-              child: Text(
-                author.name,
-                style: CustomTextStyle.heading4(context),
+              child: CircleAvatarWidget(
+                imageUrl: author.photoUrl,
               ),
             ),
-            Text(
-              timeago.format(
-                post.createdAt,
-                locale: appLocale.languageCode,
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              InkWell(
+                onTap: () {
+                  AutoRouter.of(context).push(
+                    UserInfoRoute(userId: author.id),
+                  );
+                },
+                child: Text(
+                  author.name,
+                  style: CustomTextStyle.heading4(context),
+                ),
               ),
-              style: CustomTextStyle.subText(context)
-                  .copyWith(color: kTextColorGrey),
-            ),
-          ],
-        ),
-        const Spacer(),
-        BlocBuilder<PostsBloc, PostsState>(
-          buildWhen: (previous, current) => false,
-          builder: (context, state) {
-            return IconButton(
-              splashRadius: 10,
-              onPressed: () =>
-                  _showMoreDialog(context, context.read<PostsBloc>()),
-              icon: const Icon(
-                Ionicons.chevron_down,
-                size: 20,
+              Text(
+                timeago.format(
+                  post.createdAt,
+                  locale: context.locale.languageCode,
+                ),
+                style: CustomTextStyle.subText(context)
+                    .copyWith(color: kTextColorGrey),
               ),
-            );
-          },
-        )
-      ],
+            ],
+          ),
+          const Spacer(),
+          if (author.id == context.read<AppBloc>().state.user.id)
+            BlocBuilder<PostsBloc, PostsState>(
+              buildWhen: (previous, current) => false,
+              builder: (context, state) {
+                return IconButton(
+                  splashRadius: 10,
+                  onPressed: () =>
+                      _showMoreDialog(context, context.read<PostsBloc>()),
+                  icon: const Icon(
+                    Ionicons.chevron_down,
+                    size: 20,
+                  ),
+                );
+              },
+            )
+        ],
+      ),
     );
   }
 }

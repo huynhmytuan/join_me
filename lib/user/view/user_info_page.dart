@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
@@ -12,6 +13,7 @@ import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
 
 import 'package:join_me/data/repositories/repositories.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 
 import 'package:join_me/post/bloc/posts_bloc.dart';
 import 'package:join_me/post/components/components.dart';
@@ -94,10 +96,10 @@ class _UserInfoPageState extends State<UserInfoPage>
                       labelStyle: CustomTextStyle.heading3(context),
                       tabs: [
                         Tab(
-                          text: 'Post'.toUpperCase(),
+                          text: LocaleKeys.post_post.tr().toUpperCase(),
                         ),
                         Tab(
-                          text: 'Project'.toUpperCase(),
+                          text: LocaleKeys.project_project.tr().toUpperCase(),
                         )
                       ],
                     ),

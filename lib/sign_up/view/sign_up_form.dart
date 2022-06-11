@@ -1,8 +1,10 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:formz/formz.dart';
 import 'package:join_me/config/theme.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/sign_up/cubit/sign_up_cubit.dart';
 import 'package:join_me/sign_up/cubit/sign_up_state.dart';
 import 'package:join_me/utilities/constant.dart';
@@ -27,7 +29,10 @@ class SignUpForm extends StatelessWidget {
               SnackBar(
                 behavior: SnackBarBehavior.floating,
                 backgroundColor: Theme.of(context).errorColor,
-                content: Text(state.errorMessage ?? 'Authentication Failure'),
+                content: Text(
+                  state.errorMessage ??
+                      LocaleKeys.errorMessage_authenticationFailure.tr(),
+                ),
               ),
             );
         }
@@ -36,11 +41,11 @@ class SignUpForm extends StatelessWidget {
         child: Column(
           children: [
             Text(
-              'Sign Up',
+              LocaleKeys.register.tr(),
               style: CustomTextStyle.heading1(context),
             ),
             Text(
-              'Please fill all inputs bellow here',
+              LocaleKeys.pleaseFill.tr(),
               style: CustomTextStyle.bodyMedium(context),
             ),
             const Spacer(),
@@ -64,7 +69,7 @@ class SignUpForm extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Already have an account?',
+                  LocaleKeys.alreadyAccount.tr(),
                   style: CustomTextStyle.heading4(context)
                       .copyWith(color: kTextColorGrey),
                 ),
@@ -73,7 +78,7 @@ class SignUpForm extends StatelessWidget {
                     context.router.pop();
                   },
                   child: Text(
-                    'Sign In',
+                    LocaleKeys.button_signIn.tr(),
                     style: CustomTextStyle.heading4(context)
                         .copyWith(color: Theme.of(context).primaryColor),
                   ),
@@ -102,8 +107,9 @@ class _NameInput extends StatelessWidget {
         return RoundedTextField(
           screenSize: screenSize,
           onChanged: (value) => context.read<SignUpCubit>().nameChanged(value),
-          hintText: 'Full Name',
-          errorText: state.name.invalid ? "Name can't be empty" : null,
+          hintText: LocaleKeys.textField_fullName.tr(),
+          errorText:
+              state.name.invalid ? LocaleKeys.errorMessage_empty.tr() : null,
           keyboardType: TextInputType.name,
           textInputAction: TextInputAction.next,
           prefixIcon: const Icon(Icons.person),
@@ -128,8 +134,9 @@ class _EmailInput extends StatelessWidget {
         return RoundedTextField(
           screenSize: screenSize,
           onChanged: (value) => context.read<SignUpCubit>().emailChanged(value),
-          hintText: 'Email',
-          errorText: state.email.invalid ? 'Email invalid' : null,
+          hintText: LocaleKeys.textField_email.tr(),
+          errorText:
+              state.email.invalid ? LocaleKeys.errorMessage_invalidEmail : null,
           keyboardType: TextInputType.emailAddress,
           prefixIcon: const Icon(Icons.email_rounded),
           textInputAction: TextInputAction.next,
@@ -155,8 +162,10 @@ class _PasswordInput extends StatelessWidget {
           screenSize: screenSize,
           onChanged: (value) =>
               context.read<SignUpCubit>().passwordChanged(value),
-          hintText: 'Password',
-          errorText: state.password.invalid ? 'Password invalid' : null,
+          hintText: LocaleKeys.textField_password.tr(),
+          errorText: state.password.invalid
+              ? LocaleKeys.errorMessage_invalidPassword.tr()
+              : null,
           obscureText: true,
           textInputAction: TextInputAction.next,
           prefixIcon: const Icon(Icons.lock),
@@ -185,9 +194,9 @@ class _ConfirmedPasswordInput extends StatelessWidget {
           screenSize: screenSize,
           onChanged: (value) =>
               context.read<SignUpCubit>().confirmPasswordChanged(value),
-          hintText: 'Confirm Password',
+          hintText: LocaleKeys.textField_confirmPassword.tr(),
           errorText: state.confirmedPassword.invalid
-              ? "Confirmed password doesn't match."
+              ? LocaleKeys.errorMessage_invalidConfirmPassword.tr()
               : null,
           obscureText: true,
           textInputAction: TextInputAction.done,
@@ -214,7 +223,7 @@ class _SignUpButton extends StatelessWidget {
                     ? () => context.read<SignUpCubit>().signUpWithCredentials()
                     : null,
                 child: Text(
-                  'Sign Up',
+                  LocaleKeys.button_signUp.tr(),
                   style: CustomTextStyle.heading3(context).copyWith(
                     color: Colors.white,
                   ),

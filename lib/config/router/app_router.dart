@@ -193,6 +193,11 @@ part 'app_router.gr.dart';
   ],
 )
 class AppRouter extends _$AppRouter {
-  AppRouter({required CheckIsProjectMember checkIsProjectMember})
-      : super(checkIsProjectMember: checkIsProjectMember);
+  AppRouter({
+    required CheckIsProjectMember checkIsProjectMember,
+    required CheckIfPostExists checkIfPostExists,
+  }) : super(
+          checkIsProjectMember: checkIsProjectMember,
+          checkIfPostExists: checkIfPostExists,
+        );
 }

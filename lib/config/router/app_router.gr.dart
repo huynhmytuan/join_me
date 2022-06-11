@@ -15,10 +15,13 @@ part of 'app_router.dart';
 class _$AppRouter extends RootStackRouter {
   _$AppRouter(
       {GlobalKey<NavigatorState>? navigatorKey,
-      required this.checkIsProjectMember})
+      required this.checkIsProjectMember,
+      required this.checkIfPostExists})
       : super(navigatorKey);
 
   final CheckIsProjectMember checkIsProjectMember;
+
+  final CheckIfPostExists checkIfPostExists;
 
   @override
   final Map<String, PageFactory> pagesMap = {
@@ -301,7 +304,9 @@ class _$AppRouter extends RootStackRouter {
                 RouteConfig(ProjectMembersRoute.name,
                     path: 'project-members', parent: MainWrapperRouter.name),
                 RouteConfig(PostDetailRoute.name,
-                    path: ':postId', parent: MainWrapperRouter.name),
+                    path: ':postId',
+                    parent: MainWrapperRouter.name,
+                    guards: [checkIfPostExists]),
                 RouteConfig(NewPostRoute.name,
                     path: 'new-post', parent: MainWrapperRouter.name),
                 RouteConfig(TextEditingRoute.name,

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,7 @@ import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/data/repositories/repositories.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/project/bloc/project_bloc.dart';
 
 import 'package:join_me/project/project.dart';
@@ -31,11 +33,10 @@ class SingleTaskPage extends StatelessWidget {
         projectRepository: context.read<ProjectRepository>(),
       )..add(LoadTask(taskId)),
       child: BlocConsumer<TaskBloc, TaskState>(
-        listenWhen: (previous, current) =>
-            current.status == TaskStateStatus.deleted,
         listener: (context, state) {
           if (state.status == TaskStateStatus.deleted) {
             AutoRouter.of(context).pop();
+            return;
           }
         },
         builder: (context, state) {
@@ -168,6 +169,7 @@ class _TaskViewState extends State<TaskView> {
       context: context,
       useRootNavigator: true,
       builder: (context) => EditUserDialog(
+        title: LocaleKeys.task_assignedTo.tr(),
         initialUserList: assignee,
         searchData: members,
       ),
@@ -264,7 +266,7 @@ class _TaskViewState extends State<TaskView> {
                   color: Theme.of(context).primaryColor,
                   padding: const EdgeInsets.symmetric(vertical: 5),
                   child: Text(
-                    'Task Completed',
+                    LocaleKeys.task_completed.tr(),
                     style: CustomTextStyle.heading4(context).copyWith(
                       color: Colors.white,
                     ),
@@ -281,13 +283,20 @@ class _TaskViewState extends State<TaskView> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text('This is sub task of '),
+                              Padding(
+                                padding: const EdgeInsets.all(10),
+                                child: Text(
+                                  LocaleKeys.task_subTaskOf.tr(),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
                               GestureDetector(
                                 onTap: () => AutoRouter.of(context).push(
                                   SingleTaskRoute(taskId: state.parent!.id),
                                 ),
                                 child: Text(
                                   state.parent!.name,
+                                  overflow: TextOverflow.ellipsis,
                                   style: CustomTextStyle.heading4(context)
                                       .copyWith(
                                     color: Theme.of(context).primaryColor,
@@ -307,9 +316,34 @@ class _TaskViewState extends State<TaskView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              state.task.name,
-                              style: CustomTextStyle.heading2(context),
+                            GestureDetector(
+                              onTap: () {
+                                AutoRouter.of(context)
+                                    .push(
+                                  TextEditingRoute(
+                                    initialText: state.task.name,
+                                    hintText: LocaleKeys.task_name.tr(),
+                                  ),
+                                )
+                                    .then((textEdited) {
+                                  if (textEdited != null &&
+                                      textEdited != state.task.name) {
+                                    final task = state.task;
+                                    context.read<TaskBloc>().add(
+                                          EditTask(
+                                            task.copyWith(
+                                              name: textEdited as String,
+                                            ),
+                                            currentUser.id,
+                                          ),
+                                        );
+                                  }
+                                });
+                              },
+                              child: Text(
+                                state.task.name,
+                                style: CustomTextStyle.heading2(context),
+                              ),
                             ),
                             const SizedBox(
                               height: 10,
@@ -317,14 +351,16 @@ class _TaskViewState extends State<TaskView> {
                             _buildDataRow(
                               context: context,
                               iconData: Ionicons.person_outline,
-                              rowTitle: 'Created by',
+                              rowTitle: LocaleKeys.task_createdBy.tr(),
                               rowData: Chip(
                                 avatar: CircleAvatarWidget(
                                   imageUrl: state.createdBy.photoUrl,
                                   size: 24,
                                 ),
                                 label: Text(
-                                  state.createdBy.email,
+                                  state.createdBy.email.isEmpty
+                                      ? state.createdBy.name
+                                      : state.createdBy.email,
                                   style: CustomTextStyle.bodySmall(context),
                                 ),
                               ),
@@ -335,7 +371,7 @@ class _TaskViewState extends State<TaskView> {
                             _buildDataRow(
                               context: context,
                               iconData: Ionicons.time_outline,
-                              rowTitle: 'Created at',
+                              rowTitle: LocaleKeys.properties_createdAt.tr(),
                               rowData: Text(
                                 DateFormat.yMMMMEEEEd(appLocale.languageCode)
                                     .format(state.task.createdAt),
@@ -347,7 +383,7 @@ class _TaskViewState extends State<TaskView> {
                             _buildDataRow(
                               context: context,
                               iconData: Ionicons.time_outline,
-                              rowTitle: 'Due date',
+                              rowTitle: LocaleKeys.task_dueDate.tr(),
                               rowData: GestureDetector(
                                 onTap: () => _showDatePicker(
                                   context.read<TaskBloc>(),
@@ -355,7 +391,7 @@ class _TaskViewState extends State<TaskView> {
                                 ),
                                 child: Text(
                                   state.task.dueDate == null
-                                      ? 'No due date'
+                                      ? LocaleKeys.task_noDueDate.tr()
                                       : DateFormat.yMMMMEEEEd(
                                           appLocale.languageCode,
                                         ).format(state.task.dueDate!),
@@ -373,13 +409,16 @@ class _TaskViewState extends State<TaskView> {
                               child: _buildDataRow(
                                 context: context,
                                 iconData: Ionicons.people_outline,
-                                rowTitle: 'Assigned to',
+                                rowTitle: LocaleKeys.task_assignedTo.tr(),
                                 rowData: StackedImages(
                                   imageUrlList: state.assignee
                                       .map((user) => user.photoUrl)
                                       .toList(),
                                   totalCount: state.assignee.length,
                                   imageSize: 24,
+                                  emptyHandler: Text(
+                                    LocaleKeys.task_unAssigned.tr(),
+                                  ),
                                 ),
                               ),
                             ),
@@ -391,13 +430,14 @@ class _TaskViewState extends State<TaskView> {
                               child: _buildDataRow(
                                 context: context,
                                 iconData: Ionicons.warning_outline,
-                                rowTitle: 'Priority',
+                                rowTitle: LocaleKeys.task_priority_title.tr(),
                                 rowData: Chip(
                                   visualDensity: VisualDensity.compact,
                                   backgroundColor:
                                       state.task.priority.getColor(),
                                   label: Text(
-                                    state.task.priority.toTitle(),
+                                    "task.priority.${state.task.priority.name}"
+                                        .tr(),
                                     style: CustomTextStyle.bodySmall(context)
                                         .copyWith(color: Colors.white),
                                   ),
@@ -412,7 +452,7 @@ class _TaskViewState extends State<TaskView> {
                               child: _buildDataRow(
                                 context: context,
                                 iconData: Ionicons.menu_outline,
-                                rowTitle: 'Category',
+                                rowTitle: LocaleKeys.task_category.tr(),
                                 rowData: Container(
                                   padding: const EdgeInsets.symmetric(
                                     vertical: 2,
@@ -438,7 +478,7 @@ class _TaskViewState extends State<TaskView> {
                               height: 10,
                             ),
                             Text(
-                              'Description',
+                              LocaleKeys.properties_description.tr(),
                               style: CustomTextStyle.heading4(context)
                                   .copyWith(color: kTextColorGrey),
                             ),
@@ -451,7 +491,8 @@ class _TaskViewState extends State<TaskView> {
                                     .push(
                                   TextEditingRoute(
                                     initialText: state.task.description,
-                                    hintText: 'Edit description',
+                                    hintText:
+                                        LocaleKeys.button_addDescription.tr(),
                                   ),
                                 )
                                     .then((textEdited) {
@@ -477,9 +518,12 @@ class _TaskViewState extends State<TaskView> {
                                 child: (state.task.description.isEmpty)
                                     ? Row(
                                         mainAxisSize: MainAxisSize.min,
-                                        children: const [
-                                          Icon(Ionicons.add),
-                                          Text('Add description'),
+                                        children: [
+                                          const Icon(Ionicons.add),
+                                          Text(
+                                            LocaleKeys.button_addDescription
+                                                .tr(),
+                                          ),
                                         ],
                                       )
                                     : Text(
@@ -493,7 +537,7 @@ class _TaskViewState extends State<TaskView> {
                               height: 10,
                             ),
                             Text(
-                              'Sub-Tasks',
+                              LocaleKeys.task_subTasks.tr(),
                               style: CustomTextStyle.heading4(context)
                                   .copyWith(color: kTextColorGrey),
                             ),
@@ -501,47 +545,51 @@ class _TaskViewState extends State<TaskView> {
                               height: 10,
                             ),
                             if (state.task.subTasks.isNotEmpty)
-                              Builder(builder: (context) {
-                                final subTasksOrderByCreatedAt =
-                                    List.of(state.subTasks)
-                                      ..sort(
-                                        (a, b) =>
-                                            a.createdAt.compareTo(b.createdAt),
-                                      );
-                                return ListView.separated(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  separatorBuilder: (_, __) => const SizedBox(
-                                    height: 5,
-                                  ),
-                                  itemCount: state.subTasks.length,
-                                  itemBuilder: (context, index) {
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(
-                                          kDefaultRadius,
+                              Builder(
+                                builder: (context) {
+                                  final subTasksOrderByCreatedAt =
+                                      List.of(state.subTasks)
+                                        ..sort(
+                                          (a, b) => a.createdAt
+                                              .compareTo(b.createdAt),
+                                        );
+                                  return ListView.separated(
+                                    physics:
+                                        const NeverScrollableScrollPhysics(),
+                                    shrinkWrap: true,
+                                    separatorBuilder: (_, __) => const SizedBox(
+                                      height: 5,
+                                    ),
+                                    itemCount: state.subTasks.length,
+                                    itemBuilder: (context, index) {
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            kDefaultRadius,
+                                          ),
+                                          border:
+                                              Border.all(color: kIconColorGrey),
                                         ),
-                                        border:
-                                            Border.all(color: kIconColorGrey),
-                                      ),
-                                      child: TaskListRow(
-                                        task: subTasksOrderByCreatedAt[index],
-                                        onChange: (value) => context
-                                            .read<TaskBloc>()
-                                            .add(
-                                              EditTask(
-                                                subTasksOrderByCreatedAt[index]
-                                                    .copyWith(
-                                                  isComplete: value,
-                                                ),
-                                                currentUser.id,
-                                              ),
-                                            ),
-                                      ),
-                                    );
-                                  },
-                                );
-                              }),
+                                        child: TaskListRow(
+                                          isShowPriorityColor: false,
+                                          task: subTasksOrderByCreatedAt[index],
+                                          onChange: (value) =>
+                                              context.read<TaskBloc>().add(
+                                                    EditTask(
+                                                      subTasksOrderByCreatedAt[
+                                                              index]
+                                                          .copyWith(
+                                                        isComplete: value,
+                                                      ),
+                                                      currentUser.id,
+                                                    ),
+                                                  ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
                             GestureDetector(
                               onTap: () =>
                                   _showNewTaskDialog(context.read<TaskBloc>()),
@@ -560,12 +608,12 @@ class _TaskViewState extends State<TaskView> {
                                 ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
-                                  children: const [
-                                    Icon(Ionicons.add_circle_outline),
-                                    SizedBox(
+                                  children: [
+                                    const Icon(Ionicons.add_circle_outline),
+                                    const SizedBox(
                                       width: 5,
                                     ),
-                                    Text('Add Sub-task'),
+                                    Text(LocaleKeys.task_addSubTask.tr()),
                                   ],
                                 ),
                               ),
@@ -630,11 +678,10 @@ class _TaskViewState extends State<TaskView> {
                       showDialog<bool>(
                         context: context,
                         builder: (context) => CustomAlertDialog(
-                          title: 'Are you sure?',
-                          content:
-                              '''Once you delete this task, this cannot be undone.''',
+                          title: LocaleKeys.dialog_delete_title.tr(),
+                          content: LocaleKeys.dialog_delete_content.tr(),
                           submitButtonColor: Theme.of(context).errorColor,
-                          submitLabel: 'Delete',
+                          submitLabel: LocaleKeys.button_delete.tr(),
                           onCancel: () => AutoRouter.of(context).pop(false),
                           onSubmit: () => AutoRouter.of(context).pop(true),
                         ),

@@ -1,8 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 
 import 'package:join_me/config/theme.dart';
+import 'package:join_me/data/models/task.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/project/bloc/project_bloc.dart';
 import 'package:join_me/project/components/components.dart';
 import 'package:join_me/task/bloc/tasks_overview_bloc.dart';
@@ -57,8 +60,8 @@ class _ProjectTaskListPageState extends State<ProjectTaskListPage> {
           _setListItems(task: state.tasks);
           return TaskListView(items: _items);
         }
-        return const Center(
-          child: Text('Something went wrong'),
+        return Center(
+          child: Text(LocaleKeys.errorMessage_wrong.tr()),
         );
       },
     );
@@ -146,6 +149,8 @@ class _TaskListViewState extends State<TaskListView> {
         itemBuilder: (context, index) {
           final _assignedUsers = item.expandedValue[index].assignee;
           return TaskListRow(
+            isShowPriorityColor: !item.expandedValue[index].task.isComplete &&
+                item.expandedValue[index].task.priority != TaskPriority.none,
             task: item.expandedValue[index].task,
             trailing: StackedImages(
               imageUrlList:

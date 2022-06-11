@@ -1,12 +1,15 @@
 // ignore_for_file: avoid_dynamic_calls
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
+import 'package:ionicons/ionicons.dart';
 
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/user/cubit/search_user_cubit.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/avatar_circle_widget.dart';
@@ -66,12 +69,12 @@ class _EditUserDialogState extends State<EditUserDialog> {
                         AutoRouter.of(context).pop();
                       },
                       child: Text(
-                        'Cancel',
+                        LocaleKeys.button_cancel.tr(),
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                     ),
                     Text(
-                      widget.title ?? 'Edit Members',
+                      widget.title ?? LocaleKeys.general_members.tr(),
                       style: CustomTextStyle.heading3(context),
                     ),
                     TextButton(
@@ -79,7 +82,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                         widget.onSubmit?.call();
                         AutoRouter.of(context).pop(selectedUser);
                       },
-                      child: const Text('Save'),
+                      child: Text(LocaleKeys.button_save.tr()),
                     ),
                   ],
                 ),
@@ -122,6 +125,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
               return ListTile(
                 leading: CircleAvatarWidget(imageUrl: user!.photoUrl),
                 title: Text(user.name),
+                subtitle: Text(user.email),
               );
             },
             suggestionsBoxDecoration: SuggestionsBoxDecoration(
@@ -154,7 +158,11 @@ class _EditUserDialogState extends State<EditUserDialog> {
   Widget _buildSelectionView(List<AppUser> selectedUser) {
     return (selectedUser.isEmpty)
         ? const Center(
-            child: Text('No user selected.'),
+            child: Icon(
+              Ionicons.people_outline,
+              size: 80,
+              color: kIconColorGrey,
+            ),
           )
         : SingleChildScrollView(
             child: Wrap(
@@ -173,7 +181,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                             maxWidth: 100,
                           ),
                           child: Text(
-                            user.name,
+                            user.email.isEmpty ? user.name : user.email,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),

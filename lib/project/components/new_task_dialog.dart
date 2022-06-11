@@ -1,11 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/utilities/extensions/extensions.dart';
 import 'package:join_me/widgets/widgets.dart';
@@ -47,7 +48,7 @@ class NewTaskDialogState extends State<NewTaskDialog> {
       builder: (context) => EditUserDialog(
         initialUserList: _assignees,
         searchData: widget.members,
-        title: 'Assign to',
+        title: LocaleKeys.task_assignedTo.tr(),
       ),
     ).then((selectedUser) {
       if (selectedUser == null) {
@@ -102,7 +103,7 @@ class NewTaskDialogState extends State<NewTaskDialog> {
               horizontal: 10,
             ),
             child: Text(
-              priorityList[index].toTitle(),
+              'task.priority.${priorityList[index].name.toLowerCase()}'.tr(),
               style: CustomTextStyle.bodyMedium(context)
                   .copyWith(color: Colors.white),
             ),
@@ -140,7 +141,7 @@ class NewTaskDialogState extends State<NewTaskDialog> {
                 Align(
                   alignment: Alignment.topCenter,
                   child: Text(
-                    'Add Task',
+                    LocaleKeys.dialog_addTask_title.tr(),
                     style: CustomTextStyle.heading3(context),
                   ),
                 ),
@@ -190,8 +191,8 @@ class NewTaskDialogState extends State<NewTaskDialog> {
                             );
                           }
                         : null,
-                    child: const Text(
-                      'Create',
+                    child: Text(
+                      LocaleKeys.button_create.tr(),
                     ),
                   ),
                 )
@@ -207,8 +208,8 @@ class NewTaskDialogState extends State<NewTaskDialog> {
     return TextFormField(
       controller: _taskDescriptionEditController,
       style: CustomTextStyle.bodyMedium(context),
-      decoration: const InputDecoration(
-        hintText: 'Description',
+      decoration: InputDecoration(
+        hintText: LocaleKeys.properties_description.tr(),
         border: InputBorder.none,
       ),
       maxLines: null,
@@ -221,8 +222,8 @@ class NewTaskDialogState extends State<NewTaskDialog> {
       controller: _taskNameEditController,
       autofocus: true,
       style: CustomTextStyle.heading4(context),
-      decoration: const InputDecoration(
-        hintText: 'Task name',
+      decoration: InputDecoration(
+        hintText: LocaleKeys.properties_name.tr(args: ['Task']),
         border: InputBorder.none,
       ),
       textInputAction: TextInputAction.next,
@@ -246,7 +247,7 @@ class NewTaskDialogState extends State<NewTaskDialog> {
             width: 5,
           ),
           Text(
-            'Priority',
+            LocaleKeys.task_priority_title.tr(),
             style: CustomTextStyle.bodyMedium(context)
                 .copyWith(color: kTextColorGrey),
           ),
@@ -257,7 +258,7 @@ class NewTaskDialogState extends State<NewTaskDialog> {
             visualDensity: VisualDensity.compact,
             backgroundColor: _task.priority.getColor(),
             label: Text(
-              _task.priority.toTitle(),
+              'task.priority.${_task.priority.name.toLowerCase()}'.tr(),
               style: CustomTextStyle.bodySmall(context)
                   .copyWith(color: Colors.white),
             ),
@@ -285,7 +286,7 @@ class NewTaskDialogState extends State<NewTaskDialog> {
             ),
             if (_assignees.isEmpty)
               Text(
-                'Unassigned ',
+                LocaleKeys.task_unAssigned.tr(),
                 style: CustomTextStyle.bodyMedium(context).copyWith(
                   color: kTextColorGrey,
                 ),
@@ -296,7 +297,7 @@ class NewTaskDialogState extends State<NewTaskDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Assignees',
+                    LocaleKeys.task_assignedTo.tr(),
                     style: CustomTextStyle.subText(context).copyWith(
                       color: kTextColorGrey,
                     ),
@@ -338,7 +339,7 @@ class NewTaskDialogState extends State<NewTaskDialog> {
             ),
             if (_task.dueDate == null)
               Text(
-                'No Due Date',
+                LocaleKeys.task_noDueDate.tr(),
                 style: CustomTextStyle.bodyMedium(context).copyWith(
                   color: kTextColorGrey,
                 ),
@@ -349,7 +350,7 @@ class NewTaskDialogState extends State<NewTaskDialog> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    'Due to',
+                    LocaleKeys.task_dueDate.tr(),
                     style: CustomTextStyle.subText(context).copyWith(
                       color: kTextColorGrey,
                     ),

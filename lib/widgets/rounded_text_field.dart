@@ -61,7 +61,7 @@ class RoundedTextField extends StatelessWidget {
               onChanged?.call(value);
             },
             keyboardType: keyboardType,
-            cursorColor: kPrimaryLightColor,
+            cursorColor: Theme.of(context).primaryColor,
             obscureText: obscureText ?? false,
             textInputAction: textInputAction,
             decoration: InputDecoration(

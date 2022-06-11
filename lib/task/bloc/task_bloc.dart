@@ -28,6 +28,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
     on<DeleteTask>(_onDeleteTask);
     on<UpdateSubtask>(_onUpdateSubtask);
     on<TaskNotFound>(_onTaskNotFound);
+    on<TaskDeleted>(_onTaskDeleted);
   }
   final TaskRepository _taskRepository;
   final UserRepository _userRepository;
@@ -142,6 +143,7 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
   ) async {
     try {
       await _taskRepository.deleteTask(task: event.task);
+      add(TaskDeleted());
     } catch (e) {
       emit(
         state.copyWith(
@@ -171,6 +173,15 @@ class TaskBloc extends Bloc<TaskEvent, TaskState> {
         ),
       );
     }
+  }
+
+  void _onTaskDeleted(
+    TaskDeleted event,
+    Emitter<TaskState> emit,
+  ) {
+    close();
+    _subTaskSubscription?.cancel();
+    _taskSubscription?.cancel();
   }
 
   void _onTaskNotFound(

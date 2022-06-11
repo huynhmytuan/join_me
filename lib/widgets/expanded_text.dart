@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 
 class ExpandedText extends StatefulWidget {
   const ExpandedText({
@@ -69,7 +71,7 @@ class _ExpandedTextState extends State<ExpandedText> {
                       child: isExpanded
                           ? null
                           : Text(
-                              'Read more',
+                              LocaleKeys.post_readMore.tr(),
                               style: TextStyle(
                                 color: Theme.of(context).primaryColor,
                               ),

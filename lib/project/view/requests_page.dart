@@ -1,10 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/data/models/app_user.dart';
 import 'package:join_me/data/repositories/repositories.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/project/bloc/join_requests_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/avatar_circle_widget.dart';
@@ -29,7 +31,7 @@ class RequestsPage extends StatelessWidget {
             onTap: () => AutoRouter.of(context).pop(),
             child: const Icon(Ionicons.chevron_back),
           ),
-          title: const Text('Join Request'),
+          title: Text(LocaleKeys.project_joinRequest.tr()),
         ),
         body: _RequestsView(projectId: projectId),
       ),
@@ -111,9 +113,9 @@ class _RequestCard extends StatelessWidget {
               color: kIconColorGrey,
               elevation: 0,
               height: 30,
-              child: const Text(
-                'Reject',
-                style: TextStyle(color: Colors.black),
+              child: Text(
+                LocaleKeys.button_request_decline.tr(),
+                style: const TextStyle(color: Colors.black),
               ),
             ),
             RoundedButton(
@@ -124,7 +126,9 @@ class _RequestCard extends StatelessWidget {
               },
               elevation: 0,
               height: 30,
-              child: const Text('Accept'),
+              child: Text(
+                LocaleKeys.button_request_accept.tr(),
+              ),
             ),
           ],
         )

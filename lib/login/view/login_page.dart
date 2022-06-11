@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:join_me/data/repositories/authentication_repository.dart';
 
-import 'package:join_me/l10n/l10n.dart';
 import 'package:join_me/login/bloc/login_cubit.dart';
 import 'package:join_me/login/view/view.dart';
 import 'package:join_me/utilities/constant.dart';
@@ -18,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
-    final l10n = context.l10n;
+
     return BlocProvider(
       create: (context) => LoginCubit(context.read<AuthenticationRepository>()),
       child: GestureDetector(
@@ -32,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
               height: screenSize.height,
               width: screenSize.width,
-              child: LoginForm(l10n: l10n, screenSize: screenSize),
+              child: LoginForm(screenSize: screenSize),
             ),
           ),
         ),

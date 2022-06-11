@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -7,6 +8,7 @@ import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/data/repositories/project_repository.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/utilities/constant.dart';
 
 class AddProjectInviteDialog extends StatefulWidget {
@@ -184,10 +186,10 @@ class _ProjectSearchInput extends StatelessWidget {
           Expanded(
             child: TextField(
               controller: textEditingController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 isDense: true,
                 border: InputBorder.none,
-                hintText: 'Search for project name...',
+                hintText: LocaleKeys.textField_searchForUser.tr(),
               ),
             ),
           ),

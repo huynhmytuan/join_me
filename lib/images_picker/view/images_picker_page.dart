@@ -1,12 +1,14 @@
 import 'dart:developer';
 
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:join_me/config/router/app_router.dart';
 
 import 'package:join_me/data/repositories/media_repository.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/images_picker/bloc/images_picker_bloc.dart';
 
 import 'package:photo_manager/photo_manager.dart';
@@ -96,12 +98,11 @@ class _CustomAppBarState extends State<_CustomAppBar>
               mainAxisSize: MainAxisSize.min,
               children: [
                 if (state.status == ImagePickersStatus.success)
-                  Text(
-                    (state.currentAlbum != null)
-                        ? state.currentAlbum!.name
-                        : 'No Media',
-                    style: const TextStyle(fontSize: 16),
-                  ),
+                  if (state.currentAlbum != null)
+                    Text(
+                      state.currentAlbum!.name,
+                      style: const TextStyle(fontSize: 16),
+                    ),
                 const SizedBox(
                   width: 10,
                 ),
@@ -118,10 +119,9 @@ class _CustomAppBarState extends State<_CustomAppBar>
               onPressed: state.selectedAssets.isEmpty
                   ? null
                   : () {
-                      log('Selected: ${state.selectedAssets.length}');
                       AutoRouter.of(context).pop(state.selectedAssets);
                     },
-              child: const Text('Done'),
+              child: Text(LocaleKeys.button_done.tr()),
             )
           ],
         );

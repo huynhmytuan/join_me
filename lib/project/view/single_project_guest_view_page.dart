@@ -1,13 +1,14 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/app/cubit/app_message_cubit.dart';
 import 'package:join_me/config/router/app_router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/repositories/repositories.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 
 import 'package:join_me/project/bloc/project_bloc.dart';
 import 'package:join_me/utilities/constant.dart';
@@ -48,14 +49,16 @@ class _SingleProjectGuestViewPageState
       bloc: projectBloc,
       builder: (context, state) {
         return Scaffold(
-          backgroundColor: Theme.of(context).primaryColor,
           body: CustomScrollView(
+            // physics: const ClampingScrollPhysics(),
             slivers: [
               _AppBar(projectBloc: projectBloc!),
-              _JoinProjectButton(projectBloc: projectBloc!),
               _ProjectInformationList(projectBloc: projectBloc!)
             ],
           ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerDocked,
+          floatingActionButton: _JoinProjectButton(projectBloc: projectBloc!),
         );
       },
     );
@@ -89,7 +92,7 @@ class _ProjectInformationList extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'About this project',
+                    LocaleKeys.project_about_about.tr(),
                     style: CustomTextStyle.heading2(context),
                   ),
                   const SizedBox(
@@ -97,14 +100,14 @@ class _ProjectInformationList extends StatelessWidget {
                   ),
                   Text(
                     state.project.description.isEmpty
-                        ? 'No description for this project'
+                        ? LocaleKeys.general_noDescription.tr()
                         : state.project.description,
                   ),
                   const SizedBox(
                     height: kDefaultPadding,
                   ),
                   Text(
-                    'This project start from',
+                    LocaleKeys.project_about_startFrom.tr(),
                     style: CustomTextStyle.heading4(context),
                   ),
                   const SizedBox(
@@ -118,7 +121,7 @@ class _ProjectInformationList extends StatelessWidget {
                     height: kDefaultPadding,
                   ),
                   Text(
-                    'Created by',
+                    LocaleKeys.properties_ownerBy.tr(),
                     style: CustomTextStyle.heading4(context),
                   ),
                   const SizedBox(
@@ -142,7 +145,8 @@ class _ProjectInformationList extends StatelessWidget {
                     height: kDefaultPadding,
                   ),
                   Text(
-                    'Already ${state.project.members.length} member(s) joined',
+                    LocaleKeys.project_about_members
+                        .plural(state.project.members.length),
                     style: CustomTextStyle.heading4(context),
                   ),
                   ListView.builder(
@@ -164,9 +168,9 @@ class _ProjectInformationList extends StatelessWidget {
                       title: Text(state.members[index].name),
                     ),
                   ),
-                  if (state.members.length >= 5)
+                  if (state.members.length > 5)
                     Text(
-                      'And more..',
+                      '${state.members.length - 5}+',
                       style: CustomTextStyle.heading4(context),
                     ),
                 ],
@@ -197,39 +201,36 @@ class _JoinProjectButton extends StatelessWidget {
         final isRequested = state.project.requests.contains(_currentUser.id);
         var title = '';
         if (isMember) {
-          title = 'Already Member';
+          title = LocaleKeys.button_request_joined.tr();
         } else if (isRequested) {
-          title = 'Requested';
+          title = LocaleKeys.button_request_requested.tr();
         } else {
-          title = 'Join Now';
+          title = LocaleKeys.button_request_join.tr();
         }
-        return SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.only(
-              bottom: 20,
-            ),
-            child: Center(
-              child: RoundedButton(
-                height: 30,
-                onPressed: (isMember || isRequested)
-                    ? null
-                    : () {
-                        projectBloc.add(
-                          AddJoinRequest(
-                            project: state.project,
-                            userId: _currentUser.id,
-                          ),
-                        );
-                      },
-                color: Colors.white.withOpacity(.4),
-                elevation: 0,
-                child: Text(
-                  title,
-                  style: CustomTextStyle.heading3(context).copyWith(
-                    color:
-                        (isMember || isRequested) ? Colors.grey : Colors.white,
-                  ),
-                ),
+        return Padding(
+          padding: const EdgeInsets.only(
+            bottom: 20,
+          ),
+          child: RoundedButton(
+            height: 45,
+            onPressed: (isMember || isRequested)
+                ? null
+                : () {
+                    projectBloc.add(
+                      AddJoinRequest(
+                        project: state.project,
+                        userId: _currentUser.id,
+                      ),
+                    );
+                  },
+            color: (isMember || isRequested)
+                ? Colors.white.withOpacity(.5)
+                : Theme.of(context).primaryColor,
+            elevation: 1,
+            child: Text(
+              title,
+              style: CustomTextStyle.heading3(context).copyWith(
+                color: (isMember || isRequested) ? Colors.grey : Colors.white,
               ),
             ),
           ),
@@ -257,7 +258,7 @@ class _AppBar extends StatelessWidget {
           color: Colors.white,
         ),
       ),
-      expandedHeight: 130,
+      expandedHeight: 150,
       pinned: true,
       flexibleSpace: FlexibleSpaceBar(
         centerTitle: true,
