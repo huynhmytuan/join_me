@@ -19,7 +19,7 @@ class RoundedTextField extends StatelessWidget {
     this.controller,
     this.keyboardType,
     this.textInputAction,
-    this.leading,
+    this.trailing,
     Key? key,
   }) : super(key: key);
 
@@ -37,7 +37,7 @@ class RoundedTextField extends StatelessWidget {
   final Function(String value)? onChanged;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
-  final Widget? leading;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -52,40 +52,55 @@ class RoundedTextField extends StatelessWidget {
                 : kTextFieldDarkColor,
             borderRadius: BorderRadius.circular(kDefaultRadius),
           ),
-          child: TextField(
-            controller: controller,
-            onSubmitted: (value) {
-              onSubmitted?.call(value);
-            },
-            onChanged: (value) {
-              onChanged?.call(value);
-            },
-            keyboardType: keyboardType,
-            cursorColor: Theme.of(context).primaryColor,
-            obscureText: obscureText ?? false,
-            textInputAction: textInputAction,
-            decoration: InputDecoration(
-              isDense: true,
-              labelText: label,
-              border: InputBorder.none,
-              floatingLabelStyle: TextStyle(
-                color: Theme.of(context).primaryColor,
-              ),
-              prefixIcon: prefixIcon ??
-                  const SizedBox.square(
-                    dimension: 20,
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: controller,
+                  onSubmitted: (value) {
+                    onSubmitted?.call(value);
+                  },
+                  onChanged: (value) {
+                    onChanged?.call(value);
+                  },
+                  keyboardType: keyboardType,
+                  cursorColor: Theme.of(context).primaryColor,
+                  obscureText: obscureText ?? false,
+                  textInputAction: textInputAction,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    labelText: label,
+                    border: InputBorder.none,
+                    floatingLabelStyle: TextStyle(
+                      color: Theme.of(context).primaryColor,
+                    ),
+                    prefixIcon: prefixIcon ??
+                        const SizedBox.square(
+                          dimension: 20,
+                        ),
+                    prefixIconConstraints: (prefixIcon == null)
+                        ? BoxConstraints.loose(const Size.square(20))
+                        : null,
+                    suffix: suffix,
+                    hintText: hintText,
+                    contentPadding: const EdgeInsets.only(top: 12),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:
+                          BorderSide(color: Theme.of(context).primaryColor),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    suffixIcon: trailing != null
+                        ? Material(
+                            color: Colors.transparent,
+                            clipBehavior: Clip.hardEdge,
+                            borderRadius: BorderRadius.circular(30),
+                            child: trailing,
+                          )
+                        : const SizedBox.shrink(),
                   ),
-              prefixIconConstraints: (prefixIcon == null)
-                  ? BoxConstraints.loose(const Size.square(20))
-                  : null,
-              suffix: suffix,
-              hintText: hintText,
-              contentPadding: const EdgeInsets.only(top: 12),
-              focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: Theme.of(context).primaryColor),
-                borderRadius: BorderRadius.circular(12),
+                ),
               ),
-            ),
+            ],
           ),
         ),
         if (errorText != null)

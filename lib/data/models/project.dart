@@ -60,7 +60,6 @@ class Project extends Equatable {
     String? name,
     DateTime? createdAt,
     String? owner,
-    ProjectViewType? viewType,
     DateTime? lastChangeAt,
     String? description,
     List<String>? members,

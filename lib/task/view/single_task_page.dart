@@ -1,8 +1,9 @@
+import 'dart:ui';
+
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
 import 'package:join_me/config/router/router.dart';
@@ -436,7 +437,7 @@ class _TaskViewState extends State<TaskView> {
                                   backgroundColor:
                                       state.task.priority.getColor(),
                                   label: Text(
-                                    "task.priority.${state.task.priority.name}"
+                                    'task.priority.${state.task.priority.name}'
                                         .tr(),
                                     style: CustomTextStyle.bodySmall(context)
                                         .copyWith(color: Colors.white),
@@ -533,6 +534,11 @@ class _TaskViewState extends State<TaskView> {
                                       ),
                               ),
                             ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            // TODO : Add attachment.
+                            const _ListAttachment(),
                             const SizedBox(
                               height: 10,
                             ),
@@ -732,6 +738,139 @@ class _TaskViewState extends State<TaskView> {
         ),
         rowData,
       ],
+    );
+  }
+}
+
+class _ListAttachment extends StatelessWidget {
+  const _ListAttachment({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final listAttachments = <Attachment>[
+      const Attachment(
+        attachmentUrl: 'xin',
+        name: 'Function_requirement.doc',
+        type: AttachmentType.doc,
+      ),
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Đính kèm',
+          style:
+              CustomTextStyle.heading4(context).copyWith(color: kTextColorGrey),
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: Material(
+                shape: kBorderRadiusShape,
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {},
+                  borderRadius: BorderRadius.circular(kDefaultRadius),
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: kTextColorGrey),
+                      borderRadius: BorderRadius.circular(kDefaultRadius),
+                    ),
+                    child: const Icon(
+                      Ionicons.attach_outline,
+                      size: 45,
+                      color: kTextColorGrey,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(
+                parent: AlwaysScrollableScrollPhysics(),
+              ),
+              child: Row(
+                children: listAttachments.map(_buildAttachment).toList(),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAttachment(Attachment attachment) {
+    Widget widget = const SizedBox(
+      height: 100,
+      width: 100,
+    );
+    switch (attachment.type) {
+      case AttachmentType.doc:
+        widget = _AttachmentDoc(attachment);
+        break;
+      default:
+    }
+    return widget;
+  }
+}
+
+enum AttachmentType {
+  pdf,
+  doc,
+  zip,
+  pic,
+  video,
+  unknown,
+}
+
+class Attachment {
+  const Attachment({
+    required this.attachmentUrl,
+    required this.name,
+    required this.type,
+  });
+
+  final String attachmentUrl;
+  final String name;
+  final AttachmentType type;
+}
+
+class _AttachmentDoc extends StatelessWidget {
+  const _AttachmentDoc(this.attachment, {Key? key}) : super(key: key);
+  final Attachment attachment;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      constraints: const BoxConstraints(maxWidth: 230, maxHeight: 80),
+      decoration: BoxDecoration(
+        border: Border.all(color: kTextColorGrey),
+        borderRadius: BorderRadius.circular(kDefaultRadius),
+      ),
+      child: ListTile(
+        dense: true,
+        minLeadingWidth: 40,
+        shape: kBorderRadiusShape,
+        visualDensity: VisualDensity.compact,
+        onTap: () {},
+        leading: const Icon(
+          Icons.folder_zip_outlined,
+          size: 32,
+        ),
+        title: Text(
+          attachment.name,
+          style: const TextStyle(fontSize: 14),
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: const Text('.zip'),
+      ),
     );
   }
 }

@@ -2,9 +2,9 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
-import 'package:join_me/utilities/extensions/task_priority_ext.dart';
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/utilities/constant.dart';
+import 'package:join_me/utilities/extensions/task_priority_ext.dart';
 
 // ignore: must_be_immutable
 class TaskListRow extends StatefulWidget {

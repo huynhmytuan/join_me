@@ -96,11 +96,23 @@ class _ProjectListView extends StatelessWidget {
               },
             );
           } else {
-            return EmptyHandlerWidget(
-              size: MediaQuery.of(context).size.width * .5,
-              imageHandlerDir: kNoProjectPicDir,
-              titleHandler: LocaleKeys.emptyHandler_noProject_title.tr(),
-              textHandler: LocaleKeys.emptyHandler_noProject_content.tr(),
+            return SizedBox.expand(
+              child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * .25,
+                  ),
+                  child: EmptyHandlerWidget(
+                    size: MediaQuery.of(context).size.width * .5,
+                    imageHandlerDir: kNoProjectPicDir,
+                    titleHandler: LocaleKeys.emptyHandler_noProject_title.tr(),
+                    textHandler: LocaleKeys.emptyHandler_noProject_content.tr(),
+                  ),
+                ),
+              ),
             );
           }
         }

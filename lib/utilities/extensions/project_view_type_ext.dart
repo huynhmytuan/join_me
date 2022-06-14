@@ -1,5 +1,7 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/data/models/models.dart';
+import 'package:join_me/generated/locale_keys.g.dart';
 
 extension ProjectViewTypeX on ProjectViewType {
   String toRouteName() {
@@ -18,11 +20,11 @@ extension ProjectViewTypeX on ProjectViewType {
   String toTitle() {
     switch (this) {
       case ProjectViewType.dashBoard:
-        return 'Dashboard';
+        return LocaleKeys.projectViewType_dashboard.tr();
       case ProjectViewType.listView:
-        return 'List View';
+        return LocaleKeys.projectViewType_listView.tr();
       case ProjectViewType.calendarView:
-        return 'Calendar View';
+        return LocaleKeys.projectViewType_calendarView.tr();
       case ProjectViewType.unknown:
         return 'Unknown';
     }

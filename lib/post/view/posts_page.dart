@@ -57,9 +57,12 @@ class _PostsPageState extends State<PostsPage> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          context.read<PostsBloc>().add(const FetchPosts());
+          await Future<void>.delayed(const Duration(seconds: 1)).then(
+            (value) => context.read<PostsBloc>().add(const FetchPosts()),
+          );
         },
         child: SingleChildScrollView(
+          clipBehavior: Clip.none,
           physics: const BouncingScrollPhysics(
             parent: AlwaysScrollableScrollPhysics(),
           ),

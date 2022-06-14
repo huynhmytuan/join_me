@@ -95,6 +95,24 @@ class ProjectMembersPage extends StatelessWidget {
     );
   }
 
+  void _showAddMember(BuildContext context, List<AppUser>? withoutUser) {
+    showDialog<AppUser>(
+      context: context,
+      builder: (context) => AddUserDialog(
+        //Remove owner from search
+        withoutUsers: withoutUser,
+      ),
+    ).then((selectedUser) {
+      context.read<SearchUserCubit>().clearResults();
+      if (selectedUser == null) {
+        return;
+      }
+      projectBloc.add(
+        AddUserToProject(userId: selectedUser.id),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final currentUser = context.read<AppBloc>().state.user;
@@ -121,21 +139,10 @@ class ProjectMembersPage extends StatelessWidget {
                   ? [
                       IconButton(
                         onPressed: () {
-                          showDialog<AppUser>(
-                            context: context,
-                            builder: (context) => AddUserDialog(
-                              //Remove owner from search
-                              withoutUsers: [state.owner],
-                            ),
-                          ).then((selectedUser) {
-                            context.read<SearchUserCubit>().clearResults();
-                            if (selectedUser == null) {
-                              return;
-                            }
-                            projectBloc.add(
-                              AddUserToProject(userId: selectedUser.id),
-                            );
-                          });
+                          _showAddMember(
+                            context,
+                            state.members,
+                          );
                         },
                         icon: const Icon(Ionicons.person_add_outline),
                       )

@@ -220,8 +220,7 @@ class _MediaPreview extends StatelessWidget {
                     future: state.medias[index].thumbnailDataWithOption(
                       (Platform.isIOS)
                           ? ThumbnailOption.ios(
-                              size: const ThumbnailSize.square(200),
-                              deliveryMode: DeliveryMode.fastFormat,
+                              size: const ThumbnailSize.square(250),
                             )
                           : const ThumbnailOption(
                               size: ThumbnailSize.square(200),

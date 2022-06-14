@@ -280,15 +280,15 @@ class _UserInfoSection extends StatelessWidget {
                           height: 30,
                           minWidth: 120,
                           child: Row(
-                            children: const [
-                              Icon(
+                            children: [
+                              const Icon(
                                 Ionicons.paper_plane_outline,
                                 size: 20,
                               ),
-                              SizedBox(
+                              const SizedBox(
                                 width: 5,
                               ),
-                              Text('Send Message'),
+                              Text(LocaleKeys.button_sendMessage.tr()),
                             ],
                           ),
                           onPressed: () {
@@ -306,15 +306,15 @@ class _UserInfoSection extends StatelessWidget {
                         minWidth: 120,
                         color: kSecondaryBlue,
                         child: Row(
-                          children: const [
-                            Icon(
+                          children: [
+                            const Icon(
                               Ionicons.add_circle_outline,
                               size: 20,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 5,
                             ),
-                            Text('Invite To Project'),
+                            Text(LocaleKeys.button_projectInvite.tr()),
                           ],
                         ),
                         onPressed: () => _showAddInvitationDialog(context),

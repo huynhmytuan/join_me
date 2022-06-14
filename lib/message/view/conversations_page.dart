@@ -68,14 +68,19 @@ class _ConversationsListView extends StatelessWidget {
             textHandler: LocaleKeys.emptyHandler_noMessage_content.tr(),
           );
         }
+        final conversations = List.of(state.conversations)
+          ..sort(
+            (a, b) =>
+                b.lastMessage!.createdAt.compareTo(a.lastMessage!.createdAt),
+          );
         return ListView.builder(
           physics: const AlwaysScrollableScrollPhysics(
             parent: BouncingScrollPhysics(),
           ),
-          itemCount: state.conversations.length,
+          itemCount: conversations.length,
           itemBuilder: (context, index) {
             return ConversationCard(
-              conversationViewModel: state.conversations[index],
+              conversationViewModel: conversations[index],
               currentUser: _currentUser,
             );
           },

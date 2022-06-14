@@ -86,8 +86,7 @@ class _MediaThumbnail extends StatelessWidget {
         future: asset.thumbnailDataWithOption(
           (Platform.isIOS)
               ? ThumbnailOption.ios(
-                  size: const ThumbnailSize.square(500),
-                  deliveryMode: DeliveryMode.fastFormat,
+                  size: const ThumbnailSize.square(250),
                 )
               : const ThumbnailOption(
                   size: ThumbnailSize.square(150),
@@ -100,6 +99,8 @@ class _MediaThumbnail extends StatelessWidget {
               children: [
                 Image.memory(
                   snapshot.data!,
+                  gaplessPlayback: true,
+                  isAntiAlias: true,
                   fit: BoxFit.cover,
                 ),
                 if (asset.type == AssetType.video)

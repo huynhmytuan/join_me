@@ -22,7 +22,7 @@ class LoginForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<LoginCubit, LoginState>(
+    return BlocConsumer<LoginCubit, LoginState>(
       listener: (context, state) {
         if (state.status.isSubmissionFailure) {
           ScaffoldMessenger.of(context)
@@ -39,65 +39,81 @@ class LoginForm extends StatelessWidget {
             );
         }
       },
-      child: SafeArea(
-        child: Column(
-          children: [
-            const Spacer(flex: 2),
-            Stack(
-              children: [
-                Image.asset(kLogoBackgroundDir),
-                Image.asset(
-                  Theme.of(context).brightness == Brightness.light
-                      ? kLogoLightDir
-                      : kLogoDarkDir,
-                ),
-              ],
+      builder: (context, state) => state.status.isSubmissionInProgress
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    LocaleKeys.button_signIn.tr(),
+                    style: CustomTextStyle.heading3(context),
+                  ),
+                  const SizedBox(
+                    height: kDefaultPadding,
+                  ),
+                  const CircularProgressIndicator.adaptive(),
+                ],
+              ),
+            )
+          : SafeArea(
+              child: Column(
+                children: [
+                  const Spacer(flex: 2),
+                  Stack(
+                    children: [
+                      Image.asset(kLogoBackgroundDir),
+                      Image.asset(
+                        Theme.of(context).brightness == Brightness.light
+                            ? kLogoLightDir
+                            : kLogoDarkDir,
+                      ),
+                    ],
+                  ),
+                  Text(
+                    LocaleKeys.welcomeBackTitle.tr(),
+                    style: CustomTextStyle.heading2(context),
+                  ),
+                  Text(
+                    LocaleKeys.pleaseSignIn.tr(),
+                    style: CustomTextStyle.bodyMedium(context)
+                        .copyWith(color: kTextColorGrey),
+                  ),
+                  const Spacer(flex: 2),
+                  _EmailInput(screenSize: screenSize),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  _PasswordInput(screenSize: screenSize),
+                  const Spacer(flex: 2),
+                  const _SignInButton(),
+                  const Spacer(flex: 2),
+                  Text(
+                    LocaleKeys.orSignInWith.tr(),
+                    style: CustomTextStyle.heading4(context)
+                        .copyWith(color: kTextColorGrey),
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      _FacebookSignInButton(),
+                      SizedBox(width: kDefaultPadding),
+                      _GoogleSignInButton()
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        LocaleKeys.dontHaveAnAccount.tr(),
+                        style: CustomTextStyle.heading4(context)
+                            .copyWith(color: kTextColorGrey),
+                      ),
+                      const _SignUpButton(),
+                    ],
+                  ),
+                ],
+              ),
             ),
-            Text(
-              LocaleKeys.welcomeBackTitle.tr(),
-              style: CustomTextStyle.heading2(context),
-            ),
-            Text(
-              LocaleKeys.pleaseSignIn.tr(),
-              style: CustomTextStyle.bodyMedium(context)
-                  .copyWith(color: kTextColorGrey),
-            ),
-            const Spacer(flex: 2),
-            _EmailInput(screenSize: screenSize),
-            const SizedBox(
-              height: 10,
-            ),
-            _PasswordInput(screenSize: screenSize),
-            const Spacer(flex: 2),
-            const _SignInButton(),
-            const Spacer(flex: 2),
-            Text(
-              LocaleKeys.orSignInWith.tr(),
-              style: CustomTextStyle.heading4(context)
-                  .copyWith(color: kTextColorGrey),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                _FacebookSignInButton(),
-                SizedBox(width: kDefaultPadding),
-                _GoogleSignInButton()
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  LocaleKeys.dontHaveAnAccount.tr(),
-                  style: CustomTextStyle.heading4(context)
-                      .copyWith(color: kTextColorGrey),
-                ),
-                const _SignUpButton(),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -137,13 +153,20 @@ class _EmailInput extends StatelessWidget {
   }
 }
 
-class _PasswordInput extends StatelessWidget {
+class _PasswordInput extends StatefulWidget {
   const _PasswordInput({
     Key? key,
     required this.screenSize,
   }) : super(key: key);
 
   final Size screenSize;
+
+  @override
+  State<_PasswordInput> createState() => _PasswordInputState();
+}
+
+class _PasswordInputState extends State<_PasswordInput> {
+  bool isShowPassword = false;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
@@ -153,17 +176,29 @@ class _PasswordInput extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             RoundedTextField(
-              screenSize: screenSize,
+              screenSize: widget.screenSize,
               hintText: LocaleKeys.textField_password.tr(),
               onChanged: (password) =>
                   context.read<LoginCubit>().passwordChanged(password),
               prefixIcon: const Icon(Ionicons.lock_closed_outline),
-              obscureText: true,
+              obscureText: !isShowPassword,
               keyboardType: TextInputType.visiblePassword,
               textInputAction: TextInputAction.done,
               errorText: state.password.invalid
                   ? LocaleKeys.errorMessage_invalidPassword.tr()
                   : null,
+              trailing: InkWell(
+                radius: 24,
+                onTap: () {
+                  setState(() {
+                    isShowPassword = !isShowPassword;
+                  });
+                },
+                child: Icon(
+                  isShowPassword ? Ionicons.eye_off : Ionicons.eye,
+                  color: kTextColorGrey,
+                ),
+              ),
             ),
           ],
         );
@@ -181,18 +216,16 @@ class _SignInButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<LoginCubit, LoginState>(
       builder: (context, state) {
-        return state.status.isSubmissionInProgress
-            ? const CircularProgressIndicator()
-            : RoundedButton(
-                onPressed: state.status.isValidated
-                    ? () => context.read<LoginCubit>().logInWithCredentials()
-                    : null,
-                child: Text(
-                  LocaleKeys.button_signIn.tr(),
-                  style: CustomTextStyle.heading3(context)
-                      .copyWith(color: Colors.white),
-                ),
-              );
+        return RoundedButton(
+          onPressed: state.status.isValid
+              ? () => context.read<LoginCubit>().logInWithCredentials()
+              : null,
+          child: Text(
+            LocaleKeys.button_signIn.tr(),
+            style:
+                CustomTextStyle.heading3(context).copyWith(color: Colors.white),
+          ),
+        );
       },
     );
   }
