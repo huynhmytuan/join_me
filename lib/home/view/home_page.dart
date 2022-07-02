@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(width: 10),
                   Text(
                     message,
-                    style: CustomTextStyle.heading4(context).copyWith(
+                    style: CustomTextStyle.bodySmall(context).copyWith(
                       color: Colors.white,
                     ),
                     overflow: TextOverflow.ellipsis,

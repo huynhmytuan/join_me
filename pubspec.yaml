@@ -14,6 +14,7 @@ dependencies:
   cloud_firestore: ^3.1.12
   easy_localization: null
   equatable: ^2.0.3
+  file_picker: ^4.6.1
   firebase_auth: ^3.3.14
   firebase_core: ^1.14.1
   firebase_messaging: ^11.4.1
@@ -30,6 +31,7 @@ dependencies:
   ionicons: ^0.1.2
   json_annotation: ^4.4.0
   keyboard_dismisser: ^2.0.1
+  open_file: ^3.2.1
   path_provider: ^2.0.11
   photo_manager: ^2.1.1
   photo_view: ^0.14.0
@@ -42,7 +44,6 @@ dev_dependencies:
   auto_route_generator: ^3.2.3
   bloc_test: ^9.0.3
   build_runner: ^2.1.10
-
   flutter_test:
     sdk: flutter
   json_serializable: ^6.1.6

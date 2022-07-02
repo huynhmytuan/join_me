@@ -255,7 +255,6 @@ class _AppBar extends StatelessWidget {
         icon: const Icon(
           Ionicons.chevron_back,
           size: 24,
-          color: Colors.white,
         ),
       ),
       expandedHeight: 150,

@@ -13,6 +13,7 @@ class ImagesPickerState extends Equatable {
     this.currentAlbum,
     this.medias = const [],
     this.status = ImagePickersStatus.initial,
+    this.selectLimit,
     this.selectedAssets = const [],
   });
 
@@ -20,6 +21,7 @@ class ImagesPickerState extends Equatable {
   final AssetPathEntity? currentAlbum;
   final List<AssetEntity> medias;
   final ImagePickersStatus status;
+  final int? selectLimit;
   final List<AssetEntity> selectedAssets;
 
   ImagesPickerState copyWith({
@@ -29,6 +31,7 @@ class ImagesPickerState extends Equatable {
     int? currentPage,
     int? lastPage,
     List<AssetEntity>? selectedAssets,
+    int? selectLimit,
     ImagePickersStatus? status,
   }) {
     return ImagesPickerState(
@@ -36,16 +39,18 @@ class ImagesPickerState extends Equatable {
       currentAlbum: currentAlbum ?? this.currentAlbum,
       medias: medias ?? this.medias,
       selectedAssets: selectedAssets ?? this.selectedAssets,
+      selectLimit: selectLimit ?? this.selectLimit,
       status: status ?? this.status,
     );
   }
 
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       albums,
       medias,
       status,
+      selectLimit,
       selectedAssets,
     ];
   }

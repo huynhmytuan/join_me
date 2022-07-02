@@ -9,16 +9,16 @@ part 'images_picker_state.dart';
 class ImagesPickerBloc extends Bloc<ImagesPickerEvent, ImagesPickerState> {
   ImagesPickerBloc({
     required MediaRepository mediaRepository,
-    required this.limit,
+    required int? limit,
   })  : _mediaRepository = mediaRepository,
-        super(const ImagesPickerState()) {
+        super(ImagesPickerState(selectLimit: limit)) {
     on<LoadMedias>(_onLoadMedias);
     on<ChangeAlbum>(_onChangeAlbum);
     on<MediaSelected>(_onMediaSelected);
+    on<ClearAll>(_onClearAll);
   }
 
   final MediaRepository _mediaRepository;
-  final int? limit;
 
   Future<void> _onLoadMedias(
     LoadMedias event,
@@ -82,14 +82,36 @@ class ImagesPickerBloc extends Bloc<ImagesPickerEvent, ImagesPickerState> {
     Emitter<ImagesPickerState> emit,
   ) async {
     final selections = List<AssetEntity>.from(state.selectedAssets);
-    if (selections.contains(event.media)) {
-      selections.remove(event.media);
-    } else {
-      if (limit != null && selections.length >= limit!) {
-        return;
+    if (state.selectLimit != null &&
+        state.selectLimit! == 1 &&
+        selections.isNotEmpty) {
+      if (selections.contains(event.media)) {
+        selections.remove(event.media);
+      } else {
+        selections
+          ..clear()
+          ..add(event.media);
       }
-      selections.add(event.media);
+    } else {
+      if (selections.contains(event.media)) {
+        selections.remove(event.media);
+      } else {
+        if (state.selectLimit != null &&
+            selections.length >= state.selectLimit!) {
+          return;
+        }
+        selections.add(event.media);
+      }
     }
+
+    emit(state.copyWith(selectedAssets: selections));
+  }
+
+  Future<void> _onClearAll(
+    ClearAll event,
+    Emitter<ImagesPickerState> emit,
+  ) async {
+    final selections = List<AssetEntity>.from(state.selectedAssets)..clear();
     emit(state.copyWith(selectedAssets: selections));
   }
 }

@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
@@ -71,6 +72,14 @@ class _TaskListRowState extends State<TaskListRow> {
                 maxLines: 1,
               ),
             ),
+            if (widget.task.dueDate != null)
+              Padding(
+                padding: const EdgeInsets.all(5),
+                child: Text(
+                  DateFormat.MMMd(context.locale.languageCode)
+                      .format(widget.task.dueDate!),
+                ),
+              ),
             if (widget.trailing != null)
               Padding(
                 padding: const EdgeInsets.only(right: 10),

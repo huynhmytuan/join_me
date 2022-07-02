@@ -139,21 +139,27 @@ class _MediaThumbnail extends StatelessWidget {
                               color: kPrimaryLightColor,
                             ),
                           ),
-                          child: Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: kPrimaryDarkColor,
-                            ),
-                            child: Text(
-                              (state.selectedAssets.indexOf(asset) + 1)
-                                  .toString(),
-                              style:
-                                  CustomTextStyle.bodyMedium(context).copyWith(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+                          child: (state.selectLimit != null &&
+                                  state.selectLimit == 1)
+                              ? const Icon(
+                                  Icons.check_circle,
+                                  color: kPrimaryDarkColor,
+                                )
+                              : Container(
+                                  padding: const EdgeInsets.all(5),
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: kPrimaryDarkColor,
+                                  ),
+                                  child: Text(
+                                    (state.selectedAssets.indexOf(asset) + 1)
+                                        .toString(),
+                                    style: CustomTextStyle.bodyMedium(context)
+                                        .copyWith(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
                         ),
                       );
                     }

@@ -130,7 +130,10 @@
         "userAdded": "Thêm người dùng thành công",
         "alreadyInProject": "Người dùng đã là thành viên!",
         "sentInvitation": "Đã gửi lời mời thành công!",
-        "sentRequest": "Đã gửi yêu cầu gia nhập"
+        "sentRequest": "Đã gửi yêu cầu gia nhập",
+        "attachment_uploading":"Đang tải lên...",
+        "attachment_uploaded":"Tải lên thành công.",
+        "attachment_downloading":"Đang tải xuống... Tài liệu được mở sau khi tải xong."
     },
     "errorMessage": {
         "wrong" : "Oops! Something went wrong!",
@@ -172,7 +175,7 @@
         "projectName": "Tên Dự Án",
         "pendingTask": "Đang Thực Hiện",
         "noMemberAdded": "Chưa Thêm Thành Viên",
-        "completed": "Completed",
+        "completed": "Đã Hoàn Thành",
         "about": {
             "about": "Giới thiệu về dự án",
             "startFrom": "Dự án bắt đầu từ",
@@ -207,7 +210,8 @@
         },
         "category": "Loại",
         "subTasks": "Task Con",
-        "addSubTask": "Thêm Task Con"
+        "addSubTask": "Thêm Task Con",
+        "attachments": "Tệp Đính Kèm"
     },
     "taskFilter": {
         "filterBy": "Lọc Theo",
@@ -228,7 +232,7 @@
     },
     "emptyHandler": {
         "noPost": {
-            "title" : "Chưa Bài Viết",
+            "title" : "Chưa Có Bài Viết",
             "content": "Hãy chia sẻ những trải nghiệm của bạn nhé!"
         },
         "noMessage" :{

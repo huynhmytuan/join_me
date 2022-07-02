@@ -133,12 +133,24 @@ class _TaskListViewState extends State<TaskListView> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       canTapOnHeader: true,
       headerBuilder: (context, isExpanded) {
-        return Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            item.headerValue,
-            style: CustomTextStyle.heading3(context),
-          ),
+        return Row(
+          // mainAxisSize: MainAxisSize.min,
+          children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxWidth: MediaQuery.of(context).size.width * .6,
+                ),
+                child: Text(
+                  item.headerValue,
+                  overflow: TextOverflow.clip,
+                  maxLines: 1,
+                  style: CustomTextStyle.heading3(context),
+                ),
+              ),
+            ),
+          ],
         );
       },
       body: ListView.separated(

@@ -15,6 +15,7 @@ import 'package:join_me/data/repositories/repositories.dart';
 import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/message/bloc/chat_bloc.dart';
 import 'package:join_me/message/components/components.dart';
+import 'package:join_me/message/components/messages_list_view.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/widgets/bottom_sheet/selection_bottom_sheet.dart';
 import 'package:join_me/widgets/bottom_text_field.dart';
@@ -77,7 +78,7 @@ class _ChatPageState extends State<ChatPage> {
           appBar: _buildAppBar(context, currentUser, chatBloc),
           body: Column(
             children: [
-              _MessagesListView(
+              MessagesListView(
                 chatBloc: chatBloc,
               ),
               const SizedBox(
@@ -194,166 +195,6 @@ class _ChatPageState extends State<ChatPage> {
   void dispose() {
     chatBloc.close();
     super.dispose();
-  }
-}
-
-class _MessagesListView extends StatefulWidget {
-  const _MessagesListView({required this.chatBloc, Key? key}) : super(key: key);
-  final ChatBloc chatBloc;
-
-  @override
-  State<_MessagesListView> createState() => _MessagesListViewState();
-}
-
-class _MessagesListViewState extends State<_MessagesListView> {
-  String messageIdShowingTime = '';
-  void _showMoreDialog(
-    Message message,
-    AppUser currentUser,
-  ) {
-    showModalBottomSheet<ProjectViewType>(
-      useRootNavigator: true,
-      barrierColor: Colors.black.withOpacity(0.5),
-      isScrollControlled: true,
-      context: context,
-      shape: const RoundedRectangleBorder(
-        // <-- for border radius
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(kDefaultRadius),
-          topRight: Radius.circular(kDefaultRadius),
-        ),
-      ),
-      builder: (context) {
-        final _currentUser = context.read<AppBloc>().state.user;
-        final isOwner = _currentUser.id == message.authorId;
-        return SelectionBottomSheet(
-          title: LocaleKeys.general_more.tr(),
-          listSelections: [
-            SelectionRow(
-              onTap: () {
-                Clipboard.setData(ClipboardData(text: message.content));
-                AutoRouter.of(context).pop();
-              },
-              title: LocaleKeys.button_copy.tr(),
-              iconData: Ionicons.copy_outline,
-            ),
-            if (isOwner)
-              SelectionRow(
-                onTap: () {
-                  AutoRouter.of(context).pop().then(
-                        (value) => showDialog<bool>(
-                          context: context,
-                          builder: (context) => CustomAlertDialog(
-                            title: LocaleKeys.dialog_delete_title.tr(),
-                            content: LocaleKeys.dialog_delete_content.tr(),
-                            submitButtonColor: Theme.of(context).errorColor,
-                            submitLabel: LocaleKeys.button_delete.tr(),
-                            onCancel: () => AutoRouter.of(context).pop(false),
-                            onSubmit: () => AutoRouter.of(context).pop(true),
-                          ),
-                        ).then((choice) {
-                          if (choice != null && choice) {
-                            widget.chatBloc
-                                .add(DeletedMessage(message: message));
-                          }
-                        }),
-                      );
-                },
-                color: Theme.of(context).errorColor,
-                title: LocaleKeys.button_delete.tr(),
-                iconData: Ionicons.trash_bin_outline,
-              )
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final currentUser = context.read<AppBloc>().state.user;
-    return BlocBuilder<ChatBloc, ChatState>(
-      bloc: widget.chatBloc,
-      builder: (context, state) {
-        if (state.status == ChatViewStatus.initial ||
-            state.status == ChatViewStatus.loading ||
-            state.messages.isEmpty ||
-            state.conversationViewModel.members.isEmpty) {
-          return const Expanded(child: SizedBox());
-        }
-        return Expanded(
-          child: ListView.builder(
-            padding: EdgeInsets.zero,
-            clipBehavior: Clip.none,
-            physics: const BouncingScrollPhysics(
-              parent: AlwaysScrollableScrollPhysics(),
-            ),
-            reverse: true,
-            itemCount: state.messages.length,
-            itemBuilder: (context, index) {
-              var isNotLastMessage = false;
-              var isNotFirstMessage = false;
-              final isSender = state.messages[index].authorId == currentUser.id;
-              if (index > 0) {
-                isNotLastMessage = state.messages[index].authorId ==
-                    state.messages[index - 1].authorId;
-              }
-              if (index < state.messages.length - 1) {
-                isNotFirstMessage = state.messages[index].authorId ==
-                    state.messages[index + 1].authorId;
-              }
-
-              return Column(
-                crossAxisAlignment: isSender
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
-                children: [
-                  MessageBubble(
-                    onTap: () => setState(() {
-                      if (messageIdShowingTime == state.messages[index].id) {
-                        messageIdShowingTime = '';
-                      } else {
-                        messageIdShowingTime = state.messages[index].id;
-                      }
-                    }),
-                    onLongPress: () => _showMoreDialog(
-                      state.messages[index],
-                      currentUser,
-                    ),
-                    isSelected:
-                        messageIdShowingTime == state.messages[index].id,
-                    message: state.messages[index],
-                    author: state.conversationViewModel.members.firstWhere(
-                      (user) => user.id == state.messages[index].authorId,
-                    ),
-                    isNotFirstMessage: isNotFirstMessage,
-                    isNotLastMessage: isNotLastMessage,
-                    isSender: isSender,
-                    isGroupChat:
-                        state.conversationViewModel.conversation.type ==
-                            ConversationType.group,
-                  ),
-                  if (messageIdShowingTime == state.messages[index].id)
-                    Padding(
-                      padding: EdgeInsets.only(
-                        left: isSender ? 0 : 45,
-                        right: isSender ? kDefaultPadding : 0,
-                      ),
-                      child: Text(
-                        DateFormat(
-                          'HH:mm a EEEE dd/MM/yyyy',
-                          context.locale.languageCode,
-                        ).format(state.messages[index].createdAt),
-                        style: CustomTextStyle.bodySmall(context),
-                      ),
-                    ),
-                ],
-              );
-            },
-          ),
-        );
-      },
-    );
   }
 }
 

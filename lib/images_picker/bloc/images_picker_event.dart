@@ -33,3 +33,5 @@ class MediaSelected extends ImagesPickerEvent {
   @override
   List<Object> get props => [media];
 }
+
+class ClearAll extends ImagesPickerEvent {}

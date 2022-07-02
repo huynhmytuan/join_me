@@ -185,12 +185,12 @@ class _UserInfoSection extends StatelessWidget {
       log(project.toJson().toString());
       if (project.members.contains(userBloc.state.user.id)) {
         context.read<AppMessageCubit>().showInfoSnackbar(
-              message: 'User already in this project!',
+              message: LocaleKeys.notice_alreadyInProject.tr(),
             );
       } else {
         userBloc.add(SendInvitation(userBloc.state.user, project));
         context.read<AppMessageCubit>().showSuccessfulSnackBar(
-              message: 'The invitation has been sent!',
+              message: LocaleKeys.notice_sentInvitation.tr(),
             );
       }
     });
@@ -344,7 +344,7 @@ class _UserPostView extends StatelessWidget {
           return EmptyHandlerWidget(
             size: MediaQuery.of(context).size.width * .3,
             imageHandlerDir: kNoPostPicDir,
-            textHandler: 'No Posts',
+            textHandler: LocaleKeys.emptyHandler_noPost_title.tr(),
           );
         }
         if (state.status == PostsStatus.initial ||
@@ -393,7 +393,7 @@ class _UserProjectView extends StatelessWidget {
             return EmptyHandlerWidget(
               size: MediaQuery.of(context).size.width * .3,
               imageHandlerDir: kNoProjectPicDir,
-              textHandler: 'No Projects',
+              textHandler: LocaleKeys.emptyHandler_noProject_title.tr(),
             );
           }
           return CustomScrollView(

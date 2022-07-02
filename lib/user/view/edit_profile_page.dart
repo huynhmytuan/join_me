@@ -98,7 +98,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
             icon: const Icon(
               Ionicons.chevron_back,
               size: 24,
-              color: Colors.white,
             ),
           );
         },

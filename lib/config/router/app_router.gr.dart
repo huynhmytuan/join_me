@@ -395,7 +395,7 @@ class HomeRoute extends PageRouteInfo<void> {
 class ImagesPickerRoute extends PageRouteInfo<ImagesPickerRouteArgs> {
   ImagesPickerRoute(
       {List<AssetEntity> initialMedias = const [],
-      int? limit,
+      int? limit = 10,
       RequestType? type,
       Key? key,
       List<PageRouteInfo>? children})
@@ -413,7 +413,7 @@ class ImagesPickerRoute extends PageRouteInfo<ImagesPickerRouteArgs> {
 
 class ImagesPickerRouteArgs {
   const ImagesPickerRouteArgs(
-      {this.initialMedias = const [], this.limit, this.type, this.key});
+      {this.initialMedias = const [], this.limit = 10, this.type, this.key});
 
   final List<AssetEntity> initialMedias;
 

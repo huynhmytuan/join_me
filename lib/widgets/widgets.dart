@@ -1,3 +1,4 @@
+export 'animations/scale_up_widget.dart';
 export 'avatar_circle_widget.dart';
 export 'bottom_sheet/cupertino_picker_bottom_sheet.dart';
 export 'bottom_text_field.dart';

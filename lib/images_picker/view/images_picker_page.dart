@@ -1,22 +1,22 @@
-import 'dart:developer';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:join_me/config/router/app_router.dart';
+import 'package:join_me/config/theme.dart';
 
 import 'package:join_me/data/repositories/media_repository.dart';
 import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/images_picker/bloc/images_picker_bloc.dart';
+import 'package:join_me/utilities/constant.dart';
 
 import 'package:photo_manager/photo_manager.dart';
 
 class ImagesPickerPage extends StatelessWidget {
   const ImagesPickerPage({
     this.initialMedias = const [],
-    this.limit,
+    this.limit = 10,
     this.type,
     Key? key,
   }) : super(key: key);
@@ -31,13 +31,42 @@ class ImagesPickerPage extends StatelessWidget {
         mediaRepository: context.read<MediaRepository>(),
         limit: limit,
       )..add(LoadMedias(initialMedias: initialMedias, requestType: type)),
-      child: AutoTabsScaffold(
-        routes: const [MediaGridRoute(), AlbumsListRoute()],
-        appBarBuilder: (context, tabsRouter) => _CustomAppBar(
-          tabsRouter: tabsRouter,
-        ),
+      child: BlocBuilder<ImagesPickerBloc, ImagesPickerState>(
+        builder: (context, state) {
+          return AutoTabsScaffold(
+            routes: const [MediaGridRoute(), AlbumsListRoute()],
+            appBarBuilder: (context, tabsRouter) => _CustomAppBar(
+              tabsRouter: tabsRouter,
+            ),
+            floatingActionButton: _buildFloatingActionButton(context, state),
+          );
+        },
       ),
     );
+  }
+
+  Widget? _buildFloatingActionButton(
+    BuildContext context,
+    ImagesPickerState state,
+  ) {
+    return state.selectedAssets.isEmpty
+        ? null
+        : FloatingActionButton(
+            shape: kBorderRadiusShape,
+            backgroundColor: Theme.of(context).primaryColor,
+            onPressed: () {
+              context.read<ImagesPickerBloc>().add(ClearAll());
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.clear),
+                Text(
+                  state.selectedAssets.length.toString(),
+                ),
+              ],
+            ),
+          );
   }
 }
 

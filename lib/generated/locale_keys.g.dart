@@ -21,7 +21,6 @@ abstract class  LocaleKeys {
   static const general_start = 'general.start';
   static const general_from = 'general.from';
   static const general_today = 'general.today';
-  static const general_discard = 'general.discard';
   static const general = 'general';
   static const button_signIn = 'button.signIn';
   static const button_signUp = 'button.signUp';
@@ -42,8 +41,8 @@ abstract class  LocaleKeys {
   static const button_changeAvatar = 'button.changeAvatar';
   static const button_saveChanges = 'button.saveChanges';
   static const button_cancel = 'button.cancel';
-  static const button_create = 'button.create';
   static const button_copy = 'button.copy';
+  static const button_create = 'button.create';
   static const button_delete = 'button.delete';
   static const button_leave = 'button.leave';
   static const button_remove = 'button.remove';
@@ -51,6 +50,7 @@ abstract class  LocaleKeys {
   static const button_sendMessage = 'button.sendMessage';
   static const button_projectInvite = 'button.projectInvite';
   static const button_addDescription = 'button.addDescription';
+  static const button_discard = 'button.discard';
   static const button = 'button';
   static const post_post = 'post.post';
   static const post_like = 'post.like';
@@ -97,11 +97,14 @@ abstract class  LocaleKeys {
   static const notice_addSuccess = 'notice.addSuccess';
   static const notice_deleteSuccess = 'notice.deleteSuccess';
   static const notice_removeSuccess = 'notice.removeSuccess';
-  static const notice_haveBeenRemove = 'notice.haveBeenRemove';
   static const notice_userAdded = 'notice.userAdded';
+  static const notice_haveBeenRemove = 'notice.haveBeenRemove';
   static const notice_alreadyInProject = 'notice.alreadyInProject';
   static const notice_sentInvitation = 'notice.sentInvitation';
   static const notice_sentRequest = 'notice.sentRequest';
+  static const notice_attachment_uploading = 'notice.attachment_uploading';
+  static const notice_attachment_uploaded = 'notice.attachment_uploaded';
+  static const notice_attachment_downloading = 'notice.attachment_downloading';
   static const notice = 'notice';
   static const errorMessage_wrong = 'errorMessage.wrong';
   static const errorMessage_empty = 'errorMessage.empty';
@@ -164,6 +167,7 @@ abstract class  LocaleKeys {
   static const task_category = 'task.category';
   static const task_subTasks = 'task.subTasks';
   static const task_addSubTask = 'task.addSubTask';
+  static const task_attachments = 'task.attachments';
   static const task = 'task';
   static const taskFilter_filterBy = 'taskFilter.filterBy';
   static const taskFilter_byCreatedDate_title = 'taskFilter.byCreatedDate.title';

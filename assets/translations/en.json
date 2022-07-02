@@ -130,7 +130,10 @@
         "haveBeenRemove": "You have been removed",
         "alreadyInProject": "User already in this project!",
         "sentInvitation": "The invitation has been sent!",
-        "sentRequest": "Your request has been sent"
+        "sentRequest": "Your request has been sent",
+        "attachment_uploading":"Attachment Uploading...",
+        "attachment_uploaded":"Attachment Uploaded.",
+        "attachment_downloading":"Downloading... File'll be open when ready."
     },
     "errorMessage": {
         "wrong": "Oops! Something went wrong!",
@@ -207,7 +210,8 @@
         },
         "category": "Category",
         "subTasks": "Sub Tasks",
-        "addSubTask": "Add Sub Task"
+        "addSubTask": "Add Sub Task",
+        "attachments": "Attachments"
     },
     "taskFilter": {
         "filterBy": "Filter By",

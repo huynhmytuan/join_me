@@ -75,7 +75,7 @@ class TaskCard extends StatelessWidget {
                       Row(
                         children: [
                           const Icon(
-                            Ionicons.time,
+                            Ionicons.time_outline,
                             size: 17,
                             color: kTextColorGrey,
                           ),
@@ -84,15 +84,35 @@ class TaskCard extends StatelessWidget {
                           ),
                           Text(
                             task.dueDate == null
-                                ? ''
+                                ? LocaleKeys.task_noDueDate.tr()
                                 : DateFormat.yMMMMEEEEd(languageCode)
                                     .format(task.dueDate!),
-                            style: CustomTextStyle.heading4(context).copyWith(
+                            style: CustomTextStyle.bodyMedium(context).copyWith(
                               color: kTextColorGrey,
                             ),
                           ),
                         ],
                       ),
+                      if (task.subTasks.isNotEmpty)
+                        Row(
+                          children: [
+                            const Icon(
+                              Ionicons.git_merge_outline,
+                              size: 17,
+                              color: kTextColorGrey,
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              task.subTasks.length.toString(),
+                              style:
+                                  CustomTextStyle.bodyMedium(context).copyWith(
+                                color: kTextColorGrey,
+                              ),
+                            ),
+                          ],
+                        ),
                       StackedImages(
                         imageUrlList:
                             assignedTo.map((e) => e.photoUrl).toList(),
@@ -100,7 +120,7 @@ class TaskCard extends StatelessWidget {
                         totalCount: assignedTo.length,
                         emptyHandler: Text(
                           LocaleKeys.task_unAssigned.tr(),
-                          style: CustomTextStyle.heading4(context).copyWith(
+                          style: CustomTextStyle.bodyMedium(context).copyWith(
                             color: kTextColorGrey,
                           ),
                         ),

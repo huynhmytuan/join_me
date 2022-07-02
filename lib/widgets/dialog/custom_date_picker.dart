@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
+
 import 'package:flutter/material.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/config/theme.dart';
@@ -63,45 +64,47 @@ class _CustomDatePickerState extends State<CustomDatePicker> {
                   onPressed: () {
                     AutoRouter.of(context).pop(_selectedDay);
                   },
-                  child: const Text('Save'),
+                  child: Text(LocaleKeys.button_save.tr()),
                 ),
               ],
             ),
             const Divider(),
-            Stack(
-              children: [
-                Align(
-                  child: Text(
-                    _selectedDay == null
-                        ? 'No date selected'
-                        : DateFormat.yMMMd(languageCode).format(_selectedDay!),
-                    style: CustomTextStyle.heading3(context)
-                        .copyWith(color: Theme.of(context).primaryColor),
+            SizedBox(
+              height: 25,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Align(
+                    child: Text(
+                      _selectedDay == null
+                          ? LocaleKeys.task_noDueDate.tr()
+                          : DateFormat.yMMMd(languageCode)
+                              .format(_selectedDay!),
+                      style: CustomTextStyle.heading3(context)
+                          .copyWith(color: Theme.of(context).primaryColor),
+                    ),
                   ),
-                ),
-                Positioned(
-                  right: 10,
-                  child: GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        _selectedDay = null;
-                      });
-                    },
-                    child: const Icon(Ionicons.close_circle),
+                  Positioned(
+                    right: 10,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedDay = null;
+                        });
+                      },
+                      child: const Icon(Ionicons.close_circle),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const Divider(),
             Container(
-              height: 350,
-              width: double.infinity,
               padding: const EdgeInsets.symmetric(
                 horizontal: kDefaultPadding / 2,
               ),
               child: TableCalendar<dynamic>(
                 pageJumpingEnabled: true,
-                shouldFillViewport: true,
                 locale: languageCode,
                 startingDayOfWeek: StartingDayOfWeek.monday,
                 headerStyle: const HeaderStyle(

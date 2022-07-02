@@ -1,23 +1,25 @@
-import 'dart:ui';
-
 import 'package:auto_route/auto_route.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:join_me/app/bloc/app_bloc.dart';
+import 'package:join_me/app/cubit/app_message_cubit.dart';
 import 'package:join_me/config/router/router.dart';
 import 'package:join_me/config/theme.dart';
 import 'package:join_me/data/models/models.dart';
 import 'package:join_me/data/repositories/repositories.dart';
 import 'package:join_me/generated/locale_keys.g.dart';
 import 'package:join_me/project/bloc/project_bloc.dart';
-
 import 'package:join_me/project/project.dart';
+import 'package:join_me/task/bloc/task_attachment_bloc.dart';
 import 'package:join_me/task/bloc/task_bloc.dart';
+import 'package:join_me/task/components/attachment_item.dart';
 import 'package:join_me/utilities/constant.dart';
 import 'package:join_me/utilities/extensions/extensions.dart';
 import 'package:join_me/widgets/widgets.dart';
+import 'package:mime/mime.dart';
+import 'package:path/path.dart' as path;
 
 class SingleTaskPage extends StatelessWidget {
   const SingleTaskPage({
@@ -27,12 +29,27 @@ class SingleTaskPage extends StatelessWidget {
   final String taskId;
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => TaskBloc(
-        taskRepository: context.read<TaskRepository>(),
-        userRepository: context.read<UserRepository>(),
-        projectRepository: context.read<ProjectRepository>(),
-      )..add(LoadTask(taskId)),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => TaskBloc(
+            taskRepository: context.read<TaskRepository>(),
+            userRepository: context.read<UserRepository>(),
+            projectRepository: context.read<ProjectRepository>(),
+          )..add(LoadTask(taskId)),
+        ),
+        BlocProvider(
+          create: (context) => TaskAttachmentBloc(
+            taskRepository: context.read<TaskRepository>(),
+            appMessageCubit: context.read<AppMessageCubit>(),
+          )..add(
+              FetchAllAttachments(
+                taskId,
+                context.read<AppBloc>().state.user.id,
+              ),
+            ),
+        ),
+      ],
       child: BlocConsumer<TaskBloc, TaskState>(
         listener: (context, state) {
           if (state.status == TaskStateStatus.deleted) {
@@ -42,30 +59,25 @@ class SingleTaskPage extends StatelessWidget {
         },
         builder: (context, state) {
           if (state.status == TaskStateStatus.notFound) {
-            return Scaffold(
-              appBar: AppBar(),
-              body: const Center(
-                child: Text('Not Found'),
-              ),
-            );
+            AutoRouter.of(context).popAndPush(const NotFoundRoute());
           }
           if (state.status == TaskStateStatus.loading) {
             return Scaffold(
               appBar: AppBar(),
               body: const Center(
-                child: CircularProgressIndicator(),
+                child: CircularProgressIndicator.adaptive(),
               ),
             );
           }
-          if (state.status == TaskStateStatus.success) {
-            return const TaskView();
+          if (state.status == TaskStateStatus.failure) {
+            return Scaffold(
+              appBar: AppBar(),
+              body: Center(
+                child: Text(LocaleKeys.errorMessage_wrong.tr()),
+              ),
+            );
           }
-          return Scaffold(
-            appBar: AppBar(),
-            body: const Center(
-              child: Text('Something went wrong'),
-            ),
-          );
+          return const TaskView();
         },
       ),
     );
@@ -744,133 +756,184 @@ class _TaskViewState extends State<TaskView> {
 
 class _ListAttachment extends StatelessWidget {
   const _ListAttachment({Key? key}) : super(key: key);
+  bool isImage(String path) {
+    final mimeType = lookupMimeType(path);
+    return mimeType!.startsWith('image/');
+  }
+
+  Future<void> _showDialog(BuildContext ctx) async {
+    final bloc = ctx.read<TaskAttachmentBloc>();
+    final attachFile = bloc.state.selectedFile!;
+    final fileName = path.basename(attachFile.path);
+    final fileSize = await ''.getFileSize(attachFile, 2);
+    await showGeneralDialog(
+      barrierLabel: 'Label',
+      barrierDismissible: true,
+      barrierColor: Colors.black.withOpacity(0.5),
+      transitionDuration: const Duration(milliseconds: 350),
+      context: ctx,
+      pageBuilder: (context, anim1, anim2) {
+        return Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            height: 320,
+            margin: const EdgeInsets.only(bottom: 50, left: 20, right: 20),
+            child: Material(
+              color: Theme.of(context).scaffoldBackgroundColor,
+              shape: kBorderRadiusShape,
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      onPressed: () {
+                        AutoRouter.of(context).pop();
+                      },
+                      icon: const Icon(
+                        Icons.cancel,
+                        size: 26,
+                        color: kTextColorGrey,
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        if (isImage(attachFile.path))
+                          SizedBox(
+                            height: 120,
+                            child: Image.file(
+                              attachFile,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        else
+                          Image.asset(
+                            '$kIconDir/upload_file.png',
+                            height: 100,
+                            width: 100,
+                          ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Text(
+                            fileName,
+                            style: CustomTextStyle.heading3(context),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          fileSize,
+                        )
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: RoundedButton(
+                      onPressed: () {
+                        AutoRouter.of(context).pop();
+                        bloc.add(UploadAttachment(attachFile));
+                      },
+                      elevation: 0,
+                      minWidth: 200,
+                      child: const Text('Upload File'),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+      transitionBuilder: (context, anim1, anim2, child) {
+        return SlideTransition(
+          position: Tween(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(anim1),
+          child: child,
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final listAttachments = <Attachment>[
-      const Attachment(
-        attachmentUrl: 'xin',
-        name: 'Function_requirement.doc',
-        type: AttachmentType.doc,
-      ),
-    ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Đính kèm',
-          style:
-              CustomTextStyle.heading4(context).copyWith(color: kTextColorGrey),
-        ),
-        const SizedBox(
-          height: 10,
-        ),
-        Row(
+    return BlocConsumer<TaskAttachmentBloc, TaskAttachmentState>(
+      listener: (context, state) {
+        if (state.selectedFile != null) {
+          _showDialog(context);
+        }
+      },
+      builder: (context, state) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: Material(
-                shape: kBorderRadiusShape,
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {},
-                  borderRadius: BorderRadius.circular(kDefaultRadius),
-                  child: Container(
-                    width: 60,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: kTextColorGrey),
+            Text(
+              LocaleKeys.task_attachments.tr(),
+              style: CustomTextStyle.heading4(context)
+                  .copyWith(color: kTextColorGrey),
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Material(
+                    shape: kBorderRadiusShape,
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: (state.status == TaskAttachmentStatus.uploading)
+                          ? null
+                          : () {
+                              context
+                                  .read<TaskAttachmentBloc>()
+                                  .add(PickAttachment());
+                            },
                       borderRadius: BorderRadius.circular(kDefaultRadius),
-                    ),
-                    child: const Icon(
-                      Ionicons.attach_outline,
-                      size: 45,
-                      color: kTextColorGrey,
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: kTextColorGrey),
+                          borderRadius: BorderRadius.circular(kDefaultRadius),
+                        ),
+                        child: (state.status == TaskAttachmentStatus.uploading)
+                            ? const Padding(
+                                padding: EdgeInsets.all(20),
+                                child: CircularProgressIndicator.adaptive(),
+                              )
+                            : const Icon(
+                                Ionicons.attach_outline,
+                                size: 45,
+                                color: kTextColorGrey,
+                              ),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              physics: const BouncingScrollPhysics(
-                parent: AlwaysScrollableScrollPhysics(),
-              ),
-              child: Row(
-                children: listAttachments.map(_buildAttachment).toList(),
-              ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
+                    child: Row(
+                      children:
+                          state.attachments.map(AttachmentItem.new).toList(),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAttachment(Attachment attachment) {
-    Widget widget = const SizedBox(
-      height: 100,
-      width: 100,
-    );
-    switch (attachment.type) {
-      case AttachmentType.doc:
-        widget = _AttachmentDoc(attachment);
-        break;
-      default:
-    }
-    return widget;
-  }
-}
-
-enum AttachmentType {
-  pdf,
-  doc,
-  zip,
-  pic,
-  video,
-  unknown,
-}
-
-class Attachment {
-  const Attachment({
-    required this.attachmentUrl,
-    required this.name,
-    required this.type,
-  });
-
-  final String attachmentUrl;
-  final String name;
-  final AttachmentType type;
-}
-
-class _AttachmentDoc extends StatelessWidget {
-  const _AttachmentDoc(this.attachment, {Key? key}) : super(key: key);
-  final Attachment attachment;
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      constraints: const BoxConstraints(maxWidth: 230, maxHeight: 80),
-      decoration: BoxDecoration(
-        border: Border.all(color: kTextColorGrey),
-        borderRadius: BorderRadius.circular(kDefaultRadius),
-      ),
-      child: ListTile(
-        dense: true,
-        minLeadingWidth: 40,
-        shape: kBorderRadiusShape,
-        visualDensity: VisualDensity.compact,
-        onTap: () {},
-        leading: const Icon(
-          Icons.folder_zip_outlined,
-          size: 32,
-        ),
-        title: Text(
-          attachment.name,
-          style: const TextStyle(fontSize: 14),
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: const Text('.zip'),
-      ),
+        );
+      },
     );
   }
 }
