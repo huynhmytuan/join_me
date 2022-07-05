@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:join_me/data/models/models.dart';
@@ -48,22 +50,30 @@ class JoinRequestsBloc extends Bloc<JoinRequestsEvent, JoinRequestsState> {
     AcceptRequest event,
     Emitter<JoinRequestsState> emit,
   ) async {
-    await _projectRepository.acceptJoinRequest(
-      projectId: state.project.id,
-      requesterId: event.requestId,
-    );
-    add(UpdateRequests(state.project.id));
+    try {
+      await _projectRepository.acceptJoinRequest(
+        projectId: state.project.id,
+        requesterId: event.requestId,
+      );
+      add(UpdateRequests(state.project.id));
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Future<void> _onRejectRequest(
     RejectRequest event,
     Emitter<JoinRequestsState> emit,
   ) async {
-    await _projectRepository.deleteJoinRequest(
-      projectId: state.project.id,
-      requesterId: event.requestId,
-    );
-    add(UpdateRequests(state.project.id));
+    try {
+      await _projectRepository.deleteJoinRequest(
+        projectId: state.project.id,
+        requesterId: event.requestId,
+      );
+      add(UpdateRequests(state.project.id));
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Future<void> _onUpdateRequests(

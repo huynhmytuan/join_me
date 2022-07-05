@@ -15,11 +15,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   UserBloc({
     required UserRepository userRepository,
     NotificationRepository? notificationRepository,
-    MessageRepository? messageRepository,
   })  : _userRepository = userRepository,
         _notificationRepository =
             notificationRepository ?? NotificationRepository(),
-        _messageRepository = messageRepository ?? MessageRepository(),
         super(UserState.initial()) {
     on<LoadUser>(_onLoadUser);
     on<UpdateUser>(_onUpdateUser);
@@ -27,7 +25,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   }
   final UserRepository _userRepository;
   final NotificationRepository _notificationRepository;
-  final MessageRepository _messageRepository;
+
   StreamSubscription? _streamSubscription;
 
   Future<void> _onLoadUser(

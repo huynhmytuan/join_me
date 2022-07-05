@@ -84,23 +84,27 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     UpdateConversation event,
     Emitter<ChatState> emit,
   ) async {
-    final members = await _userRepository.getUsers(
-      userIds: event.conversation.members,
-    );
-    final lastMessage = await _messageRepository.getConversationLastMessage(
-      conversationId: event.conversation.id,
-    );
-    final conversationViewModel = ConversationViewModel(
-      conversation: event.conversation,
-      members: members,
-      lastMessage: lastMessage,
-    );
-    emit(
-      state.copyWith(
-        conversationViewModel: conversationViewModel,
-        status: ChatViewStatus.success,
-      ),
-    );
+    try {
+      final members = await _userRepository.getUsers(
+        userIds: event.conversation.members,
+      );
+      final lastMessage = await _messageRepository.getConversationLastMessage(
+        conversationId: event.conversation.id,
+      );
+      final conversationViewModel = ConversationViewModel(
+        conversation: event.conversation,
+        members: members,
+        lastMessage: lastMessage,
+      );
+      emit(
+        state.copyWith(
+          conversationViewModel: conversationViewModel,
+          status: ChatViewStatus.success,
+        ),
+      );
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Future<void> _onUpdateMessages(

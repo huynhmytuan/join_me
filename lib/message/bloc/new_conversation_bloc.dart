@@ -38,16 +38,20 @@ class NewConversationBloc
     AddReceiver event,
     Emitter<NewConversationState> emit,
   ) {
-    final receivers = List.of(state.receivers);
-    if (receivers.contains(event.receiver)) {
-      return;
+    try {
+      final receivers = List.of(state.receivers);
+      if (receivers.contains(event.receiver)) {
+        return;
+      }
+      emit(
+        state.copyWith(
+          receivers: receivers..add(event.receiver),
+        ),
+      );
+      add(UpdateConversation());
+    } catch (e) {
+      log(e.toString());
     }
-    emit(
-      state.copyWith(
-        receivers: receivers..add(event.receiver),
-      ),
-    );
-    add(UpdateConversation());
   }
 
   void _onRemoveReceiver(
@@ -67,31 +71,35 @@ class NewConversationBloc
     UpdateConversation event,
     Emitter<NewConversationState> emit,
   ) async {
-    if (state.receivers.isEmpty) {
-      emit(
-        state.copyWith(),
-      );
-      return;
-    }
-    final members = List.of(state.receivers)..add(state.sender);
-    final conversation = (members.length == 2)
-        ? await _messageRepository.getConversationByMembers(
-            members.map((user) => user.id).toList(),
-          )
-        : null;
-    final messages = conversation != null
-        ? await _messageRepository
-            .loadAllConversationMessages(
-              conversationId: conversation.id,
+    try {
+      if (state.receivers.isEmpty) {
+        emit(
+          state.copyWith(),
+        );
+        return;
+      }
+      final members = List.of(state.receivers)..add(state.sender);
+      final conversation = (members.length == 2)
+          ? await _messageRepository.getConversationByMembers(
+              members.map((user) => user.id).toList(),
             )
-            .first
-        : <Message>[];
-    emit(
-      state.copyWith(
-        conversation: conversation,
-        messages: messages,
-      ),
-    );
+          : null;
+      final messages = conversation != null
+          ? await _messageRepository
+              .loadAllConversationMessages(
+                conversationId: conversation.id,
+              )
+              .first
+          : <Message>[];
+      emit(
+        state.copyWith(
+          conversation: conversation,
+          messages: messages,
+        ),
+      );
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Future<void> _onAddConversation(

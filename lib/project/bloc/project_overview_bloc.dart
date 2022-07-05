@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -40,12 +41,16 @@ class ProjectOverviewBloc extends Bloc<ProjectEvent, ProjectOverviewState> {
           .listen((projects) async {
         final listProjects = <ProjectViewModel>[];
         for (final project in projects) {
-          final tasks =
-              await _taskRepository.getListProjectTasks(project.id).first;
+          try {
+            final tasks =
+                await _taskRepository.getListProjectTasks(project.id).first;
 
-          final members =
-              await _userRepository.getUsers(userIds: project.members);
-          listProjects.add(ProjectViewModel(project, tasks, members));
+            final members =
+                await _userRepository.getUsers(userIds: project.members);
+            listProjects.add(ProjectViewModel(project, tasks, members));
+          } catch (e) {
+            log(e.toString());
+          }
         }
         add(UpdateProjects(listProjects));
       });
@@ -65,19 +70,27 @@ class ProjectOverviewBloc extends Bloc<ProjectEvent, ProjectOverviewState> {
     AddProject event,
     Emitter<ProjectOverviewState> emit,
   ) async {
-    final newProject =
-        await _projectRepository.addProject(project: event.project);
-    emit(NewProjectCreated(project: newProject));
-    emit(const ProjectsLoaded());
+    try {
+      final newProject =
+          await _projectRepository.addProject(project: event.project);
+      emit(NewProjectCreated(project: newProject));
+      emit(const ProjectsLoaded());
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   Future<void> _onAddUserToProject(
     AddUserToProject event,
     Emitter<ProjectOverviewState> emit,
   ) async {
-    await _projectRepository.addUserToProject(
-      project: event.project,
-      userId: event.userId,
-    );
+    try {
+      await _projectRepository.addUserToProject(
+        project: event.project,
+        userId: event.userId,
+      );
+    } catch (e) {
+      log(e.toString());
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -45,23 +46,27 @@ class ConversationsBloc extends Bloc<ConversationsEvent, ConversationsState> {
     Emitter<ConversationsState> emit,
   ) async {
     final conversationViewModels = <ConversationViewModel>[];
-    for (final conversation in event.conversations) {
-      final receivers = await _userRepository.getUsers(
-        userIds: conversation.members,
+    try {
+      for (final conversation in event.conversations) {
+        final receivers = await _userRepository.getUsers(
+          userIds: conversation.members,
+        );
+        final lastMessage = await _messageRepository.getConversationLastMessage(
+          conversationId: conversation.id,
+        );
+        conversationViewModels.add(
+          ConversationViewModel(
+            conversation: conversation,
+            members: receivers,
+            lastMessage: lastMessage,
+          ),
+        );
+      }
+      emit(
+        state.copyWith(conversations: conversationViewModels),
       );
-      final lastMessage = await _messageRepository.getConversationLastMessage(
-        conversationId: conversation.id,
-      );
-      conversationViewModels.add(
-        ConversationViewModel(
-          conversation: conversation,
-          members: receivers,
-          lastMessage: lastMessage,
-        ),
-      );
+    } catch (e) {
+      log(e.toString());
     }
-    emit(
-      state.copyWith(conversations: conversationViewModels),
-    );
   }
 }

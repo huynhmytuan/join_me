@@ -78,7 +78,6 @@ class ProjectBloc extends Bloc<ProjectEvent, ProjectState> {
           }
         }
       }
-      log('Project: ${event.project}', name: 'POST/PRO');
       final members = event.project != null
           ? await _userRepository.getUsers(userIds: event.project!.members)
           : null;

@@ -110,7 +110,6 @@ class TaskAttachmentBloc
     try {
       //Get application directory
       final appDir = await getApplicationDocumentsDirectory();
-
       final file = File('${appDir.path}/${event.attachment.fileName}');
       if (file.existsSync()) {
         await OpenFile.open(file.path);

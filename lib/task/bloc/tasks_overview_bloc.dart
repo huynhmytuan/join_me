@@ -30,17 +30,22 @@ class TasksOverviewBloc extends Bloc<TasksOverviewEvent, TasksOverviewState> {
     LoadTasksList event,
     Emitter<TasksOverviewState> emit,
   ) async {
-    await _streamSubscription?.cancel();
-    _streamSubscription = _taskRepository
-        .getListProjectTasks(event.projectId)
-        .listen((tasks) async {
-      final listTasks = <TaskViewModel>[];
-      for (final task in tasks) {
-        final assignee = await _userRepository.getUsers(userIds: task.assignee);
-        listTasks.add(TaskViewModel(task: task, assignee: assignee));
-      }
-      add(UpdateTasksList(listTasks));
-    });
+    try {
+      await _streamSubscription?.cancel();
+      _streamSubscription = _taskRepository
+          .getListProjectTasks(event.projectId)
+          .listen((tasks) async {
+        final listTasks = <TaskViewModel>[];
+        for (final task in tasks) {
+          final assignee =
+              await _userRepository.getUsers(userIds: task.assignee);
+          listTasks.add(TaskViewModel(task: task, assignee: assignee));
+        }
+        add(UpdateTasksList(listTasks));
+      });
+    } catch (e) {
+      log(e.toString());
+    }
   }
 
   void _onUpdateTasksList(
